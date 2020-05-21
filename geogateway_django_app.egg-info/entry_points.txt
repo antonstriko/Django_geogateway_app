@@ -1,0 +1,3 @@
+
+[airavata.djangoapp]
+geogateway_django_app = geogateway_django_app.apps:GeogatewayDjangoAppConfig

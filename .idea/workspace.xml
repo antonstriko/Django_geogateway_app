@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5d6584b2-5b74-47da-9585-dc509a6761c8" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DjangoConsoleOptions" custom-start-script="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)">
+    <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1c8HJtkoszDW0JNcDmHjWMCciBb" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../geogateway-portal" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="JavaScript.Libraries" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/venv/lib/python3.6/site-packages" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/geogateway_django_app/templates/geogateway_django_app" />
+      <recent name="$PROJECT_DIR$/geogateway_django_app" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="apps" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="geogateway-django-app" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="$PROJECT_DIR$/venv/bin/python" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/geogateway_django_app" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/geogateway_django_app/apps.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5d6584b2-5b74-47da-9585-dc509a6761c8" name="Default Changelist" comment="" />
+      <created>1589903231180</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1589903231180</updated>
+      <workItem from="1589903232398" duration="783000" />
+      <workItem from="1589904250033" duration="878000" />
+      <workItem from="1589905160818" duration="7079000" />
+      <workItem from="1589922796085" duration="887000" />
+      <workItem from="1589986143823" duration="15162000" />
+      <workItem from="1590072564417" duration="19268000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2601" y="174" width="547" height="667" key="#apps" timestamp="1589904784758">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2601" y="174" width="547" height="667" key="#apps/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589904784758" />
+    <state x="2322" y="44" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589910981748">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2322" y="44" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589910981748" />
+    <state x="2588" y="307" width="574" height="400" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589990996075">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2588" y="307" width="574" height="400" key="#com.intellij.fileTypes.FileTypeChooser/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589990996075" />
+    <state x="2528" y="296" width="694" height="406" key="EditFileWatcherDialog" timestamp="1590089528949">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2528" y="296" width="694" height="406" key="EditFileWatcherDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1590089528949" />
+    <state x="2171" y="154" width="428" height="474" key="FileChooserDialogImpl" timestamp="1589986794802">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2171" y="154" width="428" height="474" key="FileChooserDialogImpl/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589986794802" />
+    <state width="1864" height="278" key="GridCell.Tab.0.bottom" timestamp="1589912742952">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1864" height="278" key="GridCell.Tab.0.bottom/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589912742952" />
+    <state width="1864" height="278" key="GridCell.Tab.0.center" timestamp="1589912742952">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1864" height="278" key="GridCell.Tab.0.center/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589912742952" />
+    <state width="1864" height="278" key="GridCell.Tab.0.left" timestamp="1589912742952">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1864" height="278" key="GridCell.Tab.0.left/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589912742952" />
+    <state width="1864" height="278" key="GridCell.Tab.0.right" timestamp="1589912742952">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1864" height="278" key="GridCell.Tab.0.right/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589912742952" />
+    <state x="2401" y="-15" key="SettingsEditor" timestamp="1589991003765">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2401" y="-15" key="SettingsEditor/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589991003765" />
+    <state width="498" height="443" key="SwitcherDM" timestamp="1589989889214">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="498" height="443" key="SwitcherDM/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589989889214" />
+    <state x="2543" y="237" width="672" height="678" key="search.everywhere.popup" timestamp="1590088889889">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2543" y="237" width="672" height="678" key="search.everywhere.popup/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1590088889889" />
+    <state x="2601" y="382" width="544" height="214" key="vcs.readOnlyHandler.ReadOnlyStatusDialog" timestamp="1589904693178">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2601" y="382" width="544" height="214" key="vcs.readOnlyHandler.ReadOnlyStatusDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589904693178" />
+  </component>
+</project>
