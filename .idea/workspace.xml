@@ -1,7 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="5d6584b2-5b74-47da-9585-dc509a6761c8" name="Default Changelist" comment="" />
+    <list default="true" id="5d6584b2-5b74-47da-9585-dc509a6761c8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/map-tools.js" beforeDir="false" afterPath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/map-tools.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/map.js" beforeDir="false" afterPath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/map.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/tools-block.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/vue-components.js" beforeDir="false" afterPath="$PROJECT_DIR$/geogateway_django_app/static/geogateway_django_app/js/vue-components.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/templates/geogateway_django_app/main.html" beforeDir="false" afterPath="$PROJECT_DIR$/geogateway_django_app/templates/geogateway_django_app/main.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/templates/geogateway_django_app/map-tools.html" beforeDir="false" afterPath="$PROJECT_DIR$/geogateway_django_app/templates/geogateway_django_app/map-tools.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/geogateway_django_app/templates/geogateway_django_app/vue.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,7 +61,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../geogateway-portal" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -89,22 +117,36 @@
       <workItem from="1589905160818" duration="7079000" />
       <workItem from="1589922796085" duration="887000" />
       <workItem from="1589986143823" duration="15162000" />
-      <workItem from="1590072564417" duration="19268000" />
+      <workItem from="1590072564417" duration="21785000" />
+      <workItem from="1590161219983" duration="6727000" />
+      <workItem from="1590170095699" duration="2483000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="2" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
   <component name="WindowStateProjectService">
     <state x="2601" y="174" width="547" height="667" key="#apps" timestamp="1589904784758">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2601" y="174" width="547" height="667" key="#apps/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589904784758" />
-    <state x="2322" y="44" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589910981748">
+    <state x="2320" y="26" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1590161366126">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2322" y="44" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589910981748" />
+    <state x="2320" y="26" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1590161366126" />
     <state x="2588" y="307" width="574" height="400" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589990996075">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
@@ -113,10 +155,10 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2528" y="296" width="694" height="406" key="EditFileWatcherDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1590089528949" />
-    <state x="2171" y="154" width="428" height="474" key="FileChooserDialogImpl" timestamp="1589986794802">
+    <state x="2169" y="136" width="428" height="474" key="FileChooserDialogImpl" timestamp="1590161384069">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2171" y="154" width="428" height="474" key="FileChooserDialogImpl/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589986794802" />
+    <state x="2169" y="136" width="428" height="474" key="FileChooserDialogImpl/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1590161384069" />
     <state width="1864" height="278" key="GridCell.Tab.0.bottom" timestamp="1589912742952">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
@@ -133,10 +175,10 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state width="1864" height="278" key="GridCell.Tab.0.right/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589912742952" />
-    <state x="2401" y="-15" key="SettingsEditor" timestamp="1589991003765">
+    <state x="2417" y="121" key="SettingsEditor" timestamp="1590163814934">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2401" y="-15" key="SettingsEditor/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1589991003765" />
+    <state x="2417" y="121" key="SettingsEditor/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1590163814934" />
     <state width="498" height="443" key="SwitcherDM" timestamp="1589989889214">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>

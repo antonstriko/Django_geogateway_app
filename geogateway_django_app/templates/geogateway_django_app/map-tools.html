@@ -1,27 +1,23 @@
-{#<template>#}
-{#    <div>#}
-{#        <b-form-group label="Using options array:">#}
-{#            <b-form-checkbox-group#}
-{#                    id="checkbox-group-1"#}
-{#                    v-model="selected"#}
-{#                    :options="options"#}
-{#                    name="flavour-1"#}
-{#                    stacked#}
-{#            ></b-form-checkbox-group>#}
-{#        </b-form-group>#}
-{##}
-{#        <div>Selected: <strong>[[ selected ]]</strong></div>#}
-{#    </div>#}
-{#</template>#}
-
-
+{% load static %}
+        <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
+<script src="{% static '/geogateway_django_app/js/map-tools.js' %}"></script>
     <div>
         <input type="checkbox" name="kml" v-model="isKML">
         <label for="shipper">Upload KML File</label>
     </div>
     <div>
-        <input type="checkbox" name="UCERF3" v-model="isUCERF3">
-        <label for="custom broker">UCERF3 Faults</label>
+        <div>
+      <input class="tools-checkbox" type="checkbox" id="maptools.UCERF3FaultLayer" name="active-tools" value="fault-layer" onclick="showUCERF3FaultLayer('black')"/>
+      <span class="default-font">UCERF3 Faults</span>
+      <div id="div_ucerf3color" style="display: none;">
+			<form>
+			<input type="radio" name="ucerf3color" onclick="showUCERF3FaultLayer(this.value)" value="black" checked=True>black
+			<input type="radio" name="ucerf3color" onclick="showUCERF3FaultLayer(this.value)" value="yellow">yellow
+			<input type="radio" name="ucerf3color" onclick="showUCERF3FaultLayer(this.value)" value="red">red
+			<input type="radio" name="ucerf3color" onclick="showUCERF3FaultLayer(this.value)" value="grey">grey
+			</form>
+		</div>
+    </div>
     </div>
     <div>
         <input type="checkbox" name="boundaries" v-model="isBoundaries">
@@ -43,7 +39,7 @@
     </div>
 
     <div id="showUCERF3" v-show="isUCERF3">
-        <label>I'm a custom broker</label>
+
     </div>
 
     <div id="showBoundaries" v-show="isBoundaries">
