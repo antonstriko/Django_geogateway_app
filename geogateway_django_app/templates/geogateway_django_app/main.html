@@ -1,112 +1,20 @@
-
 {% extends 'base.html' %}
 {% load static %}
+{% load render_bundle from webpack_loader %}
 
-{% block content %}
-    <!-- Latest compiled and minified CSS -->
+
     {% block css %}
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-              integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-              crossorigin="">
-        {#    local css files #}
-        <link rel="stylesheet" type="text/css" href="{% static '/geogateway_django_app/css/style.css' %}"/>
-        <link rel="stylesheet" href="{% static 'geogateway_django_app/bootstrap/dist/css/bootstrap.min.css' %}"/>
-        <link rel="stylesheet" href="{% static 'geogateway_django_app/bootstrap/dist/css/bootstrap.css' %}"/>
-
+    {% render_bundle "chunk-vendors" "css" "djvue_app2" %}
+    {% render_bundle "app" "css" "djvue_app2" %}
     {% endblock css %}
 
-    {% block scripts %}
-        <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-                integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-                crossorigin=""></script>
-        {#    Vue/Bootstrap-Vue libraries #}
-        <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
-        <script src="//unpkg.com/babel-polyfill@latest/dist/polyfill.min.js"></script>
-        <script src="//unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
-        {#    local js files #}
-        <script type="text/javascript" src="{% static '/geogateway_django_app/js/map.js' %}"></script>
-        <script src="{% static '/geogateway_django_app/js/vue-components.js' %}"></script>
-        {#    plugins for leaflet #}
-        <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.2.0/leaflet-omnivore.min.js'></script>
 
-        <script>
-            new Vue({
-                el: '#map-tools',
-                delimiters: ['[[', ']]'],
-                data: {
-                    counter: 0
-                }
-            })
-
-            new Vue({
-                el: '#tools-panel',
-                delimiters: ['[[', ']]'],
-                data: {
-                    isKML: false,
-                    isUCERF3: false,
-                    isBoundaries: false,
-                    isCoasts: false,
-                    isLocation: false,
-                }
-            });
-            new Vue({
-                el: '#map-tools-check',
-
-
-            })
-        </script>
-    {% endblock scripts %}
-
-
-    <!doctype html>
-    <html lang="en">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <head>
-    <title>GeoGateway</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <div class="window">
-
-        <!-- geogateway site navigation bar -->
-        <div class="navigation">
-            <img id="logo-nav" src="{% static 'geogateway_django_app/images/logos/logo.png' %}" alt="GeoGateway Logo">
-            <span class="default-font lightBLUE"> Tools for Analysis, Modeling, and Response Using Geodetic Imaging Products</span>
-
-            <!-- set up tools panel and profile panel toggle -->
-
-            <button class="panel-toggle" id="tools">
-                <span class="glyphicon glyphicon-wrench"> </span>
-            </button>
-            <button class="panel-toggle" id="news"><span class="default-font">News</span></button>
-            <button class="panel-toggle" id="profile"><span class="glyphicon glyphicon-user"> </span></button>
-
-        </div>
-
-        <div id="map-canvas"></div>
-
-        <div class="tools-panel-tabs" id="tools-panel">
-
-            <b-tabs pills card >
-                <b-tab title="Map Tools" active><b-card-text id="map">
-                    {% include 'geogateway_django_app/map-tools.html' %}
-                </b-card-text></b-tab>
-                <b-tab title="UAVSAR"><b-card-text>Tab contents 2</b-card-text></b-tab>
-                <b-tab title="GPS"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="Seismicity"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="Forecast"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="Magnitude"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="Disloc"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="3D Imaging"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="Special Studies"><b-card-text>Tab contents 3</b-card-text></b-tab>
-                <b-tab title="Help"><b-card-text>Tab contents 3</b-card-text></b-tab>
-            </b-tabs>
-            </b-card>
-        </div>
-    </div>
-
-
-
-{% endblock content %}
+{% block content %}
+<div id="app"></div>
+{% endblock %}
+{% block scripts %}
+{% render_bundle "chunk-vendors" "js" "djvue_app2" %}
+{% render_bundle "app" "js" "djvue_app2" %}
+{% endblock %}
 
 

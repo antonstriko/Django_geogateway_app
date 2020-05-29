@@ -1,0 +1,3 @@
+/node_modules
+yarn.lock
+/geogateway_django_app.egg-info

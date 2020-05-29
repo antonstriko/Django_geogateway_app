@@ -1,1 +1,0 @@
-# geogateway-django-app
