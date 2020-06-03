@@ -3,7 +3,6 @@
     <div class="window">
         <b-navbar id="top" toggleable="lg" type="dark" variant="dark">
                 <img id="logo" src="../assets/logo.png" alt="GeoGateway Logo">
-            
             <b-button v-b-toggle.sidebar-1>
                 <b-icon-wrench></b-icon-wrench>
             </b-button>
@@ -32,7 +31,7 @@
 
 <style scoped>
 #logo {
-    position: fixed;
+    position: absolute;
     top: 10px;
     left: 50%;
     margin-top: 0;

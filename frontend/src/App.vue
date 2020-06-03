@@ -2,21 +2,21 @@
     <div id="app">
         <TopNav />
         <ToolBar />
-        <MyMap />
+        <MyMap/>
     </div>
 </template>
 
 <script>
 
-    import MyMap from './components/map'
     import TopNav from "./components/TopNav";
+    import MyMap from "./components/MyMap";
     import ToolBar from "./components/ToolBar";
     export default {
         name: 'app',
         components: {
             MyMap,
             TopNav,
-            ToolBar
+            ToolBar,
         },
     }
 </script>

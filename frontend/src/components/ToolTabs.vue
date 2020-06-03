@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-tabs pills card >
-            <b-tab title="Map Tools" active><b-card-text id="map">
+            <b-tab title="Map Tools" active><b-card-text id="map-tools">
                 <MapTools />
             </b-card-text></b-tab>
             <b-tab title="UAVSAR"><b-card-text>Tab contents 2</b-card-text></b-tab>
