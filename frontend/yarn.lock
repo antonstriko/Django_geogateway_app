@@ -4871,7 +4871,19 @@ launch-editor@^2.2.1:
     chalk "^2.3.0"
     shell-quote "^1.6.1"
 
-leaflet@^1.6.0:
+leaflet-easybutton@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/leaflet-easybutton/-/leaflet-easybutton-2.4.0.tgz#3ad8ad31c9cf6d5ca7a6a1988f82eed13ff2c1af"
+  integrity sha512-O+qsQq4zTF6ds8VClnytobTH/MKalctlPpiA8L+bNKHP14J3lgJpvEd/jSpq9mHTI6qOzRAvbQX6wS6qNwThvg==
+  dependencies:
+    leaflet "^1.0.1"
+
+leaflet-kml@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/leaflet-kml/-/leaflet-kml-1.0.1.tgz#92aec859325cf96d62acb84931a5539e03f75c2a"
+  integrity sha512-9eL2gb+3aGpzM1YMqX864JYdKmd6Rzdg1KX/lu0dVfZOJtqA44YFh2VS6BFcY6LDnBdnKX0U+88DtPM5s65u5Q==
+
+leaflet@^1.0.1, leaflet@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.6.0.tgz#aecbb044b949ec29469eeb31c77a88e2f448f308"
   integrity sha512-CPkhyqWUKZKFJ6K8umN5/D2wrJ2+/8UIpXppY7QDnUZW5bZL5+SEI2J7GBpwh4LIupOKqbNSQXgqmrEJopHVNQ==
