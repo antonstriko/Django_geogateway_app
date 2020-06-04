@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="tabs">
         <b-tabs pills card >
             <b-tab title="Map Tools" active><b-card-text id="map-tools">
                 <MapTools />
@@ -28,5 +28,7 @@
 </script>
 
 <style scoped>
-
+#tabs{
+    height: 1000px;
+}
 </style>

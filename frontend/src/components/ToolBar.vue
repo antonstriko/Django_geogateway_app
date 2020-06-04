@@ -1,9 +1,7 @@
 <template>
   <div class="toolbar-active">
     <b-sidebar id="sidebar-1" bg-variant="dark">
-
         <ToolTabs />
-
     </b-sidebar>
   </div>
 </template>
@@ -25,6 +23,13 @@
     float: left;
     /*height: 1000px;*/
     width: 400px;
+      height: 100%;
   }
+
+    #sidebar-1 {
+        height: 100%;
+    }
+
+
 
 </style>
