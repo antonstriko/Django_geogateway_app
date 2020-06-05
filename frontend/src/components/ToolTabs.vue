@@ -30,5 +30,6 @@
 <style scoped>
 #tabs{
     height: 1000px;
+
 }
 </style>

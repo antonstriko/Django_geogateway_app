@@ -19,11 +19,10 @@
 <style scoped>
 
   .toolbar-active {
-    position: relative;
-    float: left;
-    /*height: 1000px;*/
-    width: 400px;
-      height: 100%;
+      position: relative;
+      float: left;
+      width: 400px;
+
   }
 
     #sidebar-1 {

@@ -5,7 +5,6 @@
                 <b-button id="refreshButton" v-on:click="refreshLayers()">Refresh</b-button>
         </div>
 
-
 </template>
 
 <script>
@@ -18,9 +17,6 @@
                 },
                 data() {
                         return {
-                                ucerfLayer: null,
-                                boundariesLayer: null,
-                                coastsLayer: null,
                                 map: null,
                         };
                 },
@@ -35,51 +31,35 @@
                                 }).addTo(this.map);
 
                 },
+                computed: {
+                        mapTools(){
+                                return this.$store.state.mapTools;
+                        }
+                },
 
                 methods: {
                         refreshLayers(){
-                                if (this.$store.state.mapTools.ucerf) {
-                                        this.ucerfLoad();
-                                }else {this.map.removeLayer(this.ucerfLayer);}
-
-                                if (this.$store.state.mapTools.boundaries) {
-                                        this.boundariesLoad();
-                                }else {this.map.removeLayer(this.boundariesLayer);}
-
-                                if (this.$store.state.mapTools.coasts) {
-                                        this.coastsLoad();
-                                }else {this.map.removeLayer(this.coastsLayer);}
+                                for(var key in this.mapTools){
+                                        if(this.mapTools[key][0] &&
+                                                this.mapTools[key][2] === null){
+                                                this.kmlLayer(this.mapTools[key][1], key);
+                                        }else if(!(this.mapTools[key][0]) &&
+                                                this.mapTools[key][2] != null) {
+                                                this.map.removeLayer(this.mapTools[key][2]);
+                                                this.mapTools[key][2] = null;
+                                        }
+                                }
                         },
-                        ucerfLoad() {
-                                fetch('https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml').then(res => res.text())
+                        kmlLayer(url, layer) {
+                                fetch(url).then(res => res.text())
                                         .then(kmltext => {
                                                 const parser = new DOMParser();
                                                 var kml = parser.parseFromString(kmltext, "text/xml");
-                                                this.ucerfLayer = new L.KML(kml);
-                                                this.map.addLayer(this.ucerfLayer);
-                                                this.map.fitBounds(this.ucerfLayer.getBounds());
+                                                this.$store.state.mapTools[layer][2] = new L.KML(kml);
+                                                this.map.addLayer(this.$store.state.mapTools[layer][2]);
+                                                this.map.fitBounds(this.$store.state.mapTools[layer][2].getBounds());
                                         });
                         },
-                        boundariesLoad() {
-                                fetch('https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml').then(res => res.text())
-                                        .then(kmltext => {
-                                                const parser = new DOMParser();
-                                                var kml = parser.parseFromString(kmltext, "text/xml");
-                                                this.boundariesLayer = new L.KML(kml);
-                                                this.map.addLayer(this.boundariesLayer);
-                                                this.map.fitBounds(this.boundariesLayer.getBounds());
-                                        });
-                        },
-                        coastsLoad() {
-                                fetch('https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml').then(res => res.text())
-                                        .then(kmltext => {
-                                                const parser = new DOMParser();
-                                                var kml = parser.parseFromString(kmltext, "text/xml");
-                                                this.coastsLayer = new L.KML(kml);
-                                                this.map.addLayer(this.coastsLayer);
-                                                this.map.fitBounds(this.coastsLayer.getBounds());
-                                        });
-                        }
                 },
 
         };
@@ -90,20 +70,19 @@
                 height: 96%;
                 width: auto;
                 margin-left: auto;
-                padding: 0px;
                 /*float: right;*/
 
         }
         #map-window {
-                position: relative;
+                position: inherit;
                 height: 100%;
-                width: calc(100% - 400px);
-                margin-left: auto;
+                width: auto;
                 padding: 0px;
+                /*float: right;*/
         }
         #refreshButton {
                 position: absolute;
-                top: 20px;
+                top: 140px;
                 right: 20px;
                 padding: 10px;
                 z-index: 400;
