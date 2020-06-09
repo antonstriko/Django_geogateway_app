@@ -37,7 +37,7 @@
         width: 500px;
         position: relative;
         align-content: center;
-        height: inherit;
+        height: calc(100% - 500px);
         overflow: auto;
     }
 </style>

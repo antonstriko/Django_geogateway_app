@@ -1,9 +1,9 @@
 <template>
-  <div class="toolbar-active">
+
     <b-collapse id="sidebar-1" bg-variant="dark">
         <ToolTabs />
     </b-collapse>
-  </div>
+
 </template>
 
 <script>
@@ -22,15 +22,16 @@
       position: relative;
       float: left;
       width: 500px;
-      height: calc(100% - 100px);
+      height: auto;
       overflow: auto;
 
   }
 
     #sidebar-1 {
-        height: 100%;
+        height: calc(100% - 100px);
         width: 500px;
         overflow: auto;
+        float: left;
     }
 
 
