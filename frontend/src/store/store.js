@@ -17,6 +17,14 @@ export const store = new Vuex.Store({
 
             boundariesLayer : null,
             coastsLayer : null,
+        },
+        GNSS: {
+            velocities: false,
+            coseismic: false,
+            postseismic: false,
+            displacement: false,
+            model: false,
+
         }
 
     },

@@ -1,8 +1,8 @@
 <template>
   <div class="toolbar-active">
-    <b-sidebar id="sidebar-1" bg-variant="dark">
+    <b-collapse id="sidebar-1" bg-variant="dark">
         <ToolTabs />
-    </b-sidebar>
+    </b-collapse>
   </div>
 </template>
 
@@ -21,12 +21,16 @@
   .toolbar-active {
       position: relative;
       float: left;
-      width: 400px;
+      width: 500px;
+      height: calc(100% - 100px);
+      overflow: auto;
 
   }
 
     #sidebar-1 {
         height: 100%;
+        width: 500px;
+        overflow: auto;
     }
 
 

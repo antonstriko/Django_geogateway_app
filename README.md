@@ -10,6 +10,7 @@ Instructions are provided here: https://github.com/apache/airavata-django-portal
 2. Install dependencies and build frontend code
    * ``` cd geogateway-django-app/frontend ```
    * ``` yarn install ```
+   * ``` yarn build ```
 
 4. Install django app in develop mode
 * **With airavata-django-portal virtual environment activated in separate terminal:**

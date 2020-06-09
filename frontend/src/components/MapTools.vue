@@ -53,12 +53,8 @@
 </script>
 
 <style scoped>
-    p, h1, h2, h3, h4, hr {
-        color: #cccccc;
-    }
-    #tools-show {
-        height: 100%;
-    }
+
+
     .divider {
          border: 2px solid #cccccc;
         border-radius: 1px;
