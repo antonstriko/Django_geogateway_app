@@ -1,9 +1,10 @@
 <template>
 
  <div id="GNSS-panel">
-  <div class="container-fluid">
-   <div class="tool-title">GPS Data Analysis</div>
-   <div class="col-sm-7 col-sm-8 col-xs-12">
+
+  <div class="container-fluid" >
+   <div class="col-11" style="align-content: center" >
+    <h2 style="text-align: center">GPS Data Analysis</h2>
     <form id="gpsservice" method="post">
      <div class="form-group ">
       <label class="control-label requiredField">
