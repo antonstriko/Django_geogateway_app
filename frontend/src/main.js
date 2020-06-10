@@ -12,7 +12,7 @@ Vue.config.devtools = true;
 import 'leaflet/dist/leaflet.css';
 
 
-
+export const bus = new Vue();
 
 new Vue({
   store: store,

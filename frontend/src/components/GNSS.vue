@@ -39,12 +39,12 @@
       </div>
       <div class="input-group">
        <b-input-group prepend="Width">
-        <b-form-input v-model="text" placeholder="1 degree" id="gs_width"></b-form-input>
+        <b-form-input v-model="text" placeholder="" id="gs_width"></b-form-input>
        </b-input-group>
       </div>
       <div class="input-group">
        <b-input-group prepend="Height">
-        <b-form-input v-model="text" placeholder="1 degree" id="gs_height"></b-form-input>
+        <b-form-input v-model="text" placeholder="" id="gs_height"></b-form-input>
        </b-input-group>
       </div>
       <div class="input-group" id="epoch_show" v-if="this.selected === 'getcoseismic' || this.selected === 'getpostseismic'">
@@ -146,7 +146,6 @@
   },
   methods: {
    rungpsservice(){
-    console.log()
    },
   },
   computed: {
@@ -161,5 +160,6 @@
  #GNSS-panel {
   overflow: auto;
   height: auto;
+  width: 500px;
  }
 </style>

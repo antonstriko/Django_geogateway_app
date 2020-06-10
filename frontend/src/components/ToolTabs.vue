@@ -32,7 +32,9 @@
 </script>
 
 <style scoped>
-
+#tabs {
+    width: 500px;
+}
     .tab-text {
         width: 500px;
         position: relative;

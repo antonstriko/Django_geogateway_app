@@ -1,8 +1,9 @@
 <template>
         <div id="map-window">
+                <ToolBar />
                 <div id="map">
                 </div>
-                <b-button id="refreshButton" v-on:click="refreshLayers()">Refresh</b-button>
+                <b-button id="refreshButton" @click="refreshLayers()">Refresh</b-button>
         </div>
 
 </template>
@@ -11,9 +12,12 @@
         import L from 'leaflet';
         import 'leaflet/dist/leaflet.css';
         import "leaflet-kml"
+        import ToolBar from "./ToolBar";
+        import {bus} from '../main'
         export default {
                 name: 'MyMap',
                 components: {
+                        ToolBar
                 },
                 data() {
                         return {
@@ -29,6 +33,13 @@
                                         maxZoom: 18,
                                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
                                 }).addTo(this.map);
+
+                        bus.$on('updateLayer', () =>
+                                this.refreshLayers());
+
+
+                },
+                created() {
 
                 },
                 computed: {

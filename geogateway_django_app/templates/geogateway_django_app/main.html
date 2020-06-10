@@ -13,6 +13,10 @@
 <div id="app"></div>
 {% endblock %}
 {% block scripts %}
+<script src="{% static 'django_airavata_api/dist/airavata-api.js' %}"></script>
+    <script>
+
+    </script>
 {% render_bundle "chunk-vendors" "js" "djvue_app2" %}
 {% render_bundle "app" "js" "djvue_app2" %}
 {% endblock %}

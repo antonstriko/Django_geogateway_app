@@ -1,7 +1,7 @@
 <template>
     <div id="app">
         <TopNav />
-        <ToolBar />
+
         <MyMap/>
     </div>
 </template>
@@ -10,13 +10,12 @@
 
     import TopNav from "./components/TopNav";
     import MyMap from "./components/MyMap";
-    import ToolBar from "./components/ToolBar";
     export default {
         name: 'app',
         components: {
             MyMap,
             TopNav,
-            ToolBar,
+
         },
     }
 </script>
