@@ -12,7 +12,8 @@
     name: "ToolBar",
     components: {
       ToolTabs
-    }
+    },
+
   }
 </script>
 

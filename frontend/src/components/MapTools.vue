@@ -59,12 +59,12 @@
                         break;
 
                 }
-                bus.$emit('updateLayer', l);
+                bus.$emit('mapToolsLayer', l);
             },
         },
         computed: {
             mapTools(){
-                return this.$store.state.mapTools;
+                return this.$store.state.mapToolsState;
             }
         }
 

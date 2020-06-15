@@ -1,5 +1,6 @@
 <template>
         <div id="map-window">
+                <TopNav />
                 <ToolBar />
                 <div id="map">
                 </div>
@@ -14,10 +15,16 @@
         import "leaflet-kml"
         import ToolBar from "./ToolBar";
         import {bus} from '../main'
+        import 'leaflet-draw'
+        import "leaflet-draw/dist/leaflet.draw.css";
+        import TopNav from "./TopNav";
+        // import GeometryUtil from 'leaflet-geometryutil'
+
         export default {
                 name: 'MyMap',
                 components: {
-                        ToolBar
+                        ToolBar,
+                        TopNav
                 },
                 data() {
                         return {
@@ -25,6 +32,7 @@
                         };
                 },
                 mounted() {
+
                         //create layers
                         this.map = L.map('map').setView([51.505, -0.09], 3);
                         L.tileLayer(
@@ -34,44 +42,151 @@
                                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
                                 }).addTo(this.map);
 
-                        bus.$on('updateLayer', () =>
-                                this.refreshLayers());
+
+
+                        bus.$on('mapToolsLayer', () =>
+                                this.mapToolsLayer());
+                        bus.$on('drawToolbar', () =>
+                                this.drawToolbar());
+                        bus.$on('gnssLayer', () =>
+
+                                this.gnssLayer());
+
 
 
                 },
-                created() {
 
-                },
-                computed: {
-                        mapTools(){
-                                return this.$store.state.mapTools;
-                        }
-                },
 
                 methods: {
-                        refreshLayers(){
-                                for(var key in this.mapTools){
-                                        if(this.mapTools[key][0] &&
-                                                this.mapTools[key][2] === null){
-                                                this.kmlLayer(this.mapTools[key][1], key);
-                                        }else if(!(this.mapTools[key][0]) &&
-                                                this.mapTools[key][2] != null) {
-                                                this.map.removeLayer(this.mapTools[key][2]);
-                                                this.mapTools[key][2] = null;
+                        drawToolbar(){
+                                var drawnItems = new L.FeatureGroup();
+                                this.map.addLayer(drawnItems);
+                                var drawControl = new L.Control.Draw({
+                                        draw: {
+                                                polygon: false,
+                                                marker: false,
+                                                polyline: false,
+                                                circle: false,
+                                                rectangle: true,
+                                        },
+                                        edit: {
+                                                featureGroup: drawnItems
+                                        }
+                                });
+                                this.map.addControl(drawControl);
+                                this.map.addLayer(drawnItems);
+
+                                this.map.on('draw:created', function (e) {
+                                        var type = e.layerType,
+                                                layer = e.layer;
+                                        drawnItems.addLayer(layer);
+                                        if (type === 'rectangle') {
+
+                                                this.gs_latitude = layer.getCenter().lat;
+                                                this.gs_longitude = layer.getCenter().lng;
+                                                var sw = layer.getLatLngs()[0][1];
+                                                var ne = layer.getLatLngs()[0][3];
+                                                this.gs_height = Math.abs(ne.lat - sw.lat);
+                                                this.gs_width = Math.abs(ne.lng - sw.lng);
+                                                console.log(this.gs_latitude, this.gs_longitude);
+                                                console.log(this.gs_height, this.gs_width)
+
+
+                                        }
+
+
+                                });
+                        },
+                        mapToolsLayer(){
+                                for(var key in this.mapToolsState){
+                                        if(this.mapToolsState[key][0] &&
+                                                this.globalLayers[key] === null){
+                                                this.kmlLayer(this.mapToolsState[key][1], key);
+                                        }else if(!(this.mapToolsState[key][0]) &&
+                                                this.globalLayers[key] != null) {
+                                                this.map.removeLayer(this.globalLayers[key]);
+                                                this.globalLayers[key] = null;
                                         }
                                 }
+                        },
+                        gnssLayer(){
+                                console.log(this.gnssState.gnss1[1])
+                          for(var key in this.gnssState){
+                                        if(this.gnssState[key][0] &&
+                                                this.globalLayers[key] === null){
+                                                this.kmlLayer(this.gnssState[key][1], key);
+                                        }else if(!(this.gnssState[key][0]) &&
+                                                this.globalLayers[key] != null) {
+                                                this.map.removeLayer(this.globalLayers[key]);
+                                                this.globalLayers[key] = null;
+                                        }
+                                }
+
                         },
                         kmlLayer(url, layer) {
                                 fetch(url).then(res => res.text())
                                         .then(kmltext => {
                                                 const parser = new DOMParser();
                                                 var kml = parser.parseFromString(kmltext, "text/xml");
-                                                this.$store.state.mapTools[layer][2] = new L.KML(kml);
-                                                this.map.addLayer(this.$store.state.mapTools[layer][2]);
-                                                this.map.fitBounds(this.$store.state.mapTools[layer][2].getBounds());
+                                                this.globalLayers[layer] = new L.KML(kml);
+                                                this.map.addLayer(this.globalLayers[layer]);
+                                                this.map.fitBounds(this.globalLayers[layer].getBounds());
                                         });
                         },
                 },
+                computed: {
+                        mapToolsState(){
+                                return this.$store.state.mapToolsState;
+                        },
+                        gnssState() {
+                                return this.$store.state.gnssState;
+                        },
+                        globalLayers() {
+                                return this.$store.state.globalLayers;
+                        }
+                        // kmltype_sel: {
+                        //         get(){
+                        //                 return this.GNSS.formData.kmltype_sel;
+                        //         },
+                        //         set(value){
+                        //                 this.$store.commit('setkml', value);
+                        //         }
+                        // },
+                        //  latitude: {
+                        //         get(){
+                        //                 return this.GNSS.formData.gs_latitude;
+                        //         },
+                        //         set(value){
+                        //                 this.$store.commit('setLat', value);
+                        //         }
+                        // },
+                        // gs_longitude: {
+                        //         get(){
+                        //                 return this.GNSS.formData.gs_longitude;
+                        //         },
+                        //         set(value){
+                        //                 this.$store.commit('setLng', value);
+                        //         }
+                        // },
+                        // gs_width: {
+                        //         get(){
+                        //                 return this.GNSS.formData.gs_width;
+                        //         },
+                        //         set(value){
+                        //                 this.$store.commit('setWidth', value);
+                        //         }
+                        // },
+                        // height: {
+                        //         get(){
+                        //                 return this.GNSS.formData.gs_height;
+                        //         },
+                        //         set(value){
+                        //                 this.$store.commit('setHeight', value);
+                        //         }
+                        // },
+                },
+
+
 
         };
 </script>
@@ -97,5 +212,10 @@
                 right: 20px;
                 padding: 10px;
                 z-index: 400;
+        }
+        .leaflet-draw-toolbar a {
+                background-image: url('../assets/spritesheet.png');
+                background-repeat: no-repeat;
+                color: transparent !important;
         }
 </style>
