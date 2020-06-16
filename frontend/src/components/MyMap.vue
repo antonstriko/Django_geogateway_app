@@ -18,6 +18,7 @@
         import 'leaflet-draw'
         import "leaflet-draw/dist/leaflet.draw.css";
         import TopNav from "./TopNav";
+        // import axios from "axios";
         // import GeometryUtil from 'leaflet-geometryutil'
 
         export default {
@@ -42,15 +43,12 @@
                                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
                                 }).addTo(this.map);
 
-
-
                         bus.$on('mapToolsLayer', () =>
                                 this.mapToolsLayer());
                         bus.$on('drawToolbar', () =>
                                 this.drawToolbar());
-                        bus.$on('gnssLayer', () =>
-
-                                this.gnssLayer());
+                        bus.$on('gnssLayer', (text) =>
+                                this.gnssLayer(text));
 
 
 
@@ -75,6 +73,9 @@
                                 });
                                 this.map.addControl(drawControl);
                                 this.map.addLayer(drawnItems);
+
+                                //gets lat long width height of drawn rectangle and prints in console.
+                                // TODO dynamically fill form input with results from drawn rectangle
 
                                 this.map.on('draw:created', function (e) {
                                         var type = e.layerType,
@@ -109,18 +110,18 @@
                                         }
                                 }
                         },
-                        gnssLayer(){
-                                console.log(this.gnssState.gnss1[1])
-                          for(var key in this.gnssState){
-                                        if(this.gnssState[key][0] &&
-                                                this.globalLayers[key] === null){
-                                                this.kmlLayer(this.gnssState[key][1], key);
-                                        }else if(!(this.gnssState[key][0]) &&
-                                                this.globalLayers[key] != null) {
-                                                this.map.removeLayer(this.globalLayers[key]);
-                                                this.globalLayers[key] = null;
-                                        }
-                                }
+                        gnssLayer(kmltext){
+                                // console.log(this.globalLayers.gnss1)
+                                const parser = new DOMParser();
+                                const kml = parser.parseFromString(kmltext, 'text/xml');
+                                const track = new L.KML(kml);
+                                this.map.addLayer(track);
+                                const bounds = track.getBounds();
+                                this.map.fitBounds(bounds);
+
+
+
+
 
                         },
                         kmlLayer(url, layer) {
@@ -203,7 +204,7 @@
                 position: inherit;
                 height: 100%;
                 width: auto;
-                padding: 0px;
+                padding: 0;
                 /*float: right;*/
         }
         #refreshButton {

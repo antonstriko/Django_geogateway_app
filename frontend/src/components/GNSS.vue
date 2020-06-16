@@ -123,8 +123,6 @@
         name: "GNSS-tools",
         data() {
             return {
-                gnss1: [false, ''],
-                gnss2: [false, ''],
                 selected: [],
                 kmltype_sel: '',
                 gs_latitude: '',
@@ -156,6 +154,8 @@
                 }
                 else {
                     const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
+                    const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
+                    //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
                             //
@@ -182,25 +182,30 @@
                             "vabs": this.gs_vabs
                             //
                         }
-
-                    }).then(function (response){
-                        var props = response.data
-                        this.gnss1[0] = true;
-                        this.gnss2[0] = true;
-                        this.gnss1[1] = props.urls[0]
-                        this.gnss2[1] = props.urls[2]
                     })
+                        //use JSON results (filename and folder) to request raw kml text
+                        .then(function (response) {
+                            for (var i = 0; i < 3; i++) {
+                                var props = response.data
+                                axios.get(kmlURI, {
+                                    params: {
+                                        "file": props.results[i],
+                                        "folder": props.folder
+                                    },
+                                    responseType: 'text',
+                                    //emit raw kml text to parent map component
+                                }).then(function (response) {
+                                    // console.log(response.data)
+                                    bus.$emit('gnssLayer', response.data);
+                                })
+                            }
+                        })
                 }
-                this.$store.state.gnssState.gnss1 = this.gnss1;
-                this.$store.state.gnssState.gnss2 = this.gnss2;
-                console.log(this.gnss1)
-                console.log(this.$store.state.gnssState.gnss1)
-                bus.emit('gnssLayer');
 
             },
             drawToolbar() {
-                if (!this.$store.state.GNSS.drawToolbar) {
-                    this.$store.state.GNSS.drawToolbar = true;
+                if (!this.drawToolBar) {
+                    this.$store.state.drawToolBar = true;
                     bus.$emit('drawToolbar');
                 }
             }
@@ -209,6 +214,12 @@
             gnssState() {
                 return this.$store.state.gnssState;
             },
+            globalLayers() {
+                return this.$store.state.globalLayers;
+            },
+            drawToolBar() {
+                return this.$store.state.drawToolBar;
+            }
             // kmltype_sel: {
             //  get(){
             //   return this.GNSS.formData.kmltype_sel;

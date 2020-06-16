@@ -16,7 +16,7 @@ export const store = new Vuex.Store({
         },
         //layers all in one dict?
         mapToolsState: {
-            ucerf: [false, 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml'],
+            ucerf: [false, "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml"],
             kml: [false, ''],
             boundaries: [false, 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml'],
             coasts: [false, 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml'],
@@ -25,7 +25,8 @@ export const store = new Vuex.Store({
             gnss1: [false, ''],
             gnss2: [false, ''],
 
-        }
+        },
+        drawToolBar: false,
 
     },
     mutations: {

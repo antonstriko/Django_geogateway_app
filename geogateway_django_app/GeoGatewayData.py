@@ -4,12 +4,12 @@ import requests
 # TODO: add error catching
 
 GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
+KmlPrefix = "http://156.56.174.162:8000/static"
 
 
 def gps_service(request):
     if request.method == 'GET':
         print(request.GET.get("data"))
-        print()
         # more efficient way of getting request params?
         # getting request params from GET in GNSS.vue
         payload = {
@@ -34,6 +34,25 @@ def gps_service(request):
         print(payload)
 
         data = requests.get(GpsServiceUrl, params=payload)
+        # gps_response = data.json()
+        # rawV = requests.get(gps_response["urls"][0])
+        # rawH = request.get(gps_response["urls"][2])
+        # raw = {"fileV": rawV, "fileH": rawH}
+
         responseData = HttpResponse(data)
         return responseData
+
+
+def get_gnss_kml(request):
+    if request.method == 'GET':
+        folder = request.GET.get("folder")
+        file = request.GET.get("file")
+        url = KmlPrefix + '/' + folder + '/' + file
+        print('url:' + url)
+        data = requests.get(url)
+        responseData = HttpResponse(data)
+        return responseData
+
+
+
 

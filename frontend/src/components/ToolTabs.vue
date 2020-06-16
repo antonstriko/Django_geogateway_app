@@ -10,7 +10,9 @@
             </b-card-text></b-tab>
             <b-tab title="Seismicity"><b-card-text>Tab contents 3</b-card-text></b-tab>
             <b-tab title="Forecast"><b-card-text>Tab contents 3</b-card-text></b-tab>
-            <b-tab title="Magnitude"><b-card-text>Tab contents 3</b-card-text></b-tab>
+            <b-tab title="Magnitude"><b-card-text>
+                <MMCalc/>
+            </b-card-text></b-tab>
             <b-tab title="Disloc"><b-card-text>Tab contents 3</b-card-text></b-tab>
             <b-tab title="3D Imaging"><b-card-text>Tab contents 3</b-card-text></b-tab>
             <b-tab title="Special Studies"><b-card-text>Tab contents 3</b-card-text></b-tab>
@@ -22,11 +24,13 @@
 <script>
     import MapTools from "./MapTools";
     import GNSS from './GNSS'
+    import MMCalc from "./MMCalc";
     export default {
         name: "ToolTabs",
         components: {
             MapTools,
-            GNSS
+            GNSS,
+            MMCalc
         }
     }
 </script>

@@ -18,4 +18,5 @@ urlpatterns = [
         name="app",
     ),
     url(r"^gps_service/", GeoGatewayData.gps_service),
+    url(r"^get_kml/", GeoGatewayData.get_gnss_kml)
 ]
