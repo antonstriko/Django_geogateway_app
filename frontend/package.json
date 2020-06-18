@@ -16,6 +16,7 @@
     "leaflet-easybutton": "^2.4.0",
     "leaflet-geometryutil": "^0.9.3",
     "leaflet-kml": "^1.0.1",
+    "leaflet-kmz": "^0.3.8",
     "qs": "^6.9.4",
     "vue": "^2.6.11",
     "vue-resource": "^1.5.1",
@@ -23,7 +24,7 @@
     "vue2-leaflet": "^2.5.2",
     "vuex": "^3.4.0",
     "vuex-persistedstate": "^3.0.1",
-    "webpack-bundle-tracker": "^1.0.0-alpha.1"
+    "webpack-bundle-tracker": "0.4.3"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.4.0",

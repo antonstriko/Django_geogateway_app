@@ -1,10 +1,14 @@
-from django.http import HttpResponse
+import io
 import requests
+import zipfile
+from django.http import HttpResponse
 
 # TODO: add error catching
 
 GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
 KmlPrefix = "http://156.56.174.162:8000/static"
+WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
+CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
 
 
 def gps_service(request):
@@ -32,13 +36,7 @@ def gps_service(request):
             "eon": request.GET.get("eon"),
             "vabs": request.GET.get("vabs")}
         print(payload)
-
         data = requests.get(GpsServiceUrl, params=payload)
-        # gps_response = data.json()
-        # rawV = requests.get(gps_response["urls"][0])
-        # rawH = request.get(gps_response["urls"][2])
-        # raw = {"fileV": rawV, "fileH": rawH}
-
         responseData = HttpResponse(data)
         return responseData
 
@@ -54,5 +52,21 @@ def get_gnss_kml(request):
         return responseData
 
 
+# TODO combine below methods
+
+def wo_forecast(request):
+    if request.method == 'GET':
+        data = requests.get(WoForecastUrl, stream=True)
+        z = zipfile.ZipFile(io.BytesIO(data.content))
+        responseData = HttpResponse(z.open('doc.kml'))
+        return responseData
+
+
+def ca_forecast(request):
+    if request.method == 'GET':
+        data = requests.get(CaForecastUrl, stream=True)
+        z = zipfile.ZipFile(io.BytesIO(data.content))
+        responseData = HttpResponse(z.open('doc.kml'))
+        return responseData
 
 

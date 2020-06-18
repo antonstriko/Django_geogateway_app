@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="tool">
         <b-input-group prepend="Length" append="km">
             <b-form-input v-model="mm_length" placeholder="249"></b-form-input>
         </b-input-group>

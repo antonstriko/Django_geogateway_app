@@ -4,7 +4,7 @@
                 <ToolBar />
                 <div id="map">
                 </div>
-                <b-button id="refreshButton" @click="refreshLayers()">Refresh</b-button>
+                <!--                <b-button id="refreshButton" @click="refreshLayers()">Refresh</b-button>-->
         </div>
 
 </template>
@@ -18,6 +18,7 @@
         import 'leaflet-draw'
         import "leaflet-draw/dist/leaflet.draw.css";
         import TopNav from "./TopNav";
+        import "leaflet-kmz"
         // import axios from "axios";
         // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -30,6 +31,14 @@
                 data() {
                         return {
                                 map: null,
+
+                                'woForecastL': null,
+                                'caForecastL': null,
+                                'ucerfL': null,
+                                'boundariesL': null,
+                                'coastsL': null,
+
+
                         };
                 },
                 mounted() {
@@ -43,13 +52,31 @@
                                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
                                 }).addTo(this.map);
 
-                        bus.$on('mapToolsLayer', () =>
-                                this.mapToolsLayer());
+
+                        //global map layer event listeners
+
+                        bus.$on('UrlAddLayer', (url, layerName) =>
+                                this.kmlUrl(url, layerName));
+
+                        bus.$on('TextAddLayer', (text, layerName)=>
+                                this.kmlText(text, layerName));
+
                         bus.$on('drawToolbar', () =>
                                 this.drawToolbar());
-                        bus.$on('gnssLayer', (text) =>
-                                this.gnssLayer(text));
 
+                        //convert to above abstracted event listener
+
+                        bus.$on('gnssLayer', (text) =>
+                                this.kmlText(text));
+
+                        bus.$on('WoForecast', (text) =>
+                                this.kmlText(text, 'woForecastL'));
+
+                        bus.$on('CaForecast', (text) =>
+                                this.kmlText(text, 'caForecastL'));
+
+                        bus.$on('RemoveLayer', (name) =>
+                                this.removeLayer(name));
 
 
                 },
@@ -92,48 +119,37 @@
                                                 console.log(this.gs_latitude, this.gs_longitude);
                                                 console.log(this.gs_height, this.gs_width)
 
-
                                         }
-
-
                                 });
                         },
-                        mapToolsLayer(){
-                                for(var key in this.mapToolsState){
-                                        if(this.mapToolsState[key][0] &&
-                                                this.globalLayers[key] === null){
-                                                this.kmlLayer(this.mapToolsState[key][1], key);
-                                        }else if(!(this.mapToolsState[key][0]) &&
-                                                this.globalLayers[key] != null) {
-                                                this.map.removeLayer(this.globalLayers[key]);
-                                                this.globalLayers[key] = null;
-                                        }
-                                }
-                        },
-                        gnssLayer(kmltext){
+                        // TODO make addLayer and removeLayer methods for use with $emit $on
+                        // ie refine layer logic so this method is not necessary
+                        kmlText(text, layerName){
                                 // console.log(this.globalLayers.gnss1)
                                 const parser = new DOMParser();
-                                const kml = parser.parseFromString(kmltext, 'text/xml');
-                                const track = new L.KML(kml);
-                                this.map.addLayer(track);
-                                const bounds = track.getBounds();
+                                const kml = parser.parseFromString(text, 'text/xml');
+                                this[layerName] = new L.KML(kml);
+                                this.map.addLayer(this[layerName]);
+                                const bounds = this[layerName].getBounds();
                                 this.map.fitBounds(bounds);
 
-
-
-
-
                         },
-                        kmlLayer(url, layer) {
+                        kmlUrl(url, layerName) {
                                 fetch(url).then(res => res.text())
                                         .then(kmltext => {
                                                 const parser = new DOMParser();
                                                 var kml = parser.parseFromString(kmltext, "text/xml");
-                                                this.globalLayers[layer] = new L.KML(kml);
-                                                this.map.addLayer(this.globalLayers[layer]);
-                                                this.map.fitBounds(this.globalLayers[layer].getBounds());
+                                                this[layerName] = new L.KML(kml);
+                                                this.map.addLayer(this[layerName]);
+                                                this.map.fitBounds(this[layerName].getBounds());
                                         });
                         },
+                        removeLayer(layerName){
+
+                                this.map.removeLayer(this[layerName])
+                                this[layerName] = null;
+
+                        }
                 },
                 computed: {
                         mapToolsState(){
@@ -145,46 +161,6 @@
                         globalLayers() {
                                 return this.$store.state.globalLayers;
                         }
-                        // kmltype_sel: {
-                        //         get(){
-                        //                 return this.GNSS.formData.kmltype_sel;
-                        //         },
-                        //         set(value){
-                        //                 this.$store.commit('setkml', value);
-                        //         }
-                        // },
-                        //  latitude: {
-                        //         get(){
-                        //                 return this.GNSS.formData.gs_latitude;
-                        //         },
-                        //         set(value){
-                        //                 this.$store.commit('setLat', value);
-                        //         }
-                        // },
-                        // gs_longitude: {
-                        //         get(){
-                        //                 return this.GNSS.formData.gs_longitude;
-                        //         },
-                        //         set(value){
-                        //                 this.$store.commit('setLng', value);
-                        //         }
-                        // },
-                        // gs_width: {
-                        //         get(){
-                        //                 return this.GNSS.formData.gs_width;
-                        //         },
-                        //         set(value){
-                        //                 this.$store.commit('setWidth', value);
-                        //         }
-                        // },
-                        // height: {
-                        //         get(){
-                        //                 return this.GNSS.formData.gs_height;
-                        //         },
-                        //         set(value){
-                        //                 this.$store.commit('setHeight', value);
-                        //         }
-                        // },
                 },
 
 

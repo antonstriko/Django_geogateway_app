@@ -27,6 +27,11 @@ export const store = new Vuex.Store({
 
         },
         drawToolBar: false,
+        nowcastState: {
+            globalForecast: false,
+
+
+        }
 
     },
     mutations: {

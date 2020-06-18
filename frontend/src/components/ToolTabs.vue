@@ -1,6 +1,6 @@
 <template>
     <div id="tabs">
-        <b-tabs pills card >
+        <b-tabs pills card bg-variant="dark" >
             <b-tab title="Map Tools" active><b-card-text id="map-tools" class="tab-text">
                 <MapTools />
             </b-card-text></b-tab>
@@ -9,7 +9,9 @@
                 <GNSS />
             </b-card-text></b-tab>
             <b-tab title="Seismicity"><b-card-text>Tab contents 3</b-card-text></b-tab>
-            <b-tab title="Forecast"><b-card-text>Tab contents 3</b-card-text></b-tab>
+            <b-tab title="Forecast"><b-card-text>
+                <Nowcast />
+            </b-card-text></b-tab>
             <b-tab title="Magnitude"><b-card-text>
                 <MMCalc/>
             </b-card-text></b-tab>
@@ -25,12 +27,14 @@
     import MapTools from "./MapTools";
     import GNSS from './GNSS'
     import MMCalc from "./MMCalc";
+    import Nowcast from "./Nowcast";
     export default {
         name: "ToolTabs",
         components: {
             MapTools,
             GNSS,
-            MMCalc
+            MMCalc,
+            Nowcast
         }
     }
 </script>

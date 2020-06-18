@@ -39,27 +39,32 @@
         data() {
             return {
                 selected: [],
+                ucerfUrl: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
+                boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
+                coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
+
             }
         },
         methods: {
             updateLayer(l){
-                //Should the store be used in this case or is the event bus sufficient?
+                // Should the store be used in this case or is the event bus sufficient?
+                // TODO improve efficiency and utilize vue mutations to do this
                 switch (l) {
                     case 'ucerf':
-                        this.mapTools.ucerf[0]=!this.mapTools.ucerf[0];
+                        bus.$emit('UrlAddLayer', this.ucerfUrl, 'ucerfL')
                         break;
                     case 'kml':
-                        this.mapTools.kml[0]=!this.mapTools.kml[0];
                         break;
                     case 'boundaries':
-                        this.mapTools.boundaries[0]=!this.mapTools.boundaries[0];
+                        bus.$emit('UrlAddLayer', this.boundariesUrl, 'boundariesL')
                         break;
                     case 'coasts':
-                        this.mapTools.coasts[0]=!this.mapTools.coasts[0];
+                        bus.$emit('UrlAddLayer', this.boundariesUrl, 'coastsL')
                         break;
 
                 }
-                bus.$emit('mapToolsLayer', l);
+
+
             },
         },
         computed: {

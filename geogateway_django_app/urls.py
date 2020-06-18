@@ -12,11 +12,12 @@ app_name = "geogateway_django_app"
 urlpatterns = [
     url(r"^api/", include(router.urls)),
 
-    url(
-        r"^$",
+    url(r"^$",
         TemplateView.as_view(template_name="geogateway_django_app/main.html"),
         name="app",
-    ),
+        ),
     url(r"^gps_service/", GeoGatewayData.gps_service),
-    url(r"^get_kml/", GeoGatewayData.get_gnss_kml)
+    url(r"^get_kml/", GeoGatewayData.get_gnss_kml),
+    url(r"^wo_forecast/", GeoGatewayData.wo_forecast),
+    url(r"^ca_forecast/", GeoGatewayData.ca_forecast)
 ]

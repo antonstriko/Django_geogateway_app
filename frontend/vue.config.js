@@ -29,7 +29,7 @@ module.exports = {
 
 config
     .plugin('BundleTracker')
-    .use(BundleTracker, [{filename: '../geogateway_django_app/static/geogateway_django_app/bundles/webpack-stats.json'}])
+    .use(BundleTracker, [{filename: 'webpack-stats.json', path: '../geogateway_django_app/static/geogateway_django_app/bundles/'}])
 
 config.resolve.alias
     .set('__STATIC__', 'static')
