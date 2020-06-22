@@ -18,6 +18,9 @@ urlpatterns = [
         ),
     url(r"^gps_service/", GeoGatewayData.gps_service),
     url(r"^get_kml/", GeoGatewayData.get_gnss_kml),
-    url(r"^wo_forecast/", GeoGatewayData.wo_forecast),
-    url(r"^ca_forecast/", GeoGatewayData.ca_forecast)
+    url(r"^wo_forecast/", GeoGatewayData.forecast),
+    url(r"^ca_forecast/", GeoGatewayData.forecast),
+    url(r"^gdacs/", GeoGatewayData.gdacs),
+    url(r"^nowcast/", GeoGatewayData.nowcast_plots),
+
 ]

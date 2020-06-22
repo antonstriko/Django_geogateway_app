@@ -8,7 +8,9 @@
             <b-tab title="GNSS"><b-card-text class="tab-text">
                 <GNSS />
             </b-card-text></b-tab>
-            <b-tab title="Seismicity"><b-card-text>Tab contents 3</b-card-text></b-tab>
+            <b-tab title="Seismicity"><b-card-text>
+                <Seismicity />
+            </b-card-text></b-tab>
             <b-tab title="Forecast"><b-card-text>
                 <Nowcast />
             </b-card-text></b-tab>
@@ -28,13 +30,16 @@
     import GNSS from './GNSS'
     import MMCalc from "./MMCalc";
     import Nowcast from "./Nowcast";
+    import Seismicity from "./Seismicity";
     export default {
         name: "ToolTabs",
         components: {
             MapTools,
             GNSS,
             MMCalc,
-            Nowcast
+            Nowcast,
+            Seismicity,
+
         }
     }
 </script>

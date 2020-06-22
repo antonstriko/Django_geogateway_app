@@ -1,5 +1,7 @@
 <template>
     <div class="tool">
+        <h3>Moment Magnitude Calculator</h3>
+        <hr />
         <b-input-group prepend="Length" append="km">
             <b-form-input v-model="mm_length" placeholder="249"></b-form-input>
         </b-input-group>
@@ -12,10 +14,14 @@
         <b-input-group prepend="Shear Modulus" append="10^11 dyne/cm^2">
             <b-form-input v-model="mm_shear" placeholder="3"></b-form-input>
         </b-input-group>
-        <b-button v-on:click="runMMC()">Calculate</b-button>
+        <br />
+        <b-button v-on:click="runMMC()" variant="success">Calculate</b-button>
+        <br />
         <div v-show="SM != null && MM != null">
-            <h3>Seismic Moment</h3><p>{{this.SM}}</p>
-            <h3>Moment Magnitude</h3><p>{{this.MM}}</p>
+            <br />
+            <hr />
+            <h6><strong> Seismic Moment: </strong> {{this.SM}}</h6>
+            <h6><strong> Moment Magnitude: </strong> {{this.MM}}</h6>
         </div>
     </div>
 </template>
@@ -43,5 +49,7 @@
 </script>
 
 <style scoped>
+    h6 {
 
+    }
 </style>

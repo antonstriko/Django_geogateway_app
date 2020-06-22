@@ -18,7 +18,8 @@
         import 'leaflet-draw'
         import "leaflet-draw/dist/leaflet.draw.css";
         import TopNav from "./TopNav";
-        import "leaflet-kmz"
+        import "leaflet-kmz";
+
         // import axios from "axios";
         // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -31,12 +32,15 @@
                 data() {
                         return {
                                 map: null,
-
+                                drawToolShow: false,
                                 'woForecastL': null,
                                 'caForecastL': null,
                                 'ucerfL': null,
                                 'boundariesL': null,
                                 'coastsL': null,
+                                'gdacsL': null,
+                                'gnssL': null,
+                                'nowcastL': null,
 
 
                         };
@@ -69,14 +73,11 @@
                         bus.$on('gnssLayer', (text) =>
                                 this.kmlText(text));
 
-                        bus.$on('WoForecast', (text) =>
-                                this.kmlText(text, 'woForecastL'));
-
-                        bus.$on('CaForecast', (text) =>
-                                this.kmlText(text, 'caForecastL'));
-
                         bus.$on('RemoveLayer', (name) =>
                                 this.removeLayer(name));
+
+                        bus.$on('nowcast', (data, lat, lon)=>
+                                this.seismicityPlots(data, lat, lon));
 
 
                 },
@@ -84,43 +85,46 @@
 
                 methods: {
                         drawToolbar(){
-                                var drawnItems = new L.FeatureGroup();
-                                this.map.addLayer(drawnItems);
-                                var drawControl = new L.Control.Draw({
-                                        draw: {
-                                                polygon: false,
-                                                marker: false,
-                                                polyline: false,
-                                                circle: false,
-                                                rectangle: true,
-                                        },
-                                        edit: {
-                                                featureGroup: drawnItems
-                                        }
-                                });
-                                this.map.addControl(drawControl);
-                                this.map.addLayer(drawnItems);
+                                if(!this.drawToolShow) {
+                                        this.drawToolShow = true
+                                        var drawnItems = new L.FeatureGroup();
+                                        this.map.addLayer(drawnItems);
+                                        var drawControl = new L.Control.Draw({
+                                                draw: {
+                                                        polygon: false,
+                                                        marker: false,
+                                                        polyline: false,
+                                                        circle: false,
+                                                        rectangle: true,
+                                                },
+                                                edit: {
+                                                        featureGroup: drawnItems
+                                                }
+                                        });
+                                        this.map.addControl(drawControl);
+                                        this.map.addLayer(drawnItems);
 
-                                //gets lat long width height of drawn rectangle and prints in console.
-                                // TODO dynamically fill form input with results from drawn rectangle
+                                        //gets lat long width height of drawn rectangle and prints in console.
+                                        // TODO dynamically fill form input with results from drawn rectangle
 
-                                this.map.on('draw:created', function (e) {
-                                        var type = e.layerType,
-                                                layer = e.layer;
-                                        drawnItems.addLayer(layer);
-                                        if (type === 'rectangle') {
+                                        this.map.on('draw:created', function (e) {
+                                                var type = e.layerType,
+                                                        layer = e.layer;
+                                                drawnItems.addLayer(layer);
+                                                if (type === 'rectangle') {
 
-                                                this.gs_latitude = layer.getCenter().lat;
-                                                this.gs_longitude = layer.getCenter().lng;
-                                                var sw = layer.getLatLngs()[0][1];
-                                                var ne = layer.getLatLngs()[0][3];
-                                                this.gs_height = Math.abs(ne.lat - sw.lat);
-                                                this.gs_width = Math.abs(ne.lng - sw.lng);
-                                                console.log(this.gs_latitude, this.gs_longitude);
-                                                console.log(this.gs_height, this.gs_width)
+                                                        this.gs_latitude = layer.getCenter().lat;
+                                                        this.gs_longitude = layer.getCenter().lng;
+                                                        var sw = layer.getLatLngs()[0][1];
+                                                        var ne = layer.getLatLngs()[0][3];
+                                                        this.gs_height = Math.abs(ne.lat - sw.lat);
+                                                        this.gs_width = Math.abs(ne.lng - sw.lng);
+                                                        console.log(this.gs_latitude, this.gs_longitude);
+                                                        console.log(this.gs_height, this.gs_width)
 
-                                        }
-                                });
+                                                }
+                                        });
+                                }
                         },
                         // TODO make addLayer and removeLayer methods for use with $emit $on
                         // ie refine layer logic so this method is not necessary
@@ -149,20 +153,32 @@
                                 this.map.removeLayer(this[layerName])
                                 this[layerName] = null;
 
-                        }
-                },
-                computed: {
-                        mapToolsState(){
-                                return this.$store.state.mapToolsState;
                         },
-                        gnssState() {
-                                return this.$store.state.gnssState;
-                        },
-                        globalLayers() {
-                                return this.$store.state.globalLayers;
-                        }
-                },
+                        seismicityPlots(data, lat, lon){
+                                console.log(lat, lon)
+                                var style = " style=width:200px;height:150px;"
+                                const pin = L.icon({
+                                        iconUrl: 'https://raw.githubusercontent.com/cosmic-tichy/GeoGatewayStaticResources/master/map-pin-solid.svg',
 
+                                        iconSize:     [15, 55], // size of the icon
+                                        iconAnchor:   [8, 40], // point of the icon which will correspond to marker's location
+                                });
+                                var marker = L.marker([lat, lon], {icon: pin}).addTo(this.map);
+
+                                var eps = data.urls[0]
+                                var numMag = data.urls[1]
+                                var seis = data.urls[2]
+                                var click = "window.open(";
+
+                                //TODO make images clickable
+
+                                marker.bindPopup("<img src=" + eps + style + "onclick=" + click + eps + ")" + " >" + "<br/>"
+                                        + "<img src=" + numMag + style + "onclick=" +  click + numMag + ")" + " >"
+                                        + "<img src=" + seis + style + "onclick=" + click + seis + ")"  + " >");
+
+                                this.map.panTo(new L.latLng(lat, lon));
+                        }
+                },
 
 
         };

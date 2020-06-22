@@ -9,6 +9,8 @@ GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
 KmlPrefix = "http://156.56.174.162:8000/static"
 WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
+GdacsUrl = 'http://www.gdacs.org/xml/gdacs.kml'
+NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
 
 
 def gps_service(request):
@@ -35,7 +37,6 @@ def gps_service(request):
             "mon": request.GET.get("mon"),
             "eon": request.GET.get("eon"),
             "vabs": request.GET.get("vabs")}
-        print(payload)
         data = requests.get(GpsServiceUrl, params=payload)
         responseData = HttpResponse(data)
         return responseData
@@ -52,21 +53,36 @@ def get_gnss_kml(request):
         return responseData
 
 
-# TODO combine below methods
-
-def wo_forecast(request):
+def forecast(request):
     if request.method == 'GET':
-        data = requests.get(WoForecastUrl, stream=True)
+        if request.GET.get('loc') == 'global':
+            data = requests.get(WoForecastUrl, stream=True)
+        else:
+            data = requests.get(CaForecastUrl, stream=True)
+
         z = zipfile.ZipFile(io.BytesIO(data.content))
         responseData = HttpResponse(z.open('doc.kml'))
         return responseData
 
 
-def ca_forecast(request):
+def gdacs(request):
     if request.method == 'GET':
-        data = requests.get(CaForecastUrl, stream=True)
-        z = zipfile.ZipFile(io.BytesIO(data.content))
-        responseData = HttpResponse(z.open('doc.kml'))
+        data = requests.get(GdacsUrl)
+        responseData = HttpResponse(data)
         return responseData
 
+
+def nowcast_plots(request):
+    if request.method == 'GET':
+        lat = request.GET.get("lat")
+        lon = request.GET.get("lon")
+        payload = {
+            'location': lat + ',' + lon,
+            'name': request.GET.get("place"),
+            'country': 'notset',
+        }
+        data = requests.get(NowcastUrl, params=payload)
+        responseData = HttpResponse(data)
+        print(data)
+        return responseData
 

@@ -114,6 +114,8 @@
 </template>
 
 <script>
+    // TODO add checkbox for removing gnss layer
+
     import {bus} from '../main'
     import axios from 'axios'
     // import qs from 'qs'
@@ -196,7 +198,7 @@
                                     //emit raw kml text to parent map component
                                 }).then(function (response) {
                                     // console.log(response.data)
-                                    bus.$emit('gnssLayer', response.data);
+                                    bus.$emit('TextAddLayer', response.data, 'gnssL');
                                 })
                             }
                         })
@@ -204,10 +206,9 @@
 
             },
             drawToolbar() {
-                if (!this.drawToolBar) {
-                    this.$store.state.drawToolBar = true;
+
                     bus.$emit('drawToolbar');
-                }
+
             }
         },
         computed: {
