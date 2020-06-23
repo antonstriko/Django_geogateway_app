@@ -13,6 +13,7 @@ GdacsUrl = 'http://www.gdacs.org/xml/gdacs.kml'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
 
 
+
 def gps_service(request):
     if request.method == 'GET':
         print(request.GET.get("data"))
@@ -85,4 +86,5 @@ def nowcast_plots(request):
         responseData = HttpResponse(data)
         print(data)
         return responseData
+
 

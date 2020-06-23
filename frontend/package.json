@@ -12,6 +12,7 @@
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "leaflet": "^1.6.0",
+    "leaflet-ajax": "^2.1.0",
     "leaflet-draw": "^1.0.4",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-geometryutil": "^0.9.3",

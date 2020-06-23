@@ -1,5 +1,8 @@
 <template>
         <div id="map-window">
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+                      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+                      crossorigin=""/>
                 <TopNav />
                 <ToolBar />
                 <div id="map">
@@ -10,8 +13,9 @@
 </template>
 
 <script>
-        import L from 'leaflet';
+
         import 'leaflet/dist/leaflet.css';
+        import L from 'leaflet';
         import "leaflet-kml"
         import ToolBar from "./ToolBar";
         import {bus} from '../main'
@@ -33,6 +37,7 @@
                         return {
                                 map: null,
                                 drawToolShow: false,
+                                usgs_layer: null,
                                 'woForecastL': null,
                                 'caForecastL': null,
                                 'ucerfL': null,
@@ -56,6 +61,10 @@
                                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
                                 }).addTo(this.map);
 
+                        // var url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojsonp'
+                        // var geojsonLayer = new L.GeoJSON.AJAX(url, {dataType:"jsonp"});
+                        // this.map.addLayer(geojsonLayer)
+                        //
 
                         //global map layer event listeners
 
@@ -79,6 +88,12 @@
                         bus.$on('nowcast', (data, lat, lon)=>
                                 this.seismicityPlots(data, lat, lon));
 
+                        bus.$on('searchCat', (text) =>
+                                this.catalogSearch(text));
+
+                        bus.$on('filterCat', (text, dFilter, mFilter) =>
+                                this.catalogFilter(text, dFilter, mFilter));
+
 
                 },
 
@@ -92,7 +107,7 @@
                                         var drawControl = new L.Control.Draw({
                                                 draw: {
                                                         polygon: false,
-                                                        marker: false,
+                                                        marker: true,
                                                         polyline: false,
                                                         circle: false,
                                                         rectangle: true,
@@ -112,7 +127,6 @@
                                                         layer = e.layer;
                                                 drawnItems.addLayer(layer);
                                                 if (type === 'rectangle') {
-
                                                         this.gs_latitude = layer.getCenter().lat;
                                                         this.gs_longitude = layer.getCenter().lng;
                                                         var sw = layer.getLatLngs()[0][1];
@@ -154,8 +168,13 @@
                                 this[layerName] = null;
 
                         },
+                        addMarker(){
+                                this.map.on('click', function(e) {
+                                        var newMarker = new L.marker(e.latlng)
+                                        newMarker.addTo(this.map)
+                                })
+                        },
                         seismicityPlots(data, lat, lon){
-                                console.log(lat, lon)
                                 var style = " style=width:200px;height:150px;"
                                 const pin = L.icon({
                                         iconUrl: 'https://raw.githubusercontent.com/cosmic-tichy/GeoGatewayStaticResources/master/map-pin-solid.svg',
@@ -168,15 +187,64 @@
                                 var eps = data.urls[0]
                                 var numMag = data.urls[1]
                                 var seis = data.urls[2]
-                                var click = "window.open(";
 
                                 //TODO make images clickable
 
-                                marker.bindPopup("<img src=" + eps + style + "onclick=" + click + eps + ")" + " >" + "<br/>"
-                                        + "<img src=" + numMag + style + "onclick=" +  click + numMag + ")" + " >"
-                                        + "<img src=" + seis + style + "onclick=" + click + seis + ")"  + " >");
+                                marker.bindPopup("<img src=" + eps + style + " >" + "<br/>"
+                                        + "<img src=" + numMag + style + " >"
+                                        + "<img src=" + seis + style + " >");
 
                                 this.map.panTo(new L.latLng(lat, lon));
+                        },
+                        catalogSearch(text) {
+                                // var url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojsonp'
+                                // var geojsonLayer = new L.GeoJSON.AJAX(text, {dataType:"json"});
+                                if (this.usgs_layer != null) {
+                                        this.map.removeLayer(this.usgs_layer)
+                                }
+                                        this.usgs_layer = L.geoJSON(text, {
+                                                onEachFeature: function (feature, layer) {
+                                                        //what properties of each feature are most important to display?
+                                                        layer.bindPopup(
+                                                                '<p><b>Magnitude</b>: ' + feature.properties.mag + '</p>' +
+                                                                '<p><b>Place</b>: ' + feature.properties.place + '</p>' +
+                                                                '<p><b>Time</b>: ' + feature.properties.time + '</p>' +
+                                                                '<a href=' + feature.properties.url + '>' + 'USGS Event' + '</a>'
+                                                        );
+                                                }
+                                        })
+                                        this.map.addLayer(this.usgs_layer)
+                        },
+                        catalogFilter(text, dFilter, mFilter) {
+                                var toFilterM;
+                                function popup (feature, layer) {
+                                        layer.bindPopup(
+                                                '<p><b>Magnitude</b>: ' + feature.properties.mag + '</p>' +
+                                                '<p><b>Place</b>: ' + feature.properties.place + '</p>' +
+                                                '<p><b>Time</b>: ' + feature.properties.time + '</p>' +
+                                                '<a href=' + feature.properties.url + '>' + 'USGS Event' + '</a>'
+                                        );
+                                }
+                                if (this.usgs_layer != null) {
+                                        this.map.removeLayer(this.usgs_layer)
+                                }
+                                //Better way to do this?
+                                //To add depth filter (what feature property represents depth?)
+                                if(mFilter === ''){
+                                     toFilterM = () => true
+                                }else {
+                                        toFilterM = function(feature){
+                                                return feature.properties.mag > parseInt(mFilter);
+                                        }
+                                }
+                                this.usgs_layer = L.geoJSON(text, {
+                                        onEachFeature: function (feature, layer) {
+                                                //what properties of each feature are most important to display?
+                                                popup(feature, layer);
+                                        },
+                                        filter: toFilterM
+                                })
+                                this.map.addLayer(this.usgs_layer)
                         }
                 },
 

@@ -4,6 +4,8 @@ import {BootstrapVue, BootstrapVueIcons} from 'bootstrap-vue';
 import {store} from './store/store';
 // import axios from 'axios';
 import router from './router';
+import 'leaflet/dist/leaflet.css';
+import "leaflet-kml"
 
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
