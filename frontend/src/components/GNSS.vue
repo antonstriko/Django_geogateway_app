@@ -16,6 +16,7 @@
                     <option value='getdisplacement'>Displacement</option>
                     <option value='getmodel'>Model</option>
                 </select>
+                <br/>
 
                 <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
                     <b-icon-pencil></b-icon-pencil>Draw an area on map</b-button>
@@ -85,7 +86,7 @@
 
                 <div class="checkbox">
                     <label class="checkbox">
-                        <input v-model="gs_vabs" name="vabs" type="checkbox" id="gs_vabs" value=""/>
+                        <input v-model="gs_vabs" name="vabs" type="checkbox" id="gs_vabs" value= ""/>
                         Display absolute verticals
                     </label>
                 </div>
@@ -107,6 +108,11 @@
                 <div id="gpsservice_results"></div>
                 <div><strong>Data source: <a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
             </form>
+
+<!--            <span :v-for="item in ranLayers">-->
+<!--                <input type="checkbox" v-model="activeLayers" :value="item.active">-->
+<!--                <label :for="item.pre">{{ item.pre }} {{ item.active }}</label>-->
+<!--            </span>-->
         </div>
     </div>
 
@@ -118,6 +124,7 @@
 
     import {bus} from '../main'
     import axios from 'axios'
+    // import {convertEpochToSpecificTimezone} from '../assets/mapMethods'
     // import qs from 'qs'
 
     export default {
@@ -145,16 +152,26 @@
                 gs_eon: '',
                 gs_vabs: '',
                 gs_mon: '',
+                ranLayers: [],
+                activeLayers: [],
+
 
             }
+        },
+        mounted() {
+            bus.$on('rectDim', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
+                this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
 
         methods: {
             rungpsservice(){
+                var queries = this.ranLayers;
+                var prefix = this.gs_outputprefix;
                 if(this.kmltype_sel === ''){
                     alert("Please select as least one plot!");
                 }
                 else {
+                    this.layerCheckbox = true;
                     const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
                     const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
                     //request JSON dict of GPS_service details with query params from form
@@ -198,6 +215,12 @@
                                     //emit raw kml text to parent map component
                                 }).then(function (response) {
                                     // console.log(response.data)
+                                    //add query to array for hide/show
+
+                                    queries.push({
+                                        pre: prefix,
+                                        active: true,
+                                        data: response.data});
                                     bus.$emit('TextAddLayer', response.data, 'gnssL');
                                 })
                             }
@@ -207,85 +230,15 @@
             },
             drawToolbar() {
 
-                    bus.$emit('drawToolbar');
+                bus.$emit('drawToolbar');
 
-            }
-        },
-        computed: {
-            gnssState() {
-                return this.$store.state.gnssState;
             },
-            globalLayers() {
-                return this.$store.state.globalLayers;
-            },
-            drawToolBar() {
-                return this.$store.state.drawToolBar;
+            setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
+                this.gs_latitude = centerLat;
+                this.gs_longitude = centerLng;
+                this.gs_height = Math.abs(maxLat - minLat);
+                this.gs_width = Math.abs(maxLon - minLon);
             }
-            // kmltype_sel: {
-            //  get(){
-            //   return this.GNSS.formData.kmltype_sel;
-            //  },
-            //  set(value){
-            //   this.$store.commit('setkml', value);
-            //  }
-            // },
-            // gs_latitude: {
-            //  get(){
-            //   return this.GNSS.formData.gs_latitude;
-            //  },
-            //  set(value){
-            //   this.$store.commit('setLat', value);
-            //  }
-            // },
-            // gs_longitude: {
-            //  get(){
-            //   return this.GNSS.formData.gs_longitude;
-            //  },
-            //  set(value){
-            //   this.$store.commit('setLng', value);
-            //  }
-            // },
-            // gs_width: {
-            //  get(){
-            //   return this.GNSS.formData.gs_width;
-            //  },
-            //  set(value){
-            //   this.$store.commit('setWidth', value);
-            //  }
-            // },
-            // gs_height: {
-            //  get() {
-            //   return this.GNSS.formData.gs_height;
-            //  },
-            //  set(value) {
-            //   this.$store.commit('setHeight', value);
-            //  },
-            // },
-            //  gs_refsite: {
-            //   get() {
-            //    return this.GNSS.formData.gs_refsite;
-            //   },
-            //   set(value) {
-            //    this.$store.commit('setRef', value);
-            //   }
-            //  },
-            //  gs_scale: {
-            //  get(){
-            //   return this.GNSS.formData.gs_scale;
-            //  },
-            //  set(value){
-            //   this.$store.commit('setScale', value);
-            //  }
-            // },
-            // gs_outputprefix: {
-            //  get(){
-            //   return this.GNSS.formData.gs_outputprefix;
-            //  },
-            //  set(value){
-            //   this.$store.commit('setPrefix', value);
-            //  }
-            // },
-
 
         },
     }

@@ -5064,6 +5064,11 @@ leaflet-pointable@0.0.3:
   resolved "https://registry.yarnpkg.com/leaflet-pointable/-/leaflet-pointable-0.0.3.tgz#d1e6cbcdc6697fb78d386eb446c06eb9f38e4d68"
   integrity sha512-dGwxaCST4F/9kqfDoa4dqR7sNESDyqAjjZlxB3GBd81ayG8Z6hb2lxqnz9LTc0mQ3+OesYGhhjflt5UkRlAA5A==
 
+leaflet.awesome-markers@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/leaflet.awesome-markers/-/leaflet.awesome-markers-2.0.5.tgz#b7b0210d87e2566359bf478c1ab3ab07c7246f30"
+  integrity sha512-Ne/xDjkGyaujwNVVkv2tyXQUV0ZW7gZ0Mo0FuQY4jp2qWrvXi0hwDBvmZyF/8YOvybyMabTMM/mFWCTd1jZIQA==
+
 leaflet@>=0.7.0, leaflet@^1.0.1, leaflet@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/leaflet/-/leaflet-1.6.0.tgz#aecbb044b949ec29469eeb31c77a88e2f448f308"

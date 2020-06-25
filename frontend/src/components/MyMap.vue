@@ -7,7 +7,7 @@
                 <ToolBar />
                 <div id="map">
                 </div>
-                <!--                <b-button id="refreshButton" @click="refreshLayers()">Refresh</b-button>-->
+                <b-button id="clearMap" @click="clearLayers()">Clear Map</b-button>
         </div>
 
 </template>
@@ -22,8 +22,7 @@
         import 'leaflet-draw'
         import "leaflet-draw/dist/leaflet.draw.css";
         import TopNav from "./TopNav";
-        import "leaflet-kmz";
-
+        import {circleMaker, popupMaker} from '../assets/mapMethods'
         // import axios from "axios";
         // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -38,6 +37,7 @@
                                 map: null,
                                 drawToolShow: false,
                                 usgs_layer: null,
+                                markerLayer: null,
                                 'woForecastL': null,
                                 'caForecastL': null,
                                 'ucerfL': null,
@@ -84,21 +84,25 @@
 
                         bus.$on('RemoveLayer', (name) =>
                                 this.removeLayer(name));
+                        bus.$on('newRemoveLayer', (name)=>
+                                this.newRemoveLayer(name));
 
                         bus.$on('nowcast', (data, lat, lon)=>
                                 this.seismicityPlots(data, lat, lon));
 
-                        bus.$on('searchCat', (text) =>
-                                this.catalogSearch(text));
-
-                        bus.$on('filterCat', (text, dFilter, mFilter) =>
-                                this.catalogFilter(text, dFilter, mFilter));
+                        bus.$on('filterCat', (text, dFilter, mFilter, iconScale, startDate, endDate) =>
+                                this.catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate));
 
 
                 },
 
 
                 methods: {
+                        // clearLayers(){
+                        //   for(key in this.data()) {
+                        //
+                        //   }
+                        // },
                         drawToolbar(){
                                 if(!this.drawToolShow) {
                                         this.drawToolShow = true
@@ -123,19 +127,28 @@
                                         // TODO dynamically fill form input with results from drawn rectangle
 
                                         this.map.on('draw:created', function (e) {
-                                                var type = e.layerType,
-                                                        layer = e.layer;
-                                                drawnItems.addLayer(layer);
+                                                var type = e.layerType;
                                                 if (type === 'rectangle') {
-                                                        this.gs_latitude = layer.getCenter().lat;
-                                                        this.gs_longitude = layer.getCenter().lng;
-                                                        var sw = layer.getLatLngs()[0][1];
-                                                        var ne = layer.getLatLngs()[0][3];
-                                                        this.gs_height = Math.abs(ne.lat - sw.lat);
-                                                        this.gs_width = Math.abs(ne.lng - sw.lng);
-                                                        console.log(this.gs_latitude, this.gs_longitude);
-                                                        console.log(this.gs_height, this.gs_width)
+                                                        var layer = e.layer;
+                                                        this.addLayer(layer);
+                                                        var centerLat = layer.getCenter().lat;
+                                                        var centerLng = layer.getCenter().lng;
+                                                        var maxLat = layer.getLatLngs()[0][1].lat;
+                                                        var maxLon = layer.getLatLngs()[0][2].lng;
+                                                        var minLat = layer.getLatLngs()[0][3].lat;
+                                                        var minLon = layer.getLatLngs()[0][0].lng;
+                                                        // var ne = layer.getLatLngs()[0][3];
 
+                                                        // console.log(this.gs_latitude, this.gs_longitude);
+                                                        // console.log(this.gs_height, this.gs_width)
+                                                        bus.$emit('rectDim', maxLat, minLon, minLat, maxLon, centerLat, centerLng);
+                                                }
+                                                else if(type === 'marker'){
+                                                        this.markerLayer = e.layer;
+                                                        this.addLayer(this.markerLayer);
+                                                        var lat = this.markerLayer.getLatLng().lat;
+                                                        var lng = this.markerLayer.getLatLng().lng;
+                                                        bus.$emit('markPlace', lat, lng);
                                                 }
                                         });
                                 }
@@ -168,21 +181,19 @@
                                 this[layerName] = null;
 
                         },
-                        addMarker(){
-                                this.map.on('click', function(e) {
-                                        var newMarker = new L.marker(e.latlng)
-                                        newMarker.addTo(this.map)
-                                })
+                        newRemoveLayer(layername){
+                                this.map.removeLayer(this.layers[layername])
+                                this.layers[layername] = null;
                         },
                         seismicityPlots(data, lat, lon){
                                 var style = " style=width:200px;height:150px;"
-                                const pin = L.icon({
-                                        iconUrl: 'https://raw.githubusercontent.com/cosmic-tichy/GeoGatewayStaticResources/master/map-pin-solid.svg',
-
-                                        iconSize:     [15, 55], // size of the icon
-                                        iconAnchor:   [8, 40], // point of the icon which will correspond to marker's location
-                                });
-                                var marker = L.marker([lat, lon], {icon: pin}).addTo(this.map);
+                                //fa-line-chart
+                                var latlng = L.latLng(lat,lon);
+                                var plotReadyMarker = L.circleMarker(latlng,{
+                                        color: 'green',
+                                        fillColor: 'lightgreen',
+                                        radius:10,
+                                }).addTo(this.map);
 
                                 var eps = data.urls[0]
                                 var numMag = data.urls[1]
@@ -190,48 +201,21 @@
 
                                 //TODO make images clickable
 
-                                marker.bindPopup("<img src=" + eps + style + " >" + "<br/>"
+                                plotReadyMarker.bindPopup("<img src=" + eps + style + " >" + "<br/>"
                                         + "<img src=" + numMag + style + " >"
                                         + "<img src=" + seis + style + " >");
 
                                 this.map.panTo(new L.latLng(lat, lon));
                         },
-                        catalogSearch(text) {
-                                // var url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojsonp'
-                                // var geojsonLayer = new L.GeoJSON.AJAX(text, {dataType:"json"});
-                                if (this.usgs_layer != null) {
-                                        this.map.removeLayer(this.usgs_layer)
-                                }
-                                        this.usgs_layer = L.geoJSON(text, {
-                                                onEachFeature: function (feature, layer) {
-                                                        //what properties of each feature are most important to display?
-                                                        layer.bindPopup(
-                                                                '<p><b>Magnitude</b>: ' + feature.properties.mag + '</p>' +
-                                                                '<p><b>Place</b>: ' + feature.properties.place + '</p>' +
-                                                                '<p><b>Time</b>: ' + feature.properties.time + '</p>' +
-                                                                '<a href=' + feature.properties.url + '>' + 'USGS Event' + '</a>'
-                                                        );
-                                                }
-                                        })
-                                        this.map.addLayer(this.usgs_layer)
-                        },
-                        catalogFilter(text, dFilter, mFilter) {
+                        catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate) {
                                 var toFilterM;
-                                function popup (feature, layer) {
-                                        layer.bindPopup(
-                                                '<p><b>Magnitude</b>: ' + feature.properties.mag + '</p>' +
-                                                '<p><b>Place</b>: ' + feature.properties.place + '</p>' +
-                                                '<p><b>Time</b>: ' + feature.properties.time + '</p>' +
-                                                '<a href=' + feature.properties.url + '>' + 'USGS Event' + '</a>'
-                                        );
-                                }
                                 if (this.usgs_layer != null) {
                                         this.map.removeLayer(this.usgs_layer)
                                 }
                                 //Better way to do this?
                                 //To add depth filter (what feature property represents depth?)
                                 if(mFilter === ''){
-                                     toFilterM = () => true
+                                        toFilterM = () => true
                                 }else {
                                         toFilterM = function(feature){
                                                 return feature.properties.mag > parseInt(mFilter);
@@ -240,12 +224,15 @@
                                 this.usgs_layer = L.geoJSON(text, {
                                         onEachFeature: function (feature, layer) {
                                                 //what properties of each feature are most important to display?
-                                                popup(feature, layer);
+                                                popupMaker(feature, layer);
                                         },
-                                        filter: toFilterM
-                                })
-                                this.map.addLayer(this.usgs_layer)
-                        }
+                                        filter: toFilterM,
+                                        pointToLayer: function(feature, layer){
+                                                return circleMaker(feature, layer, iconScale, startDate, endDate);
+                                        }
+                                }).addTo(this.map)
+                        },
+
                 },
 
 

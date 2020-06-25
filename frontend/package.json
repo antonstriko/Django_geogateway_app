@@ -18,6 +18,7 @@
     "leaflet-geometryutil": "^0.9.3",
     "leaflet-kml": "^1.0.1",
     "leaflet-kmz": "^0.3.8",
+    "leaflet.awesome-markers": "^2.0.5",
     "qs": "^6.9.4",
     "vue": "^2.6.11",
     "vue-resource": "^1.5.1",

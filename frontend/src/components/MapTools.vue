@@ -1,16 +1,37 @@
 <template>
     <div>
-        <b-form-group >
-            <b-form-checkbox-group id="checkbox-group-2" v-model="selected" name="flavour-2" stacked >
-                <b-form-checkbox value="ucerf" @change="updateLayer('ucerf')"><p>UCERF3 Faults</p></b-form-checkbox>
-                <b-form-checkbox value="kml" @change="updateLayer('kml')"><p>KML Mapper</p></b-form-checkbox>
-                <b-form-checkbox value="states" @change="updateLayer('boundaries')"><p>Show State Boundaries</p></b-form-checkbox>
-                <b-form-checkbox value="coasts" @change="updateLayer('coasts')"><p>Show Coastlines</p></b-form-checkbox>
-            </b-form-checkbox-group>
-        </b-form-group>
-
+        <div>
+                <input
+                        type="checkbox"
+                        v-model="ucerf"
+                        @change="updateLayer('ucerf')"
+                        id="ucerf"
+                ><label for="ucerf"> UCERF3 Faults</label>
+                <br/>
+            <input
+                    type="checkbox"
+                    v-model="kml"
+                    @change="updateLayer('kml')"
+                    id="kml"
+            ><label for="kml">KML Uploader</label>
+            <br/>
+            <input
+                    type="checkbox"
+                    v-model="boundaries"
+                    @change="updateLayer('boundaries')"
+                    id="boundaries"
+            ><label for="boundaries">Show State Boundaries</label>
+            <br/>
+            <input
+                    type="checkbox"
+                    v-model="coasts"
+                    @change="updateLayer('coasts')"
+                    id="coasts"
+            ><label for="coasts">Show Coastlines</label>
+            <br/>
+        </div>
         <div id="tools-show">
-            <div v-if="mapTools.ucerf[0]">
+            <div v-if="this.ucerf">
                 <hr class="divider" />
                 <b-form-radio-group  >
                     <b-form-radio v-model="selected" name="some-radios" value="black"><p>black</p></b-form-radio>
@@ -20,7 +41,7 @@
                 </b-form-radio-group>
             </div>
 
-            <div v-if="mapTools.kml[0]">
+            <div v-if="this.kml">
                 <hr class="divider" />
                 <h2>KML File Upload</h2>
                 <form method="post" enctype="multipart/form-data">
@@ -38,10 +59,14 @@
         name: "MapTools",
         data() {
             return {
-                selected: [],
                 ucerfUrl: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
                 boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
                 coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
+                ucerf: false,
+                boundaries: false,
+                coasts: false,
+                kml: false,
+
 
             }
         },
@@ -51,15 +76,21 @@
                 // TODO improve efficiency and utilize vue mutations to do this
                 switch (l) {
                     case 'ucerf':
-                        bus.$emit('UrlAddLayer', this.ucerfUrl, 'ucerfL')
+                        if(this.ucerf) {
+                            bus.$emit('UrlAddLayer', this.ucerfUrl, 'ucerfL');
+                        }else bus.$emit('RemoveLayer', 'ucerfL');
                         break;
                     case 'kml':
                         break;
                     case 'boundaries':
-                        bus.$emit('UrlAddLayer', this.boundariesUrl, 'boundariesL')
+                        if(this.boundaries) {
+                            bus.$emit('UrlAddLayer', this.boundariesUrl, 'boundariesL');
+                        }else bus.$emit('RemoveLayer', 'boundariesL');
                         break;
                     case 'coasts':
-                        bus.$emit('UrlAddLayer', this.boundariesUrl, 'coastsL')
+                        if(this.coasts) {
+                            bus.$emit('UrlAddLayer', this.coastsUrl, 'coastsL');
+                        }else bus.$emit('RemoveLayer', 'coastsL');
                         break;
 
                 }
@@ -67,11 +98,6 @@
 
             },
         },
-        computed: {
-            mapTools(){
-                return this.$store.state.mapToolsState;
-            }
-        }
 
     }
 </script>

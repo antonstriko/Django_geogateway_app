@@ -1,10 +1,12 @@
 <template>
     <div id="panel_forecast" style="margin-top: 10px; margin-bottom:10px;">
+
         <h3>Recent Earthquakes from USGS</h3>
         <hr />
-        <p><i>Earthquake magnitude shown by circle size. Hotter colors are more recent events. Click on earthquake markers for event data.</i></p>
-        <hr />
-        <p><i>Earthquakes are color coded with most recent events in the last day represented by hotter colors, and older events by cooler colors</i></p>
+
+        <p><i>Earthquake magnitude shown by circle size. Click on earthquake markers for event data.</i></p>
+        <i id="buttonText">Most recent events represented by hotter colors, and older events by cooler colors</i>
+        <img src="../assets/color_gradient.png">
         <hr />
         <fieldset id="group1">
             <input
@@ -55,7 +57,9 @@
         </select>
         <hr/>
         <h4>Search Earthquake Catalog</h4>
-        <br/>
+        <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
+            <b-icon-pencil></b-icon-pencil>Draw an area on map</b-button>
+        <br/><br/>
         <b-input-group prepend="Min Lat">
             <b-form-input v-model="minLat" placeholder="1 degree" name="minLat" value="32.0"></b-form-input>
         </b-input-group>
@@ -68,14 +72,15 @@
         <b-input-group prepend="Max Lon">
             <b-form-input v-model="maxLon" placeholder="1 degree" name="maxLon"></b-form-input>
         </b-input-group>
-        <b-input-group prepend="Starting Date">
-            <b-form-input v-model="startDate" placeholder="1 degree" name="startD"></b-form-input>
-        </b-input-group>
+        <b-input-group prepend="Start Date">
+        <input v-model="startDate" type="date" id="start"
+               value="2020-06-22"></b-input-group>
         <b-input-group prepend="Starting Time">
             <b-form-input v-model="startTime" placeholder="1 degree" name="startT"></b-form-input>
         </b-input-group>
         <b-input-group prepend="Ending Date">
-            <b-form-input v-model="endDate" placeholder="1 degree" name="endDate"></b-form-input>
+            <input v-model="endDate" type="date" id="end"
+                   value="2020-06-26">
         </b-input-group>
         <b-input-group prepend="Ending Time">
             <b-form-input v-model="endTime" placeholder="1 degree" name="endTime"></b-form-input>
@@ -121,27 +126,43 @@
                 iconScale: '1',
             }
         },
+        mounted() {
+            bus.$on('rectDim', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
+                this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
+        },
         methods: {
             showSelected(time) {
                 var dFilter = this.dFilter;
                 var mFilter = this.mFilter;
+                var startD;
+                var endD = new Date();
                 var timeUrl;
                 switch (time) {
                     case 'day':
                         timeUrl = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson'
+                        startD = new Date();
+                        startD.setDate(startD.getDate()-1);
                         break;
                     case 'week':
                         timeUrl = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson'
+                        startD = new Date();
+                        startD.setDate(startD.getDate()-7);
                         break;
                     case 'month':
                         timeUrl = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson'
+                        startD = new Date();
+                        //rough estimate of month ago
+                        startD.setDate(startD.getDate()-30);
                         break;
                 }
                 axios.get(timeUrl).then(function(response){
-                    bus.$emit('filterCat', response.data, dFilter, mFilter)
+                    bus.$emit('filterCat', response.data, dFilter, mFilter, 1, startD, endD)
                 })
             },
             runSeismicity(){
+                var iconScale = this.iconScale;
+                var startD = new Date(this.startDate);
+                var endD = new Date(this.endDate);
                 var urlBase="https://earthquake.usgs.gov/fdsnws/event/1/query?";
                 axios.get(urlBase, {
                     params: {
@@ -156,10 +177,19 @@
                         "maxlongitude": this.maxLon,
                     }
                 }).then(function (response){
-                    console.log(response.data)
-                    bus.$emit('searchCat', response.data)
+                    bus.$emit('filterCat', response.data, '', '', iconScale, startD, endD)
 
                 })
+            },
+            drawToolbar(){
+              bus.$emit('drawToolbar');
+            },
+            setRect(maxLat, minLon, minLat, maxLon,){
+                this.maxLat = maxLat;
+                this.minLon = minLon;
+                this.minLat = minLat;
+                this.maxLon = maxLon;
+
             }
         }
     }
@@ -171,6 +201,17 @@
     }
     label {
         font-weight: bold;
+    }
+    /*#buttonText {*/
+    /*    color: white;*/
+    /*}*/
+
+    img {
+        width: 80%;
+        background-color: white;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 25px;
+        height: 50px;
     }
 
 </style>
