@@ -109,10 +109,17 @@
                 <div><strong>Data source: <a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
             </form>
 
-<!--            <span :v-for="item in ranLayers">-->
-<!--                <input type="checkbox" v-model="activeLayers" :value="item.active">-->
-<!--                <label :for="item.pre">{{ item.pre }} {{ item.active }}</label>-->
-<!--            </span>-->
+            <!--            <span :v-for="item in ranLayers">-->
+            <!--                <input type="checkbox" v-model="activeLayers" :value="item.active">-->
+            <!--                <label :for="item.pre">{{ item.pre }} {{ item.active }}</label>-->
+            <!--            </span>-->
+            <div v-if="ranLayers.length!==0">
+                <div v-for="layer in ranLayers" :key="layer.name">
+                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label">{{layer.name}} {{layer.active}}</span> <br>
+                    <hr/>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -164,16 +171,28 @@
         },
 
         methods: {
+            showHideLayers(active, layer){
+                if(active){
+                    layer === 'H' ? bus.$emit('addExisting', 'gnssH') :
+                        bus.$emit('addExisting', 'gnssV');
+                }else{
+                    layer === 'H' ? bus.$emit('RemoveLayer', 'gnssH') :
+                        bus.$emit('RemoveLayer', 'gnssV');
+                }
+            },
             rungpsservice(){
+                var fileName1;
+                var fileName2;
+                var fileName3;
+                var folder;
+                var props;
                 var queries = this.ranLayers;
-                var prefix = this.gs_outputprefix;
                 if(this.kmltype_sel === ''){
                     alert("Please select as least one plot!");
                 }
                 else {
-                    this.layerCheckbox = true;
+                    // this.layerCheckbox = true;
                     const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
-                    const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
                     //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
@@ -204,27 +223,54 @@
                     })
                         //use JSON results (filename and folder) to request raw kml text
                         .then(function (response) {
-                            for (var i = 0; i < 3; i++) {
-                                var props = response.data
-                                axios.get(kmlURI, {
-                                    params: {
-                                        "file": props.results[i],
-                                        "folder": props.folder
-                                    },
-                                    responseType: 'text',
-                                    //emit raw kml text to parent map component
-                                }).then(function (response) {
-                                    // console.log(response.data)
-                                    //add query to array for hide/show
+                            props = response.data
+                            console.log(props)
+                            folder = props.folder;
+                            fileName1 = props.results[0];
+                            queries.push({
+                                pre: 'H',
+                                name: fileName1,
+                                folder: folder,
+                                active: true,
+                            })
 
-                                    queries.push({
-                                        pre: prefix,
-                                        active: true,
-                                        data: response.data});
-                                    bus.$emit('TextAddLayer', response.data, 'gnssL');
-                                })
-                            }
+                            fileName2 = props.results[1];
+                            queries.push({
+                                name: fileName2,
+                                folder: folder,
+                                active: true,
+                            })
+
+                            fileName3 = props.results[2];
+                            queries.push({
+                                pre: 'V',
+                                name: fileName3,
+                                folder: folder,
+                                active: true,
+                            })
+                        const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
+                        axios.get(kmlURI, {
+                            params: {
+                                "file": fileName1,
+                                "folder": folder
+                            },
+                            responseType: 'text',
+                            //emit raw kml text to parent map component
+                        }).then(function (response) {
+                                    bus.$emit('TextAddLayer', response.data, 'gnssV');
+                            })
+                        axios.get(kmlURI, {
+                            params: {
+                                "file": fileName3,
+                                "folder": folder
+                            },
+                            responseType: 'text',
+                            //emit raw kml text to parent map component
+                        }).then(function (response) {
+                            bus.$emit('TextAddLayer', response.data, 'gnssH');
                         })
+
+                    })
                 }
 
             },

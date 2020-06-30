@@ -1,6 +1,6 @@
 <template>
     <div id="tabs">
-        <b-tabs pills card bg-variant="dark" >
+        <b-tabs pills card>
             <b-tab title="Map Tools" active><b-card-text id="map-tools" class="tab-text">
                 <MapTools />
             </b-card-text></b-tab>
