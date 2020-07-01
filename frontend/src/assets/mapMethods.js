@@ -24,7 +24,7 @@ export function circleMaker(feature, latlng, iconScale, startDate, endDate){
     var range = (endDate - startDate)
 
     var color = perc2color(Math.abs(((diff/range)*100) - 100))
-    console.log((diff/range), color)
+
     var circleProps = {
         radius: feature.properties.mag * iconScale,
         color: color,

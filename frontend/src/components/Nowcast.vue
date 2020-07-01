@@ -87,6 +87,10 @@
             bus.$on('markPlace', (lat, lng)=>
                 this.setMarker(lat, lng));
 
+            // bus.$on('clearLayers', () =>
+            //     this.uncheckAll());
+
+
         },
         methods: {
             ucerfAdd(){

@@ -7,9 +7,8 @@
         <ToolBar />
         <div id="map">
         </div>
-        <b-button id="clearMap" @click="clearLayers()">Clear Map</b-button>
+        <b-button id="clearMap" @click="resetMap">Clear Map</b-button>
     </div>
-
 </template>
 
 <script>
@@ -36,17 +35,20 @@
             return {
                 map: null,
                 drawToolShow: false,
-                usgs_layer: null,
-                markerLayer: null,
-                'woForecastL': null,
-                'caForecastL': null,
-                'ucerfL': null,
-                'boundariesL': null,
-                'coastsL': null,
-                'gdacsL': null,
-                'gnssV': null,
-                'gnssH': null,
-                'nowcastL': null,
+                layers: {
+                    'ucerfL': null,
+                    'woForecastL': null,
+                    'caForecastL': null,
+                    'boundariesL': null,
+                    'coastsL': null,
+                    'gdacsL': null,
+                    'gnssV': null,
+                    'gnssH': null,
+                    'nowcastL': null,
+                    'usgs_layer': null,
+                    'markerLayer': null,
+                },
+
 
             };
         },
@@ -54,12 +56,7 @@
 
             //create layers
             this.map = L.map('map').setView([51.505, -0.09], 3);
-            L.tileLayer(
-                'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-                {
-                    maxZoom: 18,
-                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
-                }).addTo(this.map);
+            this.tileLayer();
 
             // var url = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojsonp'
             // var geojsonLayer = new L.GeoJSON.AJAX(url, {dataType:"jsonp"});
@@ -101,11 +98,16 @@
 
 
         methods: {
-            // clearLayers(){
-            //   for(key in this.data()) {
-            //
-            //   }
-            // },
+
+            resetMap(){
+                for(var key in this.layers){
+                    if(this.layers[key]!==null) {
+                        this.map.removeLayer(this.layers[key]);
+                    }
+                }
+                bus.$emit('clearLayers');
+            },
+
             drawToolbar(){
                 if(!this.drawToolShow) {
                     this.drawToolShow = true
@@ -156,15 +158,23 @@
                     });
                 }
             },
+            tileLayer(){
+                L.tileLayer(
+                    'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+                    {
+                        maxZoom: 18,
+                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
+                    }).addTo(this.map);
+            },
             // TODO make addLayer and removeLayer methods for use with $emit $on
             // ie refine layer logic so this method is not necessary
             kmlText(text, layerName){
                 // console.log(this.globalLayers.gnss1)
                 const parser = new DOMParser();
                 const kml = parser.parseFromString(text, 'text/xml');
-                this[layerName] = new L.KML(kml);
-                this.map.addLayer(this[layerName]);
-                const bounds = this[layerName].getBounds();
+                this.layers[layerName] = new L.KML(kml);
+                this.map.addLayer(this.layers[layerName]);
+                const bounds = this.layers[layerName].getBounds();
                 this.map.fitBounds(bounds);
 
             },
@@ -173,13 +183,13 @@
                     .then(kmltext => {
                         const parser = new DOMParser();
                         var kml = parser.parseFromString(kmltext, "text/xml");
-                        this[layerName] = new L.KML(kml);
-                        this.map.addLayer(this[layerName]);
-                        this.map.fitBounds(this[layerName].getBounds());
+                        this.layers[layerName] = new L.KML(kml);
+                        this.map.addLayer(this.layers[layerName]);
+                        this.map.fitBounds(this.layers[layerName].getBounds());
                     });
             },
             removeLayer(layerName){
-                this.map.removeLayer(this[layerName])
+                this.map.removeLayer(this.layers[layerName])
             },
             addExistingLayer(layerName){
               this.map.addLayer(this[layerName]);
@@ -190,7 +200,6 @@
             },
             newRemoveLayer(layername){
                 this.map.removeLayer(this.layers[layername])
-                this.layers[layername] = null;
             },
             seismicityPlots(data, lat, lon){
                 var style = " style=width:200px;height:150px;"
@@ -216,8 +225,8 @@
             },
             catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate) {
                 var toFilterM;
-                if (this.usgs_layer != null) {
-                    this.map.removeLayer(this.usgs_layer)
+                if (this.layers['usgs_layer'] != null) {
+                    this.map.removeLayer(this.layers['usgs_layer'])
                 }
                 //Better way to do this?
                 //To add depth filter (what feature property represents depth?)
@@ -228,7 +237,7 @@
                         return feature.properties.mag > parseInt(mFilter);
                     }
                 }
-                this.usgs_layer = L.geoJSON(text, {
+                this.layers['usgs_layer'] = L.geoJSON(text, {
                     onEachFeature: function (feature, layer) {
                         //what properties of each feature are most important to display?
                         popupMaker(feature, layer);
@@ -241,7 +250,6 @@
             },
 
         },
-
 
     };
 </script>
@@ -261,7 +269,7 @@
         padding: 0;
         /*float: right;*/
     }
-    #refreshButton {
+    #clearMap {
         position: absolute;
         top: 140px;
         right: 20px;
