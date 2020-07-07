@@ -1,7 +1,8 @@
 import io
 import requests
 import zipfile
-from django.http import HttpResponse
+from django.http import HttpResponse, FileResponse
+import subprocess
 
 # TODO: add error catching
 
@@ -11,7 +12,6 @@ WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
 GdacsUrl = 'http://www.gdacs.org/xml/gdacs.kml'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
-
 
 
 def gps_service(request):
@@ -87,4 +87,13 @@ def nowcast_plots(request):
         print(data)
         return responseData
 
+
+def runDisloc(request):
+    if request.method == 'GET':
+        file = request.GET.get('file')
+        subprocess.run(['./disloc/disloc', file])
+        subprocess.run(['cat', './disloc/disloc.output'])
+        output = open('./disloc/disloc.output', 'rb')
+        response = FileResponse(output)
+        return response
 

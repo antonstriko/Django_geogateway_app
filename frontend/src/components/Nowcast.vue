@@ -1,6 +1,6 @@
 <template>
     <div class="tool">
-        <div class="tool-title"><h5><strong> Global Natural Hazard Viewer </strong></h5><hr/> </div>
+        <div class="tool-title"><h3> Global Natural Hazard Viewer</h3><hr/> </div>
         <div class="tool-content">
             <div id="panel_forecast" style="margin-top: 10px; margin-bottom:10px;">
                 <h6><i> Global Forecast Heat Map: M &gt; 6.5, 1 Year. <br> California Forecast Heat Map: M &gt; 5, 1 Year <br>(Open Hazards Group)</i></h6>

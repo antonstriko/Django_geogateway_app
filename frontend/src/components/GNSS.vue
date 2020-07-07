@@ -2,7 +2,7 @@
     <div id="GNSS-panel">
         <div class="col-11" style="align-content: center" >
 
-            <h2 style="text-align: center">GPS Data Analysis</h2>
+            <h3 style="text-align: center">GPS Data Analysis</h3>
             <label class="control-label requiredField">
                 Select GPS data
             </label>

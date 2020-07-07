@@ -192,11 +192,11 @@
                 this.map.removeLayer(this.layers[layerName])
             },
             addExistingLayer(layerName){
-              this.map.addLayer(this[layerName]);
+              this.map.addLayer(this.layers[layerName]);
             },
             deleteLayer(layerName){
-                this.map.removeLayer(this[layerName]);
-                this[layerName] = null;
+                this.map.removeLayer(this.layers[layerName]);
+                this.layers[layerName] = null;
             },
             newRemoveLayer(layername){
                 this.map.removeLayer(this.layers[layername])

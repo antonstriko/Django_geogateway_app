@@ -17,7 +17,9 @@
             <b-tab title="Magnitude"><b-card-text>
                 <MMCalc/>
             </b-card-text></b-tab>
-            <b-tab title="Disloc"><b-card-text>Tab contents 3</b-card-text></b-tab>
+            <b-tab title="Disloc"><b-card-text>
+                <Disloc />
+            </b-card-text></b-tab>
             <b-tab title="3D Imaging"><b-card-text>Tab contents 3</b-card-text></b-tab>
             <b-tab title="Special Studies"><b-card-text>Tab contents 3</b-card-text></b-tab>
             <b-tab title="Help"><b-card-text>Tab contents 3</b-card-text></b-tab>
@@ -31,6 +33,7 @@
     import MMCalc from "./MMCalc";
     import Nowcast from "./Nowcast";
     import Seismicity from "./Seismicity";
+    import Disloc from "./Disloc";
     export default {
         name: "ToolTabs",
         components: {
@@ -39,6 +42,8 @@
             MMCalc,
             Nowcast,
             Seismicity,
+            Disloc
+
 
         }
     }
