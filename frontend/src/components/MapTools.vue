@@ -44,10 +44,10 @@
             <div v-if="this.kml">
                 <hr class="divider" />
                 <h2>KML File Upload</h2>
-                <form method="post" enctype="multipart/form-data">
-                    <input type="file" name="kml-file"> <br/><br/>
-                    <button type="submit">Upload File</button>
-                </form>
+                <label>File
+                    <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
+                </label>
+                <button @click="submitFile()">Submit</button>
             </div>
         </div>
     </div>
@@ -55,6 +55,7 @@
 
 <script>
     import {bus} from '../main'
+    import axios from "axios";
     export default {
         name: "MapTools",
         data() {
@@ -66,6 +67,7 @@
                 boundaries: false,
                 coasts: false,
                 kml: false,
+                kmlFile: null,
 
 
             }
@@ -95,7 +97,26 @@
 
                 }
 
-
+            },
+            handleFileUpload(event){
+                console.log(event)
+                this.kmlFile = event.target.files[0];
+                console.log(this.kmlFile)
+            },
+            submitFile(){
+                var uploadUrl = 'http://127.0.0.1:8000/geogateway_django_app/kml_upload/';
+                let formData = new FormData();
+                formData.append('file', this.kmlFile);
+                console.log(formData)
+                axios.post( uploadUrl, formData
+                ).then(function(response){
+                    console.log('SUCCESS!!');
+                    bus.$emit('TextAddLayer', response.data, 'kmlUpload');
+                })
+                    .catch(function(response){
+                        console.log(response)
+                        console.log('FAILURE!!');
+                    });
             },
         },
 

@@ -22,6 +22,7 @@ urlpatterns = [
     url(r"^ca_forecast/", GeoGatewayData.forecast),
     url(r"^gdacs/", GeoGatewayData.gdacs),
     url(r"^nowcast/", GeoGatewayData.nowcast_plots),
-    url(r"^disloc/", GeoGatewayData.runDisloc)
+    url(r"^disloc/", GeoGatewayData.runDisloc),
+    url(r'^kml_upload/$', views.KmlUpload.as_view(), name='kml-upload')
 
 ]

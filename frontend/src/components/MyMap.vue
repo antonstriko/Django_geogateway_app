@@ -47,6 +47,7 @@
                     'nowcastL': null,
                     'usgs_layer': null,
                     'markerLayer': null,
+                    'kmlUpload': null,
                 },
 
 
@@ -188,6 +189,7 @@
                         this.map.fitBounds(this.layers[layerName].getBounds());
                     });
             },
+
             removeLayer(layerName){
                 this.map.removeLayer(this.layers[layerName])
             },
