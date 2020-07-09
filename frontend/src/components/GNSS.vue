@@ -131,6 +131,7 @@
 
     import {bus} from '../main'
     import axios from 'axios'
+    import toGeoJSON from 'togeojson'
     // import {convertEpochToSpecificTimezone} from '../assets/mapMethods'
     // import qs from 'qs'
 
@@ -257,7 +258,9 @@
                             responseType: 'text',
                             //emit raw kml text to parent map component
                         }).then(function (response) {
-                                    bus.$emit('TextAddLayer', response.data, 'gnssV');
+                            // console.log(toGeoJSON.kml(response.data));
+                            var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'), {styles: true})
+                            bus.$emit('gnssLayer', geojson, 'gnssV');
                             })
                         axios.get(kmlURI, {
                             params: {
@@ -267,7 +270,11 @@
                             responseType: 'text',
                             //emit raw kml text to parent map component
                         }).then(function (response) {
-                            bus.$emit('TextAddLayer', response.data, 'gnssH');
+                            // console.log(toGeoJSON.kml(response.data));
+                            var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
+                            console.log(geojson)
+                            bus.$emit('gnssLayer', geojson, 'gnssH');
+
                         })
 
                     })

@@ -52,3 +52,9 @@ export function convertEpochToSpecificTimezone(offset, d){
     var nd = new Date(utc + (3600000*offset));
     return nd
 }
+
+export function gnssPopup(feature, layer){
+    layer.bindPopup(
+        feature.properties.description
+    );
+}

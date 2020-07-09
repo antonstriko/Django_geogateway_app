@@ -21,7 +21,7 @@
     import 'leaflet-draw'
     import "leaflet-draw/dist/leaflet.draw.css";
     import TopNav from "./TopNav";
-    import {circleMaker, popupMaker} from '../assets/mapMethods'
+    import {circleMaker, gnssPopup, popupMaker} from '../assets/mapMethods'
     // import axios from "axios";
     // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -80,8 +80,8 @@
 
             //convert to above abstracted event listener
 
-            bus.$on('gnssLayer', (text) =>
-                this.kmlText(text));
+            bus.$on('gnssLayer', (text, type) =>
+                this.gnssGeoJson(text, type));
 
             bus.$on('RemoveLayer', (name) =>
                 this.removeLayer(name));
@@ -93,6 +93,9 @@
 
             bus.$on('filterCat', (text, dFilter, mFilter, iconScale, startDate, endDate) =>
                 this.catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate));
+
+            bus.$on('addGeoJson', (text, layer) =>
+                this.addGeoJson(text,layer));
 
 
         },
@@ -178,6 +181,22 @@
                 const bounds = this.layers[layerName].getBounds();
                 this.map.fitBounds(bounds);
 
+            },
+            addGeoJson(text, layer){
+              this.layers[layer] = L.geoJSON(text, {
+              }).addTo(this.map);
+            },
+            gnssGeoJson(text, type){
+              if(type === 'gnssV'){
+                  this.layers['gnssV'] = L.geoJSON(text, {
+                      onEachFeature: function (feature, layer) {
+                          //what properties of each feature are most important to display?
+                          gnssPopup(feature, layer);
+                      },
+                  }).addTo(this.map);
+              }else {
+                  this.layers['gnssH'] = L.geoJSON(text).addTo(this.map);
+              }
             },
             kmlUrl(url, layerName) {
                 fetch(url).then(res => res.text())

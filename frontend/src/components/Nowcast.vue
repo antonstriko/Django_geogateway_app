@@ -66,6 +66,7 @@
 <script>
     import {bus} from '../main'
     import axios from "axios";
+    // import toGeoJSON from "../../togeojson";
     export default {
         name: "nowcast",
         data() {
@@ -137,6 +138,8 @@
                     axios.get(gdacsUrl, {
                         responseType: "text",
                     }).then(function (response) {
+                        // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
+                        // console.log(geojson)
                         bus.$emit('TextAddLayer', response.data, 'gdacsL')
                     })
                 }else {
