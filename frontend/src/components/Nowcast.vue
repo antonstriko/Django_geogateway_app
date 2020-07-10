@@ -140,7 +140,7 @@
                     }).then(function (response) {
                         // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
                         // console.log(geojson)
-                        bus.$emit('TextAddLayer', response.data, 'gdacsL')
+                        bus.$emit('gdacsGeoJSON', response.data)
                     })
                 }else {
                     bus.$emit('RemoveLayer', 'gdacsL')

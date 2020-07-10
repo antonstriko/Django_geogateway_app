@@ -10,7 +10,7 @@ GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
 KmlPrefix = "http://156.56.174.162:8000/static"
 WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
-GdacsUrl = 'http://www.gdacs.org/xml/gdacs.kml'
+GdacsUrl = 'https://www.gdacs.org/xml/gdacsEQ.geojson'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
 
 

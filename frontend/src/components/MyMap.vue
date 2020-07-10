@@ -21,7 +21,7 @@
     import 'leaflet-draw'
     import "leaflet-draw/dist/leaflet.draw.css";
     import TopNav from "./TopNav";
-    import {circleMaker, gnssPopup, popupMaker} from '../assets/mapMethods'
+    import {circleMaker, gdacsPopup, gnssPopup, popupMaker} from '../assets/mapMethods'
     // import axios from "axios";
     // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -96,6 +96,9 @@
 
             bus.$on('addGeoJson', (text, layer) =>
                 this.addGeoJson(text,layer));
+
+            bus.$on('gdacsGeoJSON', (text) =>
+                this.addGdacsLayers(text));
 
 
         },
@@ -215,10 +218,6 @@
             addExistingLayer(layerName){
               this.map.addLayer(this.layers[layerName]);
             },
-            deleteLayer(layerName){
-                this.map.removeLayer(this.layers[layerName]);
-                this.layers[layerName] = null;
-            },
             newRemoveLayer(layername){
                 this.map.removeLayer(this.layers[layername])
             },
@@ -269,6 +268,26 @@
                     }
                 }).addTo(this.map)
             },
+
+            addGdacsLayers(text){
+                this.layers['gdacsL'] = L.geoJSON(text, {
+                    onEachFeature: function (feature, layer) {
+                        //what properties of each feature are most important to display?
+                        gdacsPopup(feature, layer);
+                    },
+                    pointToLayer: function(feature){
+                        var gdacsIcon = L.icon({
+                            iconUrl: feature.properties.iconitemlink,
+                            iconSize:     [30, 35],
+                            iconAnchor:   [15, 35],
+                        });
+                        var lat = feature.properties.latitude;
+                        var lon = feature.properties.longitude;
+                        return L.marker([lat, lon], {icon: gdacsIcon})
+                    }
+                }).addTo(this.map)
+            }
+
 
         },
 

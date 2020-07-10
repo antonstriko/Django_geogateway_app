@@ -58,3 +58,11 @@ export function gnssPopup(feature, layer){
         feature.properties.description
     );
 }
+
+export function gdacsPopup(feature, layer){
+    layer.bindPopup(
+        '<p><b>Date</b>: ' + feature.properties.fromdate + '</p>' +
+        '<p><b>Location</b>: ' + feature.properties.latitude + ", " +
+        feature.properties.longitude + '</p>'
+    );
+}
