@@ -68,6 +68,7 @@
                 coasts: false,
                 kml: false,
                 kmlFile: null,
+                selected: [],
 
 
             }

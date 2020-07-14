@@ -48,7 +48,9 @@
                     'usgs_layer': null,
                     'markerLayer': null,
                     'kmlUpload': null,
+                    'nowcastLayer': null,
                 },
+                savedLayers: [],
 
 
             };
@@ -100,6 +102,14 @@
             bus.$on('gdacsGeoJSON', (text) =>
                 this.addGdacsLayers(text));
 
+            bus.$on('saveMapState', () =>
+                this.saveState());
+
+            bus.$on('displaySave', (layers) =>
+                this.displaySave(layers));
+
+            bus.$on('clearSaveLayer', (layers) =>
+                this.clearSave(layers));
 
         },
 
@@ -110,11 +120,28 @@
                 for(var key in this.layers){
                     if(this.layers[key]!==null) {
                         this.map.removeLayer(this.layers[key]);
+                        this.layers[key] = null;
                     }
                 }
-                bus.$emit('clearLayers');
             },
 
+            saveState(){
+                bus.$emit('saved', this.layers);
+            },
+            displaySave(layers){
+                for(var key in layers){
+                        if(layers[key] !== null){
+                            this.map.addLayer(layers[key])
+                        }
+                    }
+                },
+            clearSave(layers){
+                for(var key in layers) {
+                    if (layers[key] !== null) {
+                        this.map.removeLayer(layers[key]);
+                    }
+                }
+            },
             drawToolbar(){
                 if(!this.drawToolShow) {
                     this.drawToolShow = true
@@ -127,6 +154,7 @@
                             polyline: false,
                             circle: false,
                             rectangle: true,
+                            circlemarker: false,
                         },
                         edit: {
                             featureGroup: drawnItems
@@ -149,6 +177,7 @@
                             var maxLon = layer.getLatLngs()[0][2].lng;
                             var minLat = layer.getLatLngs()[0][3].lat;
                             var minLon = layer.getLatLngs()[0][0].lng;
+                            this.removeLayer(layer)
                             // var ne = layer.getLatLngs()[0][3];
 
                             // console.log(this.gs_latitude, this.gs_longitude);
@@ -157,7 +186,6 @@
                         }
                         else if(type === 'marker'){
                             this.markerLayer = e.layer;
-                            this.addLayer(this.markerLayer);
                             var lat = this.markerLayer.getLatLng().lat;
                             var lng = this.markerLayer.getLatLng().lng;
                             bus.$emit('markPlace', lat, lng);
@@ -225,7 +253,7 @@
                 var style = " style=width:200px;height:150px;"
                 //fa-line-chart
                 var latlng = L.latLng(lat,lon);
-                var plotReadyMarker = L.circleMarker(latlng,{
+                this.layers['nowcastLayer'] = L.circleMarker(latlng,{
                     color: 'green',
                     fillColor: 'lightgreen',
                     radius:10,
@@ -237,7 +265,7 @@
 
                 //TODO make images clickable
 
-                plotReadyMarker.bindPopup("<img src=" + eps + style + " >" + "<br/>"
+                this.layers['nowcastLayer'].bindPopup("<img src=" + eps + style + " >" + "<br/>"
                     + "<img src=" + numMag + style + " >"
                     + "<img src=" + seis + style + " >");
 

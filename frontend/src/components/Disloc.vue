@@ -41,8 +41,6 @@
             }
         },
         methods: {
-            dislocHelp(){
-            },
             handleFileUpload(event){
                 console.log(event)
                 this.file = event.target.files[0];
