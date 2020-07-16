@@ -4,7 +4,9 @@
             <b-tab title="Map Tools" active><b-card-text id="map-tools" class="tab-text">
                 <MapTools />
             </b-card-text></b-tab>
-            <b-tab title="UAVSAR"><b-card-text>Tab contents 2</b-card-text></b-tab>
+            <b-tab title="UAVSAR">
+                <UAVSAR />
+            </b-tab>
             <b-tab title="GNSS"><b-card-text class="tab-text">
                 <GNSS />
             </b-card-text></b-tab>
@@ -36,6 +38,7 @@
     import Seismicity from "./Seismicity";
     import Disloc from "./Disloc";
     import Saves  from "./Saves";
+    import UAVSAR from "./UAVSAR";
     export default {
         name: "ToolTabs",
         components: {
@@ -46,6 +49,7 @@
             Seismicity,
             Disloc,
             Saves,
+            UAVSAR
 
 
         }

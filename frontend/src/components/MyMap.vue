@@ -49,6 +49,9 @@
                     'markerLayer': null,
                     'kmlUpload': null,
                     'nowcastLayer': null,
+                    'uavsarWMS': null,
+                    'uavsarOverlay': null,
+
                 },
                 savedLayers: [],
 
@@ -111,6 +114,12 @@
             bus.$on('clearSaveLayer', (layers) =>
                 this.clearSave(layers));
 
+            bus.$on('UAVSAR_overview', () =>
+                this.uavsarOverview());
+
+            bus.$on('uavsarKMLs', (queryResponse) =>
+                this.uavsarOverlay(queryResponse));
+
         },
 
 
@@ -141,6 +150,20 @@
                         this.map.removeLayer(layers[key]);
                     }
                 }
+            },
+            uavsarOverview(){
+                this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+                        layers: 'InSAR:thumbnailmosaic',
+                        transparent: true,
+                        format: 'image/png',
+                        zIndex: 2
+                }
+                ).addTo(this.map);
+            },
+            uavsarOverlay(kml){
+                this.removeLayer('uavsarWMS');
+                this.kmlText(kml, 'uavsarOverlay');
+
             },
             drawToolbar(){
                 if(!this.drawToolShow) {
@@ -199,6 +222,7 @@
                     {
                         maxZoom: 18,
                         attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
+                        zIndex: 1,
                     }).addTo(this.map);
             },
             // TODO make addLayer and removeLayer methods for use with $emit $on

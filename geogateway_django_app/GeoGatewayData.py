@@ -3,6 +3,7 @@ import requests
 import zipfile
 from django.http import HttpResponse, FileResponse
 import subprocess
+import json
 
 # TODO: add error catching
 
@@ -12,6 +13,8 @@ WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
 GdacsUrl = 'https://www.gdacs.org/xml/gdacsEQ.geojson'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
+uavsarOverUrl = 'http://gf8.ucs.indiana.edu/geoserver/InSAR/wms'
+uavsarJsonUrl = 'https://geo-gateway.org/uavsar_query/?querystr='
 
 
 def gps_service(request):
@@ -97,3 +100,31 @@ def runDisloc(request):
         response = FileResponse(output)
         return response
 
+
+def uavsarOverview(request):
+    if request.method == 'GET':
+        data = requests.get(uavsarOverUrl)
+        responseData = HttpResponse(data)
+        return responseData
+
+
+def uavsarGeometry(request):
+    if request.method == 'GET':
+        lat = request.GET.get('lat')
+        lon = request.GET.get('lon')
+        fullQuery = uavsarJsonUrl + 'Point:(' + str(lat) + ',' + str(lon) + ')'
+        data = requests.get(fullQuery)
+        responseData = HttpResponse(data)
+        return responseData
+
+
+def uavsarKML(request):
+    if request.method == 'GET':
+        baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
+        raw = request.GET.get('json')
+        query = json.loads(raw)
+        postfix = 'uid'+query['uid']+'/'+query['dataname']+'.int.kml'
+        fullURI = baseURI + postfix
+        data = requests.get(fullURI)
+        responseData = HttpResponse(data)
+        return responseData
