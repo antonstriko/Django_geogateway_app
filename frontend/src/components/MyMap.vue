@@ -51,8 +51,8 @@
                     'nowcastLayer': null,
                     'uavsarWMS': null,
                     'uavsarOverlay': null,
-
                 },
+                uavsarLayers: [],
                 savedLayers: [],
 
 
@@ -117,8 +117,16 @@
             bus.$on('UAVSAR_overview', () =>
                 this.uavsarOverview());
 
-            bus.$on('uavsarKMLs', (queryResponse) =>
-                this.uavsarOverlay(queryResponse));
+            bus.$on('uavsarKMLs', (kml, name) =>
+                this.uavsarOverlay(kml, name));
+
+            bus.$on('reactivateUavsarLayer', (name) =>
+                this.reactivateUavsarLayer(name));
+
+            bus.$on('removeUavsarLayer', (name) =>
+                this.removeUavsarLayer(name))
+
+
 
         },
 
@@ -139,11 +147,11 @@
             },
             displaySave(layers){
                 for(var key in layers){
-                        if(layers[key] !== null){
-                            this.map.addLayer(layers[key])
-                        }
+                    if(layers[key] !== null){
+                        this.map.addLayer(layers[key])
                     }
-                },
+                }
+            },
             clearSave(layers){
                 for(var key in layers) {
                     if (layers[key] !== null) {
@@ -151,19 +159,33 @@
                     }
                 }
             },
+            removeUavsarLayer(name){
+                this.map.removeLayer(this.uavsarLayers[name]);
+            },
+            reactivateUavsarLayer(name){
+                this.map.addLayer(this.uavsarLayers[name]);
+            },
             uavsarOverview(){
                 this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
                         layers: 'InSAR:thumbnailmosaic',
                         transparent: true,
                         format: 'image/png',
                         zIndex: 2
-                }
+                    }
                 ).addTo(this.map);
             },
-            uavsarOverlay(kml){
-                this.removeLayer('uavsarWMS');
-                this.kmlText(kml, 'uavsarOverlay');
-
+            uavsarOverlay(text, entry){
+                if(this.layers['uavsarWMS']) {
+                    this.removeLayer('uavsarWMS');
+                }
+                var name = entry.name
+                console.log(entry)
+                const parser = new DOMParser();
+                const kml = parser.parseFromString(text, 'text/xml');
+                this.uavsarLayers[name] = new L.KML(kml);
+                this.map.addLayer(this.uavsarLayers[name]);
+                const bounds = this.uavsarLayers[name].getBounds();
+                this.map.fitBounds(bounds);
             },
             drawToolbar(){
                 if(!this.drawToolShow) {
@@ -238,20 +260,20 @@
 
             },
             addGeoJson(text, layer){
-              this.layers[layer] = L.geoJSON(text, {
-              }).addTo(this.map);
+                this.layers[layer] = L.geoJSON(text, {
+                }).addTo(this.map);
             },
             gnssGeoJson(text, type){
-              if(type === 'gnssV'){
-                  this.layers['gnssV'] = L.geoJSON(text, {
-                      onEachFeature: function (feature, layer) {
-                          //what properties of each feature are most important to display?
-                          gnssPopup(feature, layer);
-                      },
-                  }).addTo(this.map);
-              }else {
-                  this.layers['gnssH'] = L.geoJSON(text).addTo(this.map);
-              }
+                if(type === 'gnssV'){
+                    this.layers['gnssV'] = L.geoJSON(text, {
+                        onEachFeature: function (feature, layer) {
+                            //what properties of each feature are most important to display?
+                            gnssPopup(feature, layer);
+                        },
+                    }).addTo(this.map);
+                }else {
+                    this.layers['gnssH'] = L.geoJSON(text).addTo(this.map);
+                }
             },
             kmlUrl(url, layerName) {
                 fetch(url).then(res => res.text())
@@ -268,7 +290,7 @@
                 this.map.removeLayer(this.layers[layerName])
             },
             addExistingLayer(layerName){
-              this.map.addLayer(this.layers[layerName]);
+                this.map.addLayer(this.layers[layerName]);
             },
             newRemoveLayer(layername){
                 this.map.removeLayer(this.layers[layername])

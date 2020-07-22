@@ -126,5 +126,12 @@ def uavsarKML(request):
         postfix = 'uid'+query['uid']+'/'+query['dataname']+'.int.kml'
         fullURI = baseURI + postfix
         data = requests.get(fullURI)
-        responseData = HttpResponse(data)
-        return responseData
+
+        uid = query['uid']
+
+        toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+
+        respData = data.content.replace('<href>'.encode(), toRep.encode())
+        response = HttpResponse(respData)
+    
+        return response

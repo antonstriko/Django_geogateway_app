@@ -15,12 +15,10 @@
                 <b-form-input v-model="lat_lon" name="lat_lon" placeholder=""></b-form-input>
             </b-input-group>
         </div>
-        <div v-if="uavsarQueries !== ''">
-            <b-table :sticky-header="true"
-                     :no-border-collapse="true"
-                     responsive
-                     :items="uavsarQueries"
-            ></b-table>
+        <div v-if="layers !== ''">
+            <div v-for="entry in layers" :key="entry.name">
+                <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"> <span class="checkbox-label" @click="entry.extended = true">{{entry.uid}}</span> <br>
+            </div>
         </div>
     </div>
 </template>
@@ -35,7 +33,8 @@
               overview: false,
               flight_path: '',
               lat_lon: '',
-              uavsarQueries: '',
+              uavsarQueries: [],
+              layers: [],
 
 
           }
@@ -45,6 +44,9 @@
                 this.pointQuery(lat, lon));
             bus.$on('uavsarGeom', (json) =>
                 this.uavsarKML(json));
+
+            bus.$on('assignKmls', (kml) =>
+                this.assignKmls(kml));
         },
         methods: {
             showOverview(){
@@ -67,29 +69,41 @@
                     }
                 }).then(function (response){
                     queryResponse = response.data;
-                    console.log(queryResponse)
                     bus.$emit('uavsarGeom', queryResponse)
                 })
             },
+            kmlLayerChange(entry){
+                if(entry.active) {
+                    bus.$emit('reactivateUavsarLayer', entry.name);
+                }else {
+                    bus.$emit('removeUavsarLayer', entry.name)
+                }
+            },
             uavsarKML(json){
-                this.uavsarQueries = json;
-
                 var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
-                console.log(json)
+                var results = [];
                 for(var i = 0; i < json.length; i++) {
-
+                    var dataname = json[i]['dataname'];
+                    var uid = json[i]['uid']
+                    results[i] = {name:dataname, active:true, uid:uid, extended:false};
                     axios.get(baseURI, {
                         params: {
                             //
                             "json": JSON.stringify(json[i]),
                         }
                     }).then(function (response) {
-                        var queryResponse = response.data;
-                        console.log(queryResponse)
-                        bus.$emit('uavsarKMLs', queryResponse)
 
+                        var kml = response.data
+                        console.log(kml)
+                        bus.$emit('assignKmls', kml)
                     })
                 }
+                this.uavsarQueries = results;
+            },
+            assignKmls(kml){
+                var entry = this.uavsarQueries.shift()
+                this.layers.push(entry)
+                bus.$emit('uavsarKMLs', kml, entry)
             }
         }
     }
