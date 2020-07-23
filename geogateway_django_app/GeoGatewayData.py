@@ -1,7 +1,7 @@
 import io
 import requests
 import zipfile
-from django.http import HttpResponse, FileResponse
+from django.http import HttpResponse, FileResponse, JsonResponse
 import subprocess
 import json
 
@@ -120,18 +120,46 @@ def uavsarGeometry(request):
 
 def uavsarKML(request):
     if request.method == 'GET':
+
         baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
         raw = request.GET.get('json')
-        query = json.loads(raw)
-        postfix = 'uid'+query['uid']+'/'+query['dataname']+'.int.kml'
-        fullURI = baseURI + postfix
-        data = requests.get(fullURI)
+        queries = json.loads(raw)
+        responseList = []
+        for query in queries:
 
-        uid = query['uid']
+            postfix = 'uid'+query['uid']+'/'+query['dataname']+'.int.kml'
+            fullURI = baseURI + postfix
+            data = requests.get(fullURI)
 
-        toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+            uid = query['uid']
 
-        respData = data.content.replace('<href>'.encode(), toRep.encode())
-        response = HttpResponse(respData)
-    
+            toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+
+            respData = data.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
+            meta = query
+            responseList.append({'kml': respData, 'info': meta, 'active': True, 'extended': False})
+
+        response = JsonResponse(responseList, safe=False)
         return response
+
+
+# def uavsarHighRes(request):
+#
+#
+#     wmsParams = [
+#         "version=1.1.1",
+#         "request=DescribeLayer",
+#         "outputFormat=application/json",
+#         "exceptions=application/json"
+#     ]
+#     paramChunk = "&".join(wmsParams) + "&layers=" + "InSAR:uid"
+#     if request.method == 'GET':
+#         uid = request.GET.get('uid')
+#         fullUri = wms + paramChunk + uid + "_unw"
+#         data = requests.get(fullUri)
+#         print(fullUri)
+#         print(uid)
+#         print(data)
+#         response = HttpResponse(data)
+#         return response
+#

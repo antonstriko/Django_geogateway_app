@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^kml_upload/$', views.KmlUpload.as_view(), name='kml-upload'),
     url(r"^UAVSAR_overview/", GeoGatewayData.uavsarOverview),
     url(r"^UAVSAR_geom/", GeoGatewayData.uavsarGeometry),
-    url(r"^UAVSAR_KML/", GeoGatewayData.uavsarKML)
+    url(r"^UAVSAR_KML/", GeoGatewayData.uavsarKML),
+    # url(r"^uavsarHighRes/", GeoGatewayData.uavsarHighRes)
+
 
 ]

@@ -51,6 +51,7 @@
                     'nowcastLayer': null,
                     'uavsarWMS': null,
                     'uavsarOverlay': null,
+                    'highResUavsar': null,
                 },
                 uavsarLayers: [],
                 savedLayers: [],
@@ -117,8 +118,8 @@
             bus.$on('UAVSAR_overview', () =>
                 this.uavsarOverview());
 
-            bus.$on('uavsarKMLs', (kml, name) =>
-                this.uavsarOverlay(kml, name));
+            bus.$on('uavsarKMLs', (results) =>
+                this.uavsarOverlay(results));
 
             bus.$on('reactivateUavsarLayer', (name) =>
                 this.reactivateUavsarLayer(name));
@@ -126,8 +127,8 @@
             bus.$on('removeUavsarLayer', (name) =>
                 this.removeUavsarLayer(name))
 
-
-
+            bus.$on('uavsarWMS', (layer) =>
+                this.uavsarWMS(layer));
         },
 
 
@@ -152,6 +153,30 @@
                     }
                 }
             },
+            uavsarWMS(entry){
+                console.log(entry)
+                if(this.layers['highResUavsar'] !== null){
+                    this.map.removeLayer(this.layers['highResUavsar']);
+                    this.layers['highResUavsar'] = null;
+                }
+                var baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?"
+                // var wmsParams = [
+                //     "version=1.1.1",
+                //     "outputFormat=application/json",
+                //     "exceptions=application/json"
+                // ];
+                var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
+                var queryUrl = baseURI ;
+                console.log(queryUrl)
+                this.layers['highResUavsar'] = L.tileLayer.wms(queryUrl, {
+                    layers: layername,
+                    transparent: true,
+                    format: 'image/png',
+                    zIndex: 2
+                })
+
+                this.map.addLayer(this.layers['highResUavsar']);
+            },
             clearSave(layers){
                 for(var key in layers) {
                     if (layers[key] !== null) {
@@ -174,18 +199,23 @@
                     }
                 ).addTo(this.map);
             },
-            uavsarOverlay(text, entry){
+            uavsarOverlay(entries){
                 if(this.layers['uavsarWMS']) {
                     this.removeLayer('uavsarWMS');
                 }
-                var name = entry.name
-                console.log(entry)
-                const parser = new DOMParser();
-                const kml = parser.parseFromString(text, 'text/xml');
-                this.uavsarLayers[name] = new L.KML(kml);
-                this.map.addLayer(this.uavsarLayers[name]);
-                const bounds = this.uavsarLayers[name].getBounds();
-                this.map.fitBounds(bounds);
+                for(let k = 0;k<entries.length;k++){
+                    let entry = entries[k];
+                    var name = entry.info['dataname']
+                    console.log(name)
+                    let text = entry.kml;
+                    const parser = new DOMParser();
+                    const kml = parser.parseFromString(text, 'text/xml');
+                    this.uavsarLayers[name] = new L.KML(kml);
+                    this.map.addLayer(this.uavsarLayers[name]);
+                    const bounds = this.uavsarLayers[name].getBounds();
+                    this.map.fitBounds(bounds);
+                }
+
             },
             drawToolbar(){
                 if(!this.drawToolShow) {
