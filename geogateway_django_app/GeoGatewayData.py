@@ -118,6 +118,17 @@ def uavsarGeometry(request):
         return responseData
 
 
+def uavsarTest(request):
+    if request.method == 'GET':
+        testURI = 'http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?version=1.1.1&request=DescribeLayer' \
+                  '&outputFormat=application/json&exceptions=application/json&layers= '
+
+        layername = request.GET.get('uid')
+
+        data = requests.get(testURI + layername)
+        return HttpResponse(data)
+
+
 def uavsarKML(request):
     if request.method == 'GET':
 

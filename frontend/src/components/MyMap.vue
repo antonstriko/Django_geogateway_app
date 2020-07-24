@@ -141,6 +141,12 @@
                         this.layers[key] = null;
                     }
                 }
+                for(var uid in this.uavsarLayers) {
+                    if (this.uavsarLayers[uid] !== null) {
+                        this.map.removeLayer(this.uavsarLayers[uid]);
+                        this.uavsarLayers[uid] = null;
+                    }
+                }
             },
 
             saveState(){
@@ -154,27 +160,24 @@
                 }
             },
             uavsarWMS(entry){
-                console.log(entry)
                 if(this.layers['highResUavsar'] !== null){
                     this.map.removeLayer(this.layers['highResUavsar']);
                     this.layers['highResUavsar'] = null;
                 }
                 var baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?"
-                // var wmsParams = [
-                //     "version=1.1.1",
-                //     "outputFormat=application/json",
-                //     "exceptions=application/json"
-                // ];
+
                 var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
-                var queryUrl = baseURI ;
-                console.log(queryUrl)
-                this.layers['highResUavsar'] = L.tileLayer.wms(queryUrl, {
+
+
+                this.layers['highResUavsar'] = L.tileLayer.wms(baseURI, {
                     layers: layername,
                     transparent: true,
                     format: 'image/png',
                     zIndex: 2
                 })
 
+                console.log(this.layers['highResUavsar']._container)
+                console.log(this.layers['highResUavsar'])
                 this.map.addLayer(this.layers['highResUavsar']);
             },
             clearSave(layers){
@@ -205,14 +208,13 @@
                 }
                 for(let k = 0;k<entries.length;k++){
                     let entry = entries[k];
-                    var name = entry.info['dataname']
-                    console.log(name)
+                    var id = entry.info['uid']
                     let text = entry.kml;
                     const parser = new DOMParser();
                     const kml = parser.parseFromString(text, 'text/xml');
-                    this.uavsarLayers[name] = new L.KML(kml);
-                    this.map.addLayer(this.uavsarLayers[name]);
-                    const bounds = this.uavsarLayers[name].getBounds();
+                    this.uavsarLayers[id] = new L.KML(kml);
+                    this.map.addLayer(this.uavsarLayers[id]);
+                    const bounds = this.uavsarLayers[id].getBounds();
                     this.map.fitBounds(bounds);
                 }
 
@@ -226,7 +228,7 @@
                         draw: {
                             polygon: false,
                             marker: true,
-                            polyline: false,
+                            polyline: true,
                             circle: false,
                             rectangle: true,
                             circlemarker: false,
@@ -264,6 +266,11 @@
                             var lat = this.markerLayer.getLatLng().lat;
                             var lng = this.markerLayer.getLatLng().lng;
                             bus.$emit('markPlace', lat, lng);
+                        }
+                        else if(type === 'polyline'){
+                            var displacementLine = e.layer;
+                            var arrLatLon = displacementLine.getLatLngs();
+                            console.log(arrLatLon);
                         }
                     });
                 }
