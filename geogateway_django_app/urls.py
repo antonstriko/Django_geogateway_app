@@ -27,7 +27,8 @@ urlpatterns = [
     url(r"^UAVSAR_overview/", GeoGatewayData.uavsarOverview),
     url(r"^UAVSAR_geom/", GeoGatewayData.uavsarGeometry),
     url(r"^UAVSAR_KML/", GeoGatewayData.uavsarKML),
-    url(r"^UAVSAR_test/", GeoGatewayData.uavsarTest)
+    url(r"^UAVSAR_test/", GeoGatewayData.uavsarTest),
+    url(r"^UAVSAR_csv/", GeoGatewayData.uavsarCSV)
 
 
 ]

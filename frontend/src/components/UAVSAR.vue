@@ -18,6 +18,31 @@
             <b-button variant="success" @click="pointQuery(lat_lon.split(',')[0], lat_lon.split(',')[1])">Search KMLs</b-button>
         </div>
         <br />
+
+        <div v-if="LosPlot" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
+            <p><b>Plot UID: </b>{{activePlot}}</p>
+           <b-input-group>
+               <b-input-group prepend="Start Lat/Lon" class="mb-2">
+                   <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
+                   <b-form-input v-model="lon1" name="lon1" placeholder=""></b-form-input>
+               </b-input-group>
+            </b-input-group>
+            <b-input-group>
+                <b-input-group prepend="End Lat/Lon" class="mb-2">
+                    <b-form-input v-model="lat2" name="lat2" placeholder=""></b-form-input>
+                    <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
+                </b-input-group>
+            </b-input-group>
+
+            <b-input-group prepend="LOS Length">
+                <b-form-input v-model="losLength" name="length" placeholder=""></b-form-input>
+            </b-input-group>
+            <b-input-group prepend="Azimuth">
+                <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
+            </b-input-group>
+            <br/>
+        </div>
+
         <div v-if="layers.length !== 0">
             <br/>
             <div class="layer-options">
@@ -43,6 +68,9 @@
                             <b>UID: </b>{{entry.info['uid']}}  |  <b>Heading: </b> {{entry.info['heading']}} | <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                             <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
                         </div>
+                    <div v-if="layerFound">
+                        <b-button variant="success" @click="showLosPlot(entry)">Show/Hide LOS Plot</b-button>
+                    </div>
                 </div>
 
             </div>
@@ -53,6 +81,10 @@
 <script>
     import {bus} from '../main'
     import axios from "axios";
+    // import Zingchart from 'zingchart'
+    // import Chart from 'chart.js'
+    // import * as d3 from 'd3'
+
     export default {
         name: "UAVSAR",
         data(){
@@ -65,6 +97,15 @@
                 extendedBorder: '',
                 layerFound: false,
                 selDesel: false,
+                LosPlot: false,
+                lat1: '',
+                lat2: '',
+                lon1: '',
+                lon2: '',
+                losLength: '',
+                azimuth: '',
+                activePlot: '',
+
 
             }
         },
@@ -75,9 +116,14 @@
                 this.uavsarKML(json));
             bus.$on('uavsarKMLs', (results)=>
                 this.assignKmls(results));
-
             bus.$on('layerAlert', (found)=>
                 this.dynamicExtended(found));
+            bus.$on('getCSV', (entry, latlons)=>
+                this.getCSV(entry, latlons));
+            bus.$on('updatedPlot', (latlon, entry)=>
+                this.getCSV(entry, latlon));
+            bus.$on('chartData', (csv)=>
+                this.chartData(csv));
         },
         methods: {
             dynamicExtended(found){
@@ -85,11 +131,59 @@
                     this.layerFound = true;
                     this.extendedColor = '#CCFFCC'
                     this.extendedBorder = '1px solid #99FF99'
+                    // add markers for plotting
+                    bus.$emit('uavsarPlotMarkers')
+
+
                 }else {
                     this.layerFound = false;
                     this.extendedColor = '#ffbab5'
                     this.extendedBorder = '1px solid #fc8077'
                 }
+            },
+            chartData(csv, entry){
+                console.log(csv, entry)
+                // d3.csv('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
+                //     params: {
+                //         'entry':JSON.stringify(entry),
+                //         'lat1':this.lat1,
+                //         'lon1':this.lon1,
+                //         'lat2':this.lat2,
+                //         'lon2':this.lon2,
+                //         'losLength':losLength,
+                //         'azimuth':azimuth,
+                //     }
+                // })
+                //     .then(makeChart);
+                //
+                // function makeChart(points) {
+                //     console.log(points)
+                // }
+            },
+            getCSV(entry, latlon){
+                var losLength = this.setLosLength(latlon);
+                var azimuth = this.setAzimuth(latlon);
+                this.losLength = losLength;
+                this.azimuth = azimuth;
+                this.lat1 = latlon[0];
+                this.lon1 = latlon[1];
+                this.lat2 = latlon[2];
+                this.lon2 = latlon[3];
+
+              axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
+                  params: {
+                      'entry':JSON.stringify(entry),
+                      'lat1':this.lat1,
+                      'lon1':this.lon1,
+                      'lat2':this.lat2,
+                      'lon2':this.lon2,
+                      'losLength':losLength,
+                      'azimuth':azimuth,
+
+                  }
+              }).then(function (response){
+                  console.log(response.data);
+              })
             },
             extendEntry(entry){
                 var layerFound = false;
@@ -114,6 +208,9 @@
                         var datajson = response.data
                         if(Object.prototype.hasOwnProperty.call(datajson,'layerDescriptions')) {
                             layerFound = true;
+
+
+                            bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
                         }
                         else if(Object.prototype.hasOwnProperty.call(datajson,'exceptions')) {
                             layerFound = false;
@@ -122,7 +219,6 @@
                     })
 
 
-                        bus.$emit('uavsarWMS', entry);
                 }
                 else {
                     entry.extended = false;
@@ -134,6 +230,10 @@
                   this.kmlLayerChange(this.layers[i]);
               }
               this.selDesel = !this.selDesel;
+            },
+            showLosPlot(entry){
+              this.LosPlot = true;
+              this.activePlot = entry.info['uid'];
             },
             clearQuery(){
                 this.layers = [];
@@ -183,9 +283,6 @@
                         }
                     }).then(function (response) {
                         results = response.data;
-                        for(var i = 0; i < results.length; i++){
-                            console.log(results[i].info['dataname'])
-                        }
                         // let findDuplicates = arr => arr.filter((item, index) => results.indexOf(item) != index)
                         bus.$emit('uavsarKMLs', results);
                     })
@@ -193,6 +290,45 @@
             },
             assignKmls(results){
                 this.layers = results;
+            },
+
+            setLosLength(latlon){
+                var latStart = latlon[0];
+                var lonStart = latlon[1];
+                var latEnd = latlon[2];
+                var lonEnd = latlon[3];
+
+                var d2r = Math.PI / 180.0;
+                var flatten = 1.0 / 298.247;
+                var theFactor = d2r * Math.cos(d2r * latStart) * 6378.139 * (
+                    1.0 - Math.sin(d2r * latStart) * Math.sin(d2r * latStart) * flatten);
+
+                var xdiff = (lonEnd - lonStart) * theFactor;
+                var ydiff = (latEnd - latStart) * 111.32;
+
+                var losLength = Math.sqrt(xdiff * xdiff + ydiff * ydiff);
+                losLength = losLength.toFixed(3);
+                return losLength;
+            },
+            setAzimuth(latlon){
+                var swLat = latlon[0];
+                var swLon = latlon[1];
+                var neLat = latlon[2];
+                var neLon = latlon[3];
+                //Using http://www.movable-type.co.uk/scripts/latlong.html
+                var d2r=Math.PI/180.0;
+                var flatten=1.0/298.247;
+
+                var theFactor=d2r* Math.cos(d2r * swLat) * 6378.139 * (1.0 - Math.sin(d2r * swLat) * Math.sin(d2r * swLat) * flatten);
+                var x=(neLon-swLon)*theFactor;
+                var y=(neLat-swLat)*111.32;
+
+                var azimuth=Math.atan2(x,y)/d2r;
+                azimuth=azimuth.toFixed(1);
+                if(azimuth>180) azimuth=azimuth-360;
+                if(azimuth<-180) azimuth=azimuth+360;
+
+                return azimuth;
             }
         }
     }

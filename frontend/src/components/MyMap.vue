@@ -55,6 +55,9 @@
                 },
                 uavsarLayers: [],
                 savedLayers: [],
+                plottingMarker1: null,
+                plottingMarker2: null,
+                plotLine: null,
 
 
             };
@@ -127,8 +130,14 @@
             bus.$on('removeUavsarLayer', (name) =>
                 this.removeUavsarLayer(name))
 
-            bus.$on('uavsarWMS', (layer) =>
-                this.uavsarWMS(layer));
+            bus.$on('uavsarWMS', (layer, latlon) =>
+                this.uavsarWMS(layer, latlon));
+
+            // this.map.on('click', (e) =>
+            //     this.mapListener(e));
+
+            bus.$on('updatePlotLine', (entry)=>
+                this.updatePlotLine(entry));
         },
 
 
@@ -149,6 +158,12 @@
                 }
             },
 
+            updatePlotLine(entry){
+                this.plotLine.remove();
+                this.plotLine = L.polyline([this.plottingMarker1.getLatLng(),this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
+                var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
+                bus.$emit('updatedPlot', latlon, entry)
+            },
             saveState(){
                 bus.$emit('saved', this.layers);
             },
@@ -159,7 +174,7 @@
                     }
                 }
             },
-            uavsarWMS(entry){
+            uavsarWMS(entry, latlon){
                 if(this.layers['highResUavsar'] !== null){
                     this.map.removeLayer(this.layers['highResUavsar']);
                     this.layers['highResUavsar'] = null;
@@ -177,8 +192,49 @@
                 })
 
                 console.log(this.layers['highResUavsar']._container)
-                console.log(this.layers['highResUavsar'])
+
                 this.map.addLayer(this.layers['highResUavsar']);
+                console.log(this.layers['highResUavsar'])
+
+                var lat1 = latlon[0][1];
+                var lon1 = latlon[0][0];
+                var lat2 = latlon[2][1];
+                var lon2 = latlon[2][0];
+
+                //set markers for LOS plotting
+
+                console.log(lon1, lon2)
+
+                var factor = (lon2 - lon1)/6
+
+                var updatedLon2 = lon1 + factor;
+
+                var updatedLat2 = ((lat2 - lat1)/5) + lat1
+
+                bus.$emit('getCSV', entry,  [lat1, lon1, updatedLat2, updatedLon2]);
+
+                if(this.plottingMarker1 !== null){
+                    this.plottingMarker1.remove();
+                    this.plottingMarker2.remove();
+                    this.plotLine.remove();
+                }
+                this.plottingMarker1 = L.marker([lat1, lon1],
+                    {draggable: true}).addTo(this.map)
+                // console.log(this.plottingMarker1)
+                this.plottingMarker2 = L.marker([updatedLat2, updatedLon2],
+                    {draggable: true}).addTo(this.map)
+
+                this.plotLine = L.polyline([this.plottingMarker1.getLatLng(),this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
+
+                this.plottingMarker1.on('drag', function(){
+                    bus.$emit('updatePlotLine', entry);
+                })
+
+                this.plottingMarker2.on('drag', function(){
+                    bus.$emit('updatePlotLine', entry);
+                })
+
+
             },
             clearSave(layers){
                 for(var key in layers) {
