@@ -69,8 +69,9 @@
                             <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
                         </div>
                     <div v-if="layerFound">
-                        <b-button variant="success" @click="showLosPlot(entry)">Show/Hide LOS Plot</b-button>
+                        <b-button variant="success" @click="activatePlotButton(entry)">Show/Hide LOS Plot</b-button>
                     </div>
+
                 </div>
 
             </div>
@@ -84,6 +85,7 @@
     // import Zingchart from 'zingchart'
     // import Chart from 'chart.js'
     // import * as d3 from 'd3'
+    // import Dygraph from 'dygraphs'
 
     export default {
         name: "UAVSAR",
@@ -105,6 +107,7 @@
                 losLength: '',
                 azimuth: '',
                 activePlot: '',
+                csv_final: '',
 
 
             }
@@ -141,24 +144,24 @@
                     this.extendedBorder = '1px solid #fc8077'
                 }
             },
-            chartData(csv, entry){
-                console.log(csv, entry)
-                // d3.csv('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
-                //     params: {
-                //         'entry':JSON.stringify(entry),
-                //         'lat1':this.lat1,
-                //         'lon1':this.lon1,
-                //         'lat2':this.lat2,
-                //         'lon2':this.lon2,
-                //         'losLength':losLength,
-                //         'azimuth':azimuth,
-                //     }
-                // })
-                //     .then(makeChart);
-                //
-                // function makeChart(points) {
-                //     console.log(points)
-                // }
+            chartData(csv){
+                var csv2=csv.split("\n");
+                var csv_final="";
+                for(var i=0;i<csv2.length;i++) {
+                    var csv3=csv2[i].split(",");
+                    //                console.log(csv2[i],csv3)
+                    if(csv3[2] && csv3[3]) {
+                        csv_final+=csv3[2]+","+csv3[3]+"\n";
+                    }
+                    //                console.log(csv_final);
+                }
+                this.csv_final = csv_final;
+
+                bus.$emit('activatePlot', csv_final);
+            },
+            activatePlotButton(entry){
+                this.showLosPlot(entry);
+                bus.$emit('showPlot', this.csv_final);
             },
             getCSV(entry, latlon){
                 var losLength = this.setLosLength(latlon);
@@ -182,7 +185,7 @@
 
                   }
               }).then(function (response){
-                  console.log(response.data);
+                  bus.$emit('chartData', response.data);
               })
             },
             extendEntry(entry){
@@ -237,6 +240,7 @@
             },
             clearQuery(){
                 this.layers = [];
+                this.
                 this.showOverview();
             },
             showOverview(){

@@ -36,7 +36,7 @@
     left: 50%;
     margin-top: 0;
     margin-left: -10px;
-
+    float: top;
     height: auto;
     width: 100px;
 }

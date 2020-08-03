@@ -5,9 +5,14 @@
               crossorigin=""/>
         <TopNav />
         <ToolBar />
+        <div v-if="plotActive" class="plot-window">
+            <div id="dygraph-LOS"></div>
+        </div>
+
         <div id="map">
         </div>
         <b-button id="clearMap" @click="resetMap">Clear Map</b-button>
+
     </div>
 </template>
 
@@ -17,11 +22,13 @@
     import L from 'leaflet';
     import "leaflet-kml"
     import ToolBar from "./ToolBar";
+    import TopNav from "./TopNav";
     import {bus} from '../main'
     import 'leaflet-draw'
     import "leaflet-draw/dist/leaflet.draw.css";
-    import TopNav from "./TopNav";
+
     import {circleMaker, gdacsPopup, gnssPopup, popupMaker} from '../assets/mapMethods'
+    import Dygraph from "dygraphs";
     // import axios from "axios";
     // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -29,7 +36,7 @@
         name: 'MyMap',
         components: {
             ToolBar,
-            TopNav
+            TopNav,
         },
         data() {
             return {
@@ -58,6 +65,7 @@
                 plottingMarker1: null,
                 plottingMarker2: null,
                 plotLine: null,
+                plotActive: false,
 
 
             };
@@ -138,11 +146,33 @@
 
             bus.$on('updatePlotLine', (entry)=>
                 this.updatePlotLine(entry));
+            bus.$on('showPlot', (csv_final)=>
+                this.showPlot(csv_final));
+            bus.$on('activatePlot', (csv_final)=>
+                this.activatePlot(csv_final));
         },
 
 
         methods: {
+            showPlot(csv_final){
+                new Dygraph(
+                    document.getElementById("dygraph-LOS"),
+                    csv_final,{drawPoints:true,
+                        pointSize:2,
+                        strokeWidth:0.0,
+                        titleHeight:20,
+                        xLabelHeight:16,
+                        yLabelWidth:16,
+                        xlabel:'Distance (km)',
+                        ylabel:'Ground Range Change (cm)'
+                    }
+                );
 
+            },
+            activatePlot(csv_final){
+                this.plotActive = true;
+                this.showPlot(csv_final)
+            },
             resetMap(){
                 for(var key in this.layers){
                     if(this.layers[key]!==null) {
@@ -226,11 +256,11 @@
 
                 this.plotLine = L.polyline([this.plottingMarker1.getLatLng(),this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
 
-                this.plottingMarker1.on('drag', function(){
+                this.plottingMarker1.on('dragend', function(){
                     bus.$emit('updatePlotLine', entry);
                 })
 
-                this.plottingMarker2.on('drag', function(){
+                this.plottingMarker2.on('dragend', function(){
                     bus.$emit('updatePlotLine', entry);
                 })
 
@@ -466,6 +496,7 @@
         height: 96%;
         width: auto;
         margin-left: auto;
+        margin-bottom: auto;
         /*float: right;*/
 
     }
@@ -488,4 +519,27 @@
         background-repeat: no-repeat;
         color: transparent !important;
     }
+    /*.plot{*/
+    /*    position: absolute;*/
+    /*    height: 200px;*/
+    /*    width: 500px;*/
+    /*    z-index: 400;*/
+    /*}*/
+    #dygraph-LOS {
+        position: absolute;
+        height: 300px;
+        width: 950px;
+        margin-left: 200px;
+        margin-top: 25px;
+        border-color: #5cb85c;
+
+    }
+    .plot-window {
+        position: relative;
+        height: 350px;
+        width: 100%;
+        margin-left: 500px;
+        background-color: #CCFFCC;
+    }
+
 </style>
