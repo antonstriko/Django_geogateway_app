@@ -146,10 +146,16 @@
 
             bus.$on('updatePlotLine', (entry)=>
                 this.updatePlotLine(entry));
-            bus.$on('showPlot', (csv_final)=>
-                this.showPlot(csv_final));
             bus.$on('activatePlot', (csv_final)=>
-                this.activatePlot(csv_final));
+                this.showPlot(csv_final));
+            bus.$on('hidePlot', ()=>
+                this.hidePlot());
+            bus.$on('showPlotDiv', ()=>
+                this.showPlotDiv());
+            bus.$on('resetUavsar', ()=>
+                this.resetUavsar());
+            bus.$on('FormUpdatePlotLine', (activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength )=>
+                this.updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength ));
         },
 
 
@@ -169,9 +175,18 @@
                 );
 
             },
-            activatePlot(csv_final){
+            resetUavsar(){
+                this.plotActive = false;
+                if(this.layers['highResUavsar'] !== null){
+                    this.removeLayer('highResUavsar');
+                }
+                this.plottingMarker1.remove();
+                this.plottingMarker2.remove();
+                this.plotLine.remove();
+            },
+            showPlotDiv(){
                 this.plotActive = true;
-                this.showPlot(csv_final)
+                this.$forceUpdate();
             },
             resetMap(){
                 for(var key in this.layers){
@@ -186,6 +201,20 @@
                         this.uavsarLayers[uid] = null;
                     }
                 }
+            },
+            hidePlot(){
+                this.plotActive = false
+
+            },
+
+            updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len){
+                console.log(az, len);
+                this.plottingMarker2.setLatLng([lat2, lon2]);
+                this.plottingMarker1.setLatLng([lat1, lon1]);
+                var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
+                this.plotLine.setLatLngs([[lat1, lon1],
+                    [lat2, lon2]]);
+                bus.$emit('updatedPlot', latlon, entry)
             },
 
             updatePlotLine(entry){
@@ -263,6 +292,8 @@
                 this.plottingMarker2.on('dragend', function(){
                     bus.$emit('updatePlotLine', entry);
                 })
+
+                this.plotActive = true;
 
 
             },

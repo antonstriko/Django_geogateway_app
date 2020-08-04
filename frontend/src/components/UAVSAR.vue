@@ -41,6 +41,7 @@
                 <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
             </b-input-group>
             <br/>
+            <b-button variant="success" @click="updatePlot(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">Update LOS Plot</b-button>
         </div>
 
         <div v-if="layers.length !== 0">
@@ -108,6 +109,7 @@
                 azimuth: '',
                 activePlot: '',
                 csv_final: '',
+                activeEntry: null,
 
 
             }
@@ -130,6 +132,7 @@
         },
         methods: {
             dynamicExtended(found){
+                //set background color dynamically according to wms description
                 if(found){
                     this.layerFound = true;
                     this.extendedColor = '#CCFFCC'
@@ -156,12 +159,24 @@
                     //                console.log(csv_final);
                 }
                 this.csv_final = csv_final;
-
+                this.LosPlot = true;
                 bus.$emit('activatePlot', csv_final);
             },
             activatePlotButton(entry){
-                this.showLosPlot(entry);
-                bus.$emit('showPlot', this.csv_final);
+                if(!this.LosPlot){
+                    this.LosPlot = true;
+                    this.activePlot = entry.info['uid'];
+                    bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
+
+                }
+                else {
+                    this.LosPlot = false;
+                    bus.$emit('hidePlot');
+                }
+
+            },
+            updatePlot(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength){
+                bus.$emit('FormUpdatePlotLine', activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength );
             },
             getCSV(entry, latlon){
                 var losLength = this.setLosLength(latlon);
@@ -190,6 +205,8 @@
             },
             extendEntry(entry){
                 var layerFound = false;
+                bus.$emit('hidePlot');
+                this.activeEntry = entry;
                 if(!entry.extended) {
                     for (var i = 0; i < this.layers.length; i++) {
                         this.layers[i].extended = false
@@ -203,6 +220,10 @@
 
                     var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
+
+
+                    //get wms description and check for exception
+
                     axios.get(testURI, {
                         params: {
                             'uid':layername,
@@ -211,8 +232,6 @@
                         var datajson = response.data
                         if(Object.prototype.hasOwnProperty.call(datajson,'layerDescriptions')) {
                             layerFound = true;
-
-
                             bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
                         }
                         else if(Object.prototype.hasOwnProperty.call(datajson,'exceptions')) {
@@ -220,8 +239,6 @@
                         }
                         bus.$emit('layerAlert', layerFound);
                     })
-
-
                 }
                 else {
                     entry.extended = false;
@@ -234,13 +251,10 @@
               }
               this.selDesel = !this.selDesel;
             },
-            showLosPlot(entry){
-              this.LosPlot = true;
-              this.activePlot = entry.info['uid'];
-            },
             clearQuery(){
                 this.layers = [];
-                this.
+                this.LosPlot = false;
+                bus.$emit('resetUavsar');
                 this.showOverview();
             },
             showOverview(){
