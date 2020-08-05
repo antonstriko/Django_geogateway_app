@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="tab-window">
         <div>
                 <input
                         type="checkbox"
@@ -132,4 +132,10 @@
         border-radius: 1px;
     }
 
+</style>
+
+<style>
+    label {
+        color: #71A7DD;
+    }
 </style>

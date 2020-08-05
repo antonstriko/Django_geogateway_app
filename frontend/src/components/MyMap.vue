@@ -343,9 +343,9 @@
                     this.map.addLayer(drawnItems);
                     var drawControl = new L.Control.Draw({
                         draw: {
-                            polygon: false,
+                            polygon: true,
                             marker: true,
-                            polyline: true,
+                            polyline: false,
                             circle: false,
                             rectangle: true,
                             circlemarker: false,
@@ -384,10 +384,11 @@
                             var lng = this.markerLayer.getLatLng().lng;
                             bus.$emit('markPlace', lat, lng);
                         }
-                        else if(type === 'polyline'){
-                            var displacementLine = e.layer;
-                            var arrLatLon = displacementLine.getLatLngs();
-                            console.log(arrLatLon);
+                        else if(type === 'polygon'){
+                            var placedPolygon = e.layer;
+                            var arrLatLon = placedPolygon.getLatLngs();
+                            console.log(arrLatLon)
+                            bus.$emit('polyDrawn', arrLatLon);
                         }
                     });
                 }

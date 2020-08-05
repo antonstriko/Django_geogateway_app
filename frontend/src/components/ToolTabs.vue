@@ -59,6 +59,7 @@
 <style scoped>
 #tabs {
     width: 500px;
+    background-color: #343a40;
 }
     .tab-text {
         width: 500px;

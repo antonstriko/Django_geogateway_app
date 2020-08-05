@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="tab-window">
         <b-button variant="success" @click="saveState">Save Current State</b-button>
         <br/> <br>
 

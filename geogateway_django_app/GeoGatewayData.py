@@ -109,9 +109,16 @@ def uavsarOverview(request):
 
 def uavsarGeometry(request):
     if request.method == 'GET':
-        lat = request.GET.get('lat')
-        lon = request.GET.get('lon')
-        fullQuery = uavsarJsonUrl + 'Point:(' + str(lat) + ',' + str(lon) + ')'
+        if request.GET.get('type') == 'point':
+            point = request.GET.get('queryStr')
+            fullQuery = uavsarJsonUrl + 'Point:' + point
+        elif request.GET.get('type') == 'polygon':
+            poly = request.GET.get('queryStr')
+            fullQuery = uavsarJsonUrl + 'Polygon:' + poly
+        else:
+            rect = request.GET.get('queryStr')
+            fullQuery = uavsarJsonUrl + 'Rectangle:' + rect
+
         data = requests.get(fullQuery)
         responseData = HttpResponse(data)
         return responseData

@@ -1,5 +1,5 @@
 <template>
-    <div class="tool">
+    <div class="tab-window">
         <div class="tool-title"><h3> Global Natural Hazard Viewer</h3><hr/> </div>
         <div class="tool-content">
             <div id="panel_forecast" style="margin-top: 10px; margin-bottom:10px;">

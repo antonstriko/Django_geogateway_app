@@ -1,4 +1,5 @@
 <template>
+    <div class="tab-window">
     <div id="panel_forecast" style="margin-top: 10px; margin-bottom:10px;">
 
         <h3>Recent Earthquakes from USGS</h3>
@@ -97,6 +98,7 @@
         <br/>
         <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="runSeismicity()">Search Catalog
         </button>
+    </div>
     </div>
 </template>
 

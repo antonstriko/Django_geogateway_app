@@ -1,5 +1,5 @@
 <template>
-    <div class="tool">
+    <div class="tab-window">
         <h3>Moment Magnitude Calculator</h3>
         <hr />
         <b-input-group prepend="Length" append="km">

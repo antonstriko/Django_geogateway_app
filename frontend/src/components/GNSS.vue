@@ -305,6 +305,8 @@
     }
     .input-group {
         width: 440px;
-
+    }
+    strong {
+        color: #B8C7D6;
     }
 </style>

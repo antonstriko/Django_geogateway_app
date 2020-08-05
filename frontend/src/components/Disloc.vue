@@ -1,7 +1,7 @@
 
 
 <template>
-    <div>
+    <div class="tab-window">
         <h3>Disloc</h3>
         <hr/>
         <div id="upload-container">

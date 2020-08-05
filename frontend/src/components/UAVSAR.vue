@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="tab-window">
         <input
                 type="checkbox"
                 v-model="overview"
@@ -19,7 +19,7 @@
         </div>
         <br />
 
-        <div v-if="LosPlot" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
+        <div v-if="LosPlot && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
             <p><b>Plot UID: </b>{{activePlot}}</p>
            <b-input-group>
                <b-input-group prepend="Start Lat/Lon" class="mb-2">
@@ -129,22 +129,26 @@
                 this.getCSV(entry, latlon));
             bus.$on('chartData', (csv)=>
                 this.chartData(csv));
+            bus.$on('polyDrawn', (latlngs)=>
+                this.polyQuery(latlngs));
+            bus.$on('rectDim', (maxLat, minLon, minLat, maxLon, centerLat, centerLng)=>
+                this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
         methods: {
             dynamicExtended(found){
                 //set background color dynamically according to wms description
                 if(found){
                     this.layerFound = true;
-                    this.extendedColor = '#CCFFCC'
-                    this.extendedBorder = '1px solid #99FF99'
+                    this.extendedColor = '#ADD6A3'
+                    this.extendedBorder = '1px solid #ADD673'
                     // add markers for plotting
                     bus.$emit('uavsarPlotMarkers')
 
 
                 }else {
                     this.layerFound = false;
-                    this.extendedColor = '#ffbab5'
-                    this.extendedBorder = '1px solid #fc8077'
+                    this.extendedColor = '#D6A7A3'
+                    this.extendedBorder = '1px solid #C26259'
                 }
             },
             chartData(csv){
@@ -268,12 +272,52 @@
             pointQuery(lat, lon){
                 var queryResponse
                 this.lat_lon = lat.toString() + ',' + lon.toString();
+                var queryStr = '(' + this.lat_lon + ')'
                 var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                 axios.get(baseURI, {
                     params: {
                         //
-                        "lat": lat,
-                        "lon": lon,
+                        "type":"point",
+                        "queryStr":queryStr,
+                    }
+                }).then(function (response){
+                    queryResponse = response.data;
+                    bus.$emit('uavsarGeom', queryResponse)
+                })
+            },
+            polyQuery(latlngs){
+                var queryResponse
+                var queryStr = '';
+                for(var i = 0;i<latlngs[0].length;i++){
+                    queryStr += '(' + latlngs[0][i].lat + ',' + latlngs[0][i].lng + '),'
+                }
+                console.log(queryStr)
+                queryStr = queryStr.replace(/,\s*$/, "");
+
+                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                axios.get(baseURI, {
+                    params: {
+                        //
+                        "type":'polygon',
+                        "queryStr":queryStr
+                    }
+                }).then(function (response){
+                    queryResponse = response.data;
+                    bus.$emit('uavsarGeom', queryResponse)
+                })
+            },
+            rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
+                var queryResponse
+                console.log(centerLng, centerLat);
+                var queryStr = '';
+                    queryStr += '(' + '(' + minLat + ',' + minLon + '),' +'(' + maxLat + ',' + maxLon + '))'
+                console.log(queryStr)
+                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                axios.get(baseURI, {
+                    params: {
+                        //
+                        "type":'rectangle',
+                        "queryStr":queryStr
                     }
                 }).then(function (response){
                     queryResponse = response.data;
@@ -358,17 +402,31 @@
     .collapsed {
         width: auto;
         height: auto;
-        border: 2px solid #C0C0C0;
+        border: 2px solid #2C4157;
         box-sizing: border-box;
-        background-color: #E0E0E0;
+        border-radius: 8px;
+        background-color: #8494A3;
     }
 
     .extended {
         width: auto;
         height: auto;
-
         box-sizing: border-box;
         font-size: 15px;
+        border-radius: 8px;
+    }
+    #active-plot {
+        border-radius: 8px;
+    }
+</style>
 
+<style>
+    html, body {margin:0;padding:0;height:100%;}
+    .tab-window {
+        background-color: #343a40;
+        height:100%;
+    }
+    h3, h4, h5 {
+        color: #B8C7D6;
     }
 </style>
