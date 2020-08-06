@@ -117,10 +117,10 @@
         mounted() {
             bus.$on('markPlace', (lat, lon) =>
                 this.pointQuery(lat, lon));
-            bus.$on('uavsarGeom', (json) =>
-                this.uavsarKML(json));
-            bus.$on('uavsarKMLs', (results)=>
-                this.assignKmls(results));
+            bus.$on('uavsarGeom', (entries) =>
+                this.kmlQueries(entries));
+            bus.$on('assignEntry', (entry)=>
+                this.assignKmls(entry));
             bus.$on('layerAlert', (found)=>
                 this.dynamicExtended(found));
             bus.$on('getCSV', (entry, latlons)=>
@@ -270,7 +270,6 @@
                 }
             },
             pointQuery(lat, lon){
-                var queryResponse
                 this.lat_lon = lat.toString() + ',' + lon.toString();
                 var queryStr = '(' + this.lat_lon + ')'
                 var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
@@ -281,17 +280,31 @@
                         "queryStr":queryStr,
                     }
                 }).then(function (response){
-                    queryResponse = response.data;
-                    bus.$emit('uavsarGeom', queryResponse)
+                    var entries = response.data;
+
+                    for(var i = 0;i < entries.length; i++) {
+                        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                        axios.get(baseURI, {
+                            params: {
+                                //
+                                "json": JSON.stringify(entries[i]),
+                            }
+                        }).then(function (response) {
+                            var entry = response.data;
+                            bus.$emit('uavsarKMLs', entry)
+                            bus.$emit('assignEntry', entry);
+
+                        })
+                    }
+
                 })
             },
             polyQuery(latlngs){
-                var queryResponse
+                var queryResponse;
                 var queryStr = '';
                 for(var i = 0;i<latlngs[0].length;i++){
                     queryStr += '(' + latlngs[0][i].lat + ',' + latlngs[0][i].lng + '),'
                 }
-                console.log(queryStr)
                 queryStr = queryStr.replace(/,\s*$/, "");
 
                 var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
@@ -304,14 +317,14 @@
                 }).then(function (response){
                     queryResponse = response.data;
                     bus.$emit('uavsarGeom', queryResponse)
+                    bus.$emit('uavsarKMLs', this.layers)
+
                 })
             },
             rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
-                var queryResponse
                 console.log(centerLng, centerLat);
                 var queryStr = '';
-                    queryStr += '(' + '(' + minLat + ',' + minLon + '),' +'(' + maxLat + ',' + maxLon + '))'
-                console.log(queryStr)
+                    queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3)  + '),' +'(' + maxLat.toFixed(3)  + ',' + maxLon.toFixed(3)  + '))'
                 var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                 axios.get(baseURI, {
                     params: {
@@ -320,8 +333,23 @@
                         "queryStr":queryStr
                     }
                 }).then(function (response){
-                    queryResponse = response.data;
-                    bus.$emit('uavsarGeom', queryResponse)
+                    var entries = response.data;
+
+                    for(var i = 0;i < entries.length; i++) {
+                        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                        axios.get(baseURI, {
+                            params: {
+                                //
+                                "json": JSON.stringify(entries[i]),
+                            }
+                        }).then(function (response) {
+                            var entry = response.data;
+                            bus.$emit('uavsarKMLs', entry)
+                            bus.$emit('assignEntry', entry);
+
+                        })
+                    }
+
                 })
             },
             kmlLayerChange(entry){
@@ -331,27 +359,27 @@
                     bus.$emit('removeUavsarLayer', entry.info['uid'])
                 }
             },
-            uavsarKML(json){
-                // var rawJson = json.slice();
-                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
-                var results = [];
-                // for(var i = 0; i < json.length; i++) {
+            kmlQueries(entries){
+              for(var i = 0;i < entries.length; i++){
+                  this.uavsarKML(entries[i]);
+              }
 
-                    // results[i] = {name:dataname, active:true, json:entryJson, extended:false};
+            },
+            uavsarKML(jsonEntry){
+                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
                     axios.get(baseURI, {
                         params: {
                             //
-                            "json": JSON.stringify(json),
+                            "json": JSON.stringify(jsonEntry),
                         }
                     }).then(function (response) {
-                        results = response.data;
-                        // let findDuplicates = arr => arr.filter((item, index) => results.indexOf(item) != index)
-                        bus.$emit('uavsarKMLs', results);
+                        var entry = response.data;
+                        bus.$emit('assignEntry', entry);
                     })
 
             },
-            assignKmls(results){
-                this.layers = results;
+            assignKmls(entry){
+                this.layers.push(entry);
             },
 
             setLosLength(latlon){
@@ -425,6 +453,7 @@
     .tab-window {
         background-color: #343a40;
         height:100%;
+        overflow-x: hidden;
     }
     h3, h4, h5 {
         color: #B8C7D6;

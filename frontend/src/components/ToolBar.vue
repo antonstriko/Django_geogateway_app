@@ -19,20 +19,13 @@
 
 <style scoped>
 
-  .toolbar-active {
-      position: relative;
-      float: left;
-      width: 500px;
-      height: auto;
-      overflow: auto;
-
-  }
 
     #sidebar-1 {
         height: calc(100% - 100px);
         width: 500px;
         overflow: auto;
         float: left;
+        background-color: #343a40;
     }
 
 

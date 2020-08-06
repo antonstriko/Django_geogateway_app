@@ -140,22 +140,20 @@ def uavsarKML(request):
 
         baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
         raw = request.GET.get('json')
-        queries = json.loads(raw)
-        responseList = []
-        for query in queries:
-            postfix = 'uid' + query['uid'] + '/' + query['dataname'] + '.int.kml'
-            fullURI = baseURI + postfix
-            data = requests.get(fullURI)
+        query = json.loads(raw)
+        postfix = 'uid' + query['uid'] + '/' + query['dataname'] + '.int.kml'
+        fullURI = baseURI + postfix
+        data = requests.get(fullURI)
 
-            uid = query['uid']
+        uid = query['uid']
 
-            toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+        toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
 
-            respData = data.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
-            meta = query
-            responseList.append({'kml': respData, 'info': meta, 'active': True, 'extended': False})
+        respData = data.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
+        meta = query
+        responseObj = {'kml': respData, 'info': meta, 'active': True, 'extended': False}
 
-        response = JsonResponse(responseList, safe=False)
+        response = JsonResponse(responseObj, safe=False)
         return response
 
 

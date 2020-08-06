@@ -319,21 +319,16 @@
                     }
                 ).addTo(this.map);
             },
-            uavsarOverlay(entries){
+            uavsarOverlay(entry){
                 if(this.layers['uavsarWMS']) {
                     this.removeLayer('uavsarWMS');
                 }
-                for(let k = 0;k<entries.length;k++){
-                    let entry = entries[k];
                     var id = entry.info['uid']
                     let text = entry.kml;
                     const parser = new DOMParser();
                     const kml = parser.parseFromString(text, 'text/xml');
                     this.uavsarLayers[id] = new L.KML(kml);
                     this.map.addLayer(this.uavsarLayers[id]);
-                    const bounds = this.uavsarLayers[id].getBounds();
-                    this.map.fitBounds(bounds);
-                }
 
             },
             drawToolbar(){
@@ -343,7 +338,7 @@
                     this.map.addLayer(drawnItems);
                     var drawControl = new L.Control.Draw({
                         draw: {
-                            polygon: true,
+                            polygon: false,
                             marker: true,
                             polyline: false,
                             circle: false,
