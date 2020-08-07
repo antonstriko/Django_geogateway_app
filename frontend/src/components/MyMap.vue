@@ -217,6 +217,8 @@
                 bus.$emit('updatedPlot', latlon, entry)
             },
 
+            //update LOS plotline when markers move or field entries are changed
+
             updatePlotLine(entry){
                 this.plotLine.remove();
                 this.plotLine = L.polyline([this.plottingMarker1.getLatLng(),this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
@@ -233,6 +235,8 @@
                     }
                 }
             },
+
+            //UAVSAR overview layer
             uavsarWMS(entry, latlon){
                 if(this.layers['highResUavsar'] !== null){
                     this.map.removeLayer(this.layers['highResUavsar']);

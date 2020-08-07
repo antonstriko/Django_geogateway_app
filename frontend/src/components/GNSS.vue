@@ -18,7 +18,7 @@
                 </select>
                 <br/>
 
-                <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
+                <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" v-b-tooltip.hover title="Use toolbar -->" @click="drawToolbar()">
                     <b-icon-pencil></b-icon-pencil>Draw an area on map</b-button>
                 <br/>
                 <br/>
@@ -113,9 +113,11 @@
             <!--                <input type="checkbox" v-model="activeLayers" :value="item.active">-->
             <!--                <label :for="item.pre">{{ item.pre }} {{ item.active }}</label>-->
             <!--            </span>-->
-            <div v-if="ranLayers.length!==0">
+            <br/>
+            <br/>
+            <div v-if="ranLayers.length!==0" style="color: #B8C7D6; text-align: left">
                 <div v-for="layer in ranLayers" :key="layer.name">
-                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label">{{layer.name}} {{layer.active}}</span> <br>
+                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label">{{layer.name}}</span> <br>
                     <hr/>
                 </div>
             </div>

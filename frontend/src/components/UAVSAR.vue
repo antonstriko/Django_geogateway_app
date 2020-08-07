@@ -1,11 +1,14 @@
 <template>
     <div class="tab-window">
+        <h3>UAVSAR</h3>
+        <hr />
+
         <input
                 type="checkbox"
                 v-model="overview"
                 id="overview"
                 @change="showOverview"
-        ><label for="overview">UAVSAR</label>
+        ><label for="overview">Show Overview</label>
 
         <div v-if="overview">
             <b-input-group prepend="Flight name/path">
@@ -42,6 +45,9 @@
             </b-input-group>
             <br/>
             <b-button variant="success" @click="updatePlot(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">Update LOS Plot</b-button>
+            <br/>
+            <br/>
+            <span @click="openDataSource" style="cursor: pointer; color: #2e6da4"><b-icon-chart></b-icon-chart><b>Open Data Source</b></span>
         </div>
 
         <div v-if="layers.length !== 0">
@@ -135,6 +141,9 @@
                 this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
         methods: {
+            openDataSource(){
+              window.open('http://gf2.ucs.indiana.edu/quaketables/uavsar?uid='+this.activePlot, '_blank');
+            },
             dynamicExtended(found){
                 //set background color dynamically according to wms description
                 if(found){
@@ -211,6 +220,7 @@
                 var layerFound = false;
                 bus.$emit('hidePlot');
                 this.activeEntry = entry;
+                this.activePlot = entry.info['uid'];
                 if(!entry.extended) {
                     for (var i = 0; i < this.layers.length; i++) {
                         this.layers[i].extended = false
@@ -266,38 +276,44 @@
                     bus.$emit('UAVSAR_overview');
                     bus.$emit('drawToolbar');
                 }else {
-                    bus.$emit('RemoveLayer', 'uavsarWMS')
+                    this.layers = [];
+                    this.LosPlot = false;
+                    bus.$emit('removeLayer', 'highResUavsar');
+                    bus.$emit('resetUavsar');
+
                 }
             },
             pointQuery(lat, lon){
-                this.lat_lon = lat.toString() + ',' + lon.toString();
-                var queryStr = '(' + this.lat_lon + ')'
-                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
-                axios.get(baseURI, {
-                    params: {
-                        //
-                        "type":"point",
-                        "queryStr":queryStr,
-                    }
-                }).then(function (response){
-                    var entries = response.data;
+                if(this.overview) {
+                    this.lat_lon = lat.toString() + ',' + lon.toString();
+                    var queryStr = '(' + this.lat_lon + ')'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                    axios.get(baseURI, {
+                        params: {
+                            //
+                            "type": "point",
+                            "queryStr": queryStr,
+                        }
+                    }).then(function (response) {
+                        var entries = response.data;
 
-                    for(var i = 0;i < entries.length; i++) {
-                        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
-                        axios.get(baseURI, {
-                            params: {
-                                //
-                                "json": JSON.stringify(entries[i]),
-                            }
-                        }).then(function (response) {
-                            var entry = response.data;
-                            bus.$emit('uavsarKMLs', entry)
-                            bus.$emit('assignEntry', entry);
+                        for (var i = 0; i < entries.length; i++) {
+                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                            axios.get(baseURI, {
+                                params: {
+                                    //
+                                    "json": JSON.stringify(entries[i]),
+                                }
+                            }).then(function (response) {
+                                var entry = response.data;
+                                bus.$emit('uavsarKMLs', entry)
+                                bus.$emit('assignEntry', entry);
 
-                        })
-                    }
+                            })
+                        }
 
-                })
+                    })
+                }
             },
             polyQuery(latlngs){
                 var queryResponse;
@@ -322,35 +338,37 @@
                 })
             },
             rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
-                console.log(centerLng, centerLat);
-                var queryStr = '';
-                    queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3)  + '),' +'(' + maxLat.toFixed(3)  + ',' + maxLon.toFixed(3)  + '))'
-                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
-                axios.get(baseURI, {
-                    params: {
-                        //
-                        "type":'rectangle',
-                        "queryStr":queryStr
-                    }
-                }).then(function (response){
-                    var entries = response.data;
+                if(this.overview) {
+                    console.log(centerLng, centerLat);
+                    var queryStr = '';
+                    queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                    axios.get(baseURI, {
+                        params: {
+                            //
+                            "type": 'rectangle',
+                            "queryStr": queryStr
+                        }
+                    }).then(function (response) {
+                        var entries = response.data;
 
-                    for(var i = 0;i < entries.length; i++) {
-                        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
-                        axios.get(baseURI, {
-                            params: {
-                                //
-                                "json": JSON.stringify(entries[i]),
-                            }
-                        }).then(function (response) {
-                            var entry = response.data;
-                            bus.$emit('uavsarKMLs', entry)
-                            bus.$emit('assignEntry', entry);
+                        for (var i = 0; i < entries.length; i++) {
+                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                            axios.get(baseURI, {
+                                params: {
+                                    //
+                                    "json": JSON.stringify(entries[i]),
+                                }
+                            }).then(function (response) {
+                                var entry = response.data;
+                                bus.$emit('uavsarKMLs', entry)
+                                bus.$emit('assignEntry', entry);
 
-                        })
-                    }
+                            })
+                        }
 
-                })
+                    })
+                }
             },
             kmlLayerChange(entry){
                 if(entry.active) {
@@ -379,6 +397,7 @@
 
             },
             assignKmls(entry){
+
                 this.layers.push(entry);
             },
 

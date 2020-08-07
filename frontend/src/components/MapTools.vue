@@ -1,5 +1,7 @@
 <template>
     <div class="tab-window">
+        <h3>Map Tools</h3>
+        <hr />
         <div>
                 <input
                         type="checkbox"
