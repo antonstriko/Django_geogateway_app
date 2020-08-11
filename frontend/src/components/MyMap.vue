@@ -11,7 +11,8 @@
 
         <div id="map">
         </div>
-        <b-button id="clearMap" @click="resetMap">Clear Map</b-button>
+        <b-button id="clearMap" onclick="location.href='/geogateway_django_app'" type="button">
+            Clear Map</b-button>
 
     </div>
 </template>
@@ -189,18 +190,18 @@
                 this.$forceUpdate();
             },
             resetMap(){
-                for(var key in this.layers){
-                    if(this.layers[key]!==null) {
-                        this.map.removeLayer(this.layers[key]);
-                        this.layers[key] = null;
-                    }
-                }
-                for(var uid in this.uavsarLayers) {
-                    if (this.uavsarLayers[uid] !== null) {
-                        this.map.removeLayer(this.uavsarLayers[uid]);
-                        this.uavsarLayers[uid] = null;
-                    }
-                }
+                // for(var key in this.layers){
+                //     if(this.layers[key]!==null) {
+                //         this.map.removeLayer(this.layers[key]);
+                //         this.layers[key] = null;
+                //     }
+                // }
+                // for(var uid in this.uavsarLayers) {
+                //     if (this.uavsarLayers[uid] !== null) {
+                //         this.map.removeLayer(this.uavsarLayers[uid]);
+                //         this.uavsarLayers[uid] = null;
+                //     }
+                // }
             },
             hidePlot(){
                 this.plotActive = false

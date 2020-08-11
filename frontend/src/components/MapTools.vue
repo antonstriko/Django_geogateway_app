@@ -35,11 +35,11 @@
         <div id="tools-show">
             <div v-if="this.ucerf">
                 <hr class="divider" />
-                <b-form-radio-group  >
-                    <b-form-radio v-model="selected" name="some-radios" value="black"><p>black</p></b-form-radio>
-                    <b-form-radio v-model="selected" name="some-radios" value="red"><p>red</p></b-form-radio>
-                    <b-form-radio v-model="selected" name="some-radios" value="yellow"><p>yellow</p></b-form-radio>
-                    <b-form-radio v-model="selected" name="some-radios" value="grey"><p>grey</p></b-form-radio>
+                <b-form-radio-group>
+                    <b-form-radio label="black" name="some-radios" :value="selected" @change="updateColor('black')"><p>black</p></b-form-radio>
+                    <b-form-radio label="red" name="some-radios" :value="selected" @change="updateColor('red')"><p>red</p></b-form-radio>
+                    <b-form-radio vlabel="yellow" name="some-radios" :value="selected" @change="updateColor('yellow')"><p>yellow</p></b-form-radio>
+                    <b-form-radio label="grey" name="some-radios" :value="selected" @change="updateColor('grey')"><p>grey</p></b-form-radio>
                 </b-form-radio-group>
             </div>
 
@@ -62,7 +62,10 @@
         name: "MapTools",
         data() {
             return {
-                ucerfUrl: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
+                ucerfUrlGrey: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_grey.kml",
+                ucerfUrlBlack: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
+                ucerfUrlRed: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_red.kml",
+                ucerfUrlYellow: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_yellow.kml",
                 boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
                 coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
                 ucerf: false,
@@ -70,19 +73,32 @@
                 coasts: false,
                 kml: false,
                 kmlFile: null,
-                selected: [],
+                selected: 'grey',
 
 
             }
         },
         methods: {
-            updateLayer(l){
-                // Should the store be used in this case or is the event bus sufficient?
-                // TODO improve efficiency and utilize vue mutations to do this
+            updateColor(selected){
+                this.selected = selected;
+                bus.$emit('RemoveLayer', 'ucerfL');
+                this.updateLayer('ucerf', selected)
+            },
+            updateLayer(l, color){
                 switch (l) {
+
                     case 'ucerf':
                         if(this.ucerf) {
-                            bus.$emit('UrlAddLayer', this.ucerfUrl, 'ucerfL');
+                            var url;
+                            if(color === 'black'){
+                                url = this.ucerfUrlBlack
+                            }else if(color === 'red'){
+                                url = this.ucerfUrlRed;
+                            }else if(color === 'yellow'){
+                                url = this.ucerfUrlYellow;
+                            }else url = this.ucerfUrlGrey;
+
+                            bus.$emit('UrlAddLayer', url, 'ucerfL');
                         }else bus.$emit('RemoveLayer', 'ucerfL');
                         break;
                     case 'kml':
