@@ -123,7 +123,7 @@
                 console.log(this.kmlFile)
             },
             submitFile(){
-                var uploadUrl = 'http://127.0.0.1:8000/geogateway_django_app/kml_upload/';
+                var uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/';
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
                 console.log(formData)

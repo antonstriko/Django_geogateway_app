@@ -5,7 +5,7 @@
 This assumes you have the airavata-django-portal repo cloned and the development environment setup. 
 Instructions are provided here: https://github.com/apache/airavata-django-portal
 
-1. Clone repo
+1. Clone this repo
 
 2. Install dependencies and build frontend code
    * ``` cd geogateway-django-app/frontend ```
