@@ -556,19 +556,27 @@
     /*}*/
     #dygraph-LOS {
         position: absolute;
-        height: 300px;
-        width: 950px;
+        height: 87%;
+        width: 60%;
         margin-left: 200px;
         margin-top: 25px;
         border-color: #5cb85c;
 
+
     }
     .plot-window {
         position: relative;
-        height: 350px;
+        border-color: #5cb85c;
+        border-width: thick;
+        height: 20%;
         width: 100%;
-        margin-left: 500px;
+        margin-left: 520px;
         background-color: #CCFFCC;
+    }
+
+    .dygraph-legend {
+        text-align: right;
+        background: none;
     }
 
 </style>

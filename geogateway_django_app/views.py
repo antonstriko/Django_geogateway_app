@@ -7,7 +7,7 @@ import subprocess
 import requests
 
 
-DislocUrl = 'http://127.0.0.1:8000/geogateway_django_app/disloc'
+DislocUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/disloc'
 
 
 class MyFileView(APIView):
