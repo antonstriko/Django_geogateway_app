@@ -30,7 +30,7 @@
 
 <script>
     import axios from "axios";
-    import {bus} from '../main'
+    // import {bus} from '../main'
 
     axios.defaults.xsrfHeaderName = 'X-CSRFToken'
     axios.defaults.xsrfCookieName = 'csrftoken'
