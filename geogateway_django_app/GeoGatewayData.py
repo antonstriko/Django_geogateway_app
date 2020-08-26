@@ -96,7 +96,9 @@ def runDisloc(request):
         subprocess.run(['./disloc/disloc', file])
         subprocess.run(['cat', './disloc/disloc.output'])
         output = open('./disloc/disloc.output', 'rb')
-        response = FileResponse(output)
+        subprocess.run(['python', 'disloc/disloc2kml.py', '-i', output, '-o disloc.kml'])
+        kmlOut = open('./disloc/disloc.kml', 'rb')
+        response = FileResponse(kmlOut)
         return response
 
 

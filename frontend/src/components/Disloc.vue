@@ -30,6 +30,8 @@
 
 <script>
     import axios from "axios";
+    import {bus} from '../main'
+
     axios.defaults.xsrfHeaderName = 'X-CSRFToken'
     axios.defaults.xsrfCookieName = 'csrftoken'
     export default {
@@ -53,8 +55,7 @@
                 console.log(formData)
                 axios.post( uploadUrl, formData
                 ).then(function(response){
-                    console.log('SUCCESS!!');
-                    console.log(response);
+                    console.log(response)
                 })
                     .catch(function(response){
                         console.log(response)

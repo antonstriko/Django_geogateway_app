@@ -60,6 +60,7 @@
                     'uavsarWMS': null,
                     'uavsarOverlay': null,
                     'highResUavsar': null,
+                    'disloc': null,
                 },
                 uavsarLayers: [],
                 savedLayers: [],
@@ -394,13 +395,9 @@
                 }
             },
             tileLayer(){
-                L.tileLayer(
-                    'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-                    {
-                        maxZoom: 18,
-                        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attribution">CARTO</a>',
-                        zIndex: 1,
-                    }).addTo(this.map);
+                L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
+                }).addTo(this.map);
             },
             // TODO make addLayer and removeLayer methods for use with $emit $on
             // ie refine layer logic so this method is not necessary
