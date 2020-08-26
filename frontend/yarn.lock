@@ -3120,6 +3120,11 @@ duplexify@^3.4.2, duplexify@^3.6.0:
     readable-stream "^2.0.0"
     stream-shift "^1.0.0"
 
+dygraphs@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/dygraphs/-/dygraphs-2.1.0.tgz#2fbfd2c803ead02307df3faf8d4dd3ef55cb2075"
+  integrity sha1-L7/SyAPq0CMH3z+vjU3T71XLIHU=
+
 easy-stack@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/easy-stack/-/easy-stack-1.0.0.tgz#12c91b3085a37f0baa336e9486eac4bf94e3e788"
@@ -8005,6 +8010,15 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     extend-shallow "^3.0.2"
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
+
+togeojson@^0.16.0:
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/togeojson/-/togeojson-0.16.0.tgz#ab5729e4f8c9920e6da5f08fd82490a1d16aca6d"
+  integrity sha1-q1cp5PjJkg5tpfCP2CSQodFqym0=
+  dependencies:
+    concat-stream "~1.5.1"
+    minimist "1.2.0"
+    xmldom "~0.1.19"
 
 toidentifier@1.0.0:
   version "1.0.0"

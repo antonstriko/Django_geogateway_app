@@ -141,17 +141,17 @@
                 var timeUrl;
                 switch (time) {
                     case 'day':
-                        timeUrl = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson'
+                        timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson'
                         startD = new Date();
                         startD.setDate(startD.getDate()-1);
                         break;
                     case 'week':
-                        timeUrl = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson'
+                        timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson'
                         startD = new Date();
                         startD.setDate(startD.getDate()-7);
                         break;
                     case 'month':
-                        timeUrl = 'http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson'
+                        timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson'
                         startD = new Date();
                         //rough estimate of month ago
                         startD.setDate(startD.getDate()-30);

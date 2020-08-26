@@ -9,7 +9,6 @@ ALLOWED_HOSTS = ['django.seagrid.org', '192.168.1.4', '127.0.0.1']
 
 
 class Settings:
-
     WEBPACK_LOADER = {
         "djvue_app2": {
             "BUNDLE_DIR_NAME": "geogateway_django_app/bundles/",
