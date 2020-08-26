@@ -230,7 +230,7 @@
                     }
                     entry.extended = true;
 
-                    var testURI =  'http://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
+                    var testURI =  'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
 
                     var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
