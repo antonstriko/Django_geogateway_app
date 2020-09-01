@@ -45,7 +45,7 @@
 
             <div v-if="this.kml">
                 <hr class="divider" />
-                <h2>KML File Upload</h2>
+                <h4>KML File Upload</h4>
                 <label>File
                     <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
                 </label>

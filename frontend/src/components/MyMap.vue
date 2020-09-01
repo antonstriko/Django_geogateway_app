@@ -68,6 +68,22 @@
                 plottingMarker2: null,
                 plotLine: null,
                 plotActive: false,
+                greenIcon: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                }),
+                redIcon: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                }),
 
 
             };
@@ -283,11 +299,13 @@
                     this.plottingMarker2.remove();
                     this.plotLine.remove();
                 }
+
+
                 this.plottingMarker1 = L.marker([lat1, lon1],
-                    {draggable: true}).addTo(this.map)
+                    {draggable: true, icon: this.greenIcon}).addTo(this.map)
                 // console.log(this.plottingMarker1)
                 this.plottingMarker2 = L.marker([updatedLat2, updatedLon2],
-                    {draggable: true}).addTo(this.map)
+                    {draggable: true, icon: this.redIcon}).addTo(this.map)
 
                 this.plotLine = L.polyline([this.plottingMarker1.getLatLng(),this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
 
