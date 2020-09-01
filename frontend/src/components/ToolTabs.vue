@@ -25,7 +25,9 @@
             <b-tab title="Saves"><b-card-text>
                 <Saves />
             </b-card-text></b-tab>
-            <b-tab title="Help"><b-card-text>Tab contents 3</b-card-text></b-tab>
+            <b-tab title="Help"><b-card-text>
+                <help />
+            </b-card-text></b-tab>
         </b-tabs>
     </div>
 </template>
@@ -39,6 +41,7 @@
     import Disloc from "./Disloc";
     import Saves  from "./Saves";
     import UAVSAR from "./UAVSAR";
+    import help from "./help";
     export default {
         name: "ToolTabs",
         components: {
@@ -49,7 +52,8 @@
             Seismicity,
             Disloc,
             Saves,
-            UAVSAR
+            UAVSAR,
+            help
 
 
         }
