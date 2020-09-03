@@ -35,7 +35,7 @@
     left: 50%;
     margin-left: -10px;
     float: top;
-    height: 80%;
+    height: 45px;
     width: 115px;
 }
 </style>

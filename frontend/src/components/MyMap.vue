@@ -106,7 +106,7 @@
             var legend2 = L.control({position: 'bottomleft'});
             legend2.onAdd = function () {
                 var div = L.DomUtil.create('div', 'info legend2');
-                div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="margin-bottom: 80px; height: 30px; width: 82px">';
+                div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="margin-bottom: 70px; height: 30px; width: 82px">';
                 return div;
             };
             legend2.addTo(this.map);
