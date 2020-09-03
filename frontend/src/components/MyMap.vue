@@ -106,7 +106,7 @@
             var legend2 = L.control({position: 'bottomleft'});
             legend2.onAdd = function () {
                 var div = L.DomUtil.create('div', 'info legend2');
-                div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="margin-bottom: 30px; height: 30px; width: 82px">';
+                div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="margin-bottom: 10px; height: 30px; width: 82px">';
                 return div;
             };
             legend2.addTo(this.map);
@@ -223,12 +223,7 @@
                     this.uavsarLayers[key].remove();
                 }
                 if (this.plottingMarker1 !== null) {
-                    this.plottingMarker1.remove();
-                    this.plottingMarker2.remove();
-                    this.plotLine.remove();
-                    this.plottingMarker1 = null;
-                    this.plottingMarker2 = null;
-                    this.plotLine = null;
+                    this.resetPlot();
                 }
             },
             deactivateUavsar() {
@@ -249,7 +244,18 @@
             },
             hidePlot() {
                 this.plotActive = false
+                if(this.plottingMarker1 !== null) {
+                    this.resetPlot();
+                }
 
+            },
+            resetPlot(){
+                this.plottingMarker1.remove();
+                this.plottingMarker2.remove();
+                this.plotLine.remove();
+                this.plottingMarker1 = null;
+                this.plottingMarker2 = null;
+                this.plotLine = null;
             },
 
             updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len) {
@@ -264,11 +270,13 @@
 
             //update LOS plotline when markers move or field entries are changed
 
+            //plot sometimes doesn't show data when just updatePlotLine is used
+
             updatePlotLine(entry) {
-                this.plotLine.remove();
-                this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
-                var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
-                bus.$emit('updatedPlot', latlon, entry)
+                this.updatePlotLineForm(entry, this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng)
+                // this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
+                // var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
+                // bus.$emit('updatedPlot', latlon, entry)
             },
             saveState() {
                 bus.$emit('saved', this.layers);
@@ -321,9 +329,6 @@
                 this.map.on('click', markerClick)
 
 
-
-
-
             },
             placePlotMarkers(southwest, northeast, clickloc, latlon, entry){
 
@@ -365,6 +370,8 @@
                     })
 
                     this.plotActive = true;
+
+                    // this.map.fitBounds([this.plotLat1, this.plotLon1], [this.plotLat2, this.plotLon2])
 
                     bus.$emit('getCSV', entry, [this.plotLat1, this.plotLon1, this.plotLat2, this.plotLon2]);
                 }
