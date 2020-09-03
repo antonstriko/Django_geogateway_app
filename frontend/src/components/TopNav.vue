@@ -32,12 +32,10 @@
 <style scoped>
 #logo {
     position: absolute;
-    top: 10px;
     left: 50%;
-    margin-top: 0;
     margin-left: -10px;
     float: top;
-    height: auto;
-    width: 100px;
+    height: 80%;
+    width: 115px;
 }
 </style>

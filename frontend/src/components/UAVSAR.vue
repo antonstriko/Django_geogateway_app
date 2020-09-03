@@ -151,6 +151,7 @@
                     this.extendedColor = '#ADD6A3'
                     this.extendedBorder = '1px solid #ADD673'
                     // add markers for plotting
+                    // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
                     bus.$emit('uavsarPlotMarkers')
 
 
@@ -278,8 +279,7 @@
                 }else {
                     this.layers = [];
                     this.LosPlot = false;
-                    bus.$emit('removeLayer', 'highResUavsar');
-                    bus.$emit('resetUavsar');
+                    bus.$emit('deactivateUavsar');
 
                 }
             },
