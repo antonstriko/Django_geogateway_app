@@ -69,7 +69,7 @@
         width: 500px;
         position: relative;
         align-content: center;
-        height: calc(100% - 500px);
+        height: 100% ;
         overflow: auto;
     }
 </style>

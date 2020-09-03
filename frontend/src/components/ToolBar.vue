@@ -21,7 +21,7 @@
 
 
     #sidebar-1 {
-        height: calc(100% - 100px);
+        height: 100%;
         width: 520px;
         overflow: auto;
         float: left;
