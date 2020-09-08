@@ -5,10 +5,19 @@
               crossorigin=""/>
         <TopNav/>
         <ToolBar/>
-        <div v-if="plotActive" class="plot-window">
-            <div class="dygraph-legend"></div>
-            <div id="dygraph-LOS"></div>
-        </div>
+                <DraggableDiv class="col-11" v-if="plotActive" id="plot-window">
+                    <template slot="header">
+                        <p>LOS Plot</p>
+                    </template>
+                    <template slot="main" >
+                        <div id="dygraph-LOS"></div>
+                    </template>
+
+                </DraggableDiv>
+<!--        <div v-if="plotActive" class="plot-window">-->
+<!--            <div id="los-header"><h4>LOS Plot</h4></div>-->
+<!--            <div id="dygraph-LOS"></div>-->
+<!--        </div>-->
 
         <div id="map">
         </div>
@@ -32,6 +41,7 @@
 
     import {circleMaker, gdacsPopup, gnssPopup, popupMaker} from '../assets/mapMethods'
     import Dygraph from "dygraphs";
+    import DraggableDiv from "./DraggableDiv";
     // import axios from "axios";
     // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -40,6 +50,7 @@
         components: {
             ToolBar,
             TopNav,
+            DraggableDiv,
         },
         data() {
             return {
@@ -624,8 +635,10 @@
 </script>
 <style scoped>
     #map {
+
         position: relative;
         height: 100%;
+        /*z-index: 30000;*/
         width: auto;
         margin-left: auto;
         margin-bottom: auto;
@@ -636,6 +649,7 @@
     #map-window {
         position: inherit;
         height: calc(100% - 125px);
+        /*z-index: 30000;*/
         width: auto;
         padding: 0;
         /*float: right;*/
@@ -662,29 +676,27 @@
     /*    z-index: 400;*/
     /*}*/
     #dygraph-LOS {
+        height: 190px;
+        width: 600px;
+        margin-left: 90px;
+        margin-bottom: 50px;
+        border-color: #5cb85c;
+
+
+    }
+
+
+    #plot-window {
         position: absolute;
-        height: 87%;
-        width: 50%;
-        margin-left: 200px;
-        margin-top: 25px;
-        border-color: #5cb85c;
-
-
-    }
-
-    .plot-window {
-        position: relative;
-        border-color: #5cb85c;
-        border-width: thick;
-        height: 300px;
-        width: 100%;
-        margin-left: 520px;
+        z-index: 1500;
         background-color: #CCFFCC;
-    }
-
-    .dygraph-legend {
-        background: transparent !important;
+        height: 250px;
+        width: 725px;
+        border-radius: 20px;
+        border: solid #343a40;
+        border-width: thick;
     }
 
 
 </style>
+
