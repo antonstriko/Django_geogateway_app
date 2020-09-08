@@ -1,7 +1,7 @@
 <template>
     <div class="tab-window">
         <h3>Map Tools</h3>
-        <hr />
+        <hr>
         <div>
                 <input
                         type="checkbox"
@@ -34,7 +34,6 @@
         </div>
         <div id="tools-show">
             <div v-if="this.ucerf">
-                <hr class="divider" />
                 <b-form-radio-group>
                     <b-form-radio label="black" name="some-radios" :value="selected" @change="updateColor('black')"><p>black</p></b-form-radio>
                     <b-form-radio label="red" name="some-radios" :value="selected" @change="updateColor('red')"><p>red</p></b-form-radio>
@@ -44,13 +43,19 @@
             </div>
 
             <div v-if="this.kml">
-                <hr class="divider" />
+                <br />
                 <h4>KML File Upload</h4>
+                <p>Upload a KML from your local file system</p>
                 <label>File
                     <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
                 </label>
                 <button @click="submitFile()">Submit</button>
             </div>
+<!--            <div v-if="boundaries">-->
+<!--                <label for="opacity">Example range with min and max</label>-->
+<!--                <b-form-input id="opacity" @change="updateOpacity(value)" v-model="value" type="range" min="0" max="100"></b-form-input>-->
+<!--                <div class="mt-2">Value: {{ value }}</div>-->
+<!--            </div>-->
         </div>
     </div>
 </template>
@@ -74,11 +79,15 @@
                 kml: false,
                 kmlFile: null,
                 selected: 'grey',
+                value: 50,
 
 
             }
         },
         methods: {
+            // updateOpacity(value){
+            //   bus.$emit('stateBoundaryOpacity', (value/100))
+            // },
             updateColor(selected){
                 this.selected = selected;
                 bus.$emit('RemoveLayer', 'ucerfL');
@@ -145,15 +154,14 @@
 <style scoped>
 
 
-    .divider {
-        border: 2px solid #cccccc;
-        border-radius: 1px;
-    }
 
 </style>
 
 <style>
     label {
+        color: #71A7DD;
+    }
+    p {
         color: #71A7DD;
     }
 </style>

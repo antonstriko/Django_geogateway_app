@@ -31,10 +31,10 @@
         name: "MMCalc",
         data(){
             return {
-                mm_length: null,
-                mm_width: null,
-                mm_slip: null,
-                mm_shear: null,
+                mm_length: 249,
+                mm_width: 120.0,
+                mm_slip: 23,
+                mm_shear: 3,
                 SM: null,
                 MM: null,
             };

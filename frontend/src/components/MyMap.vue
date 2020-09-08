@@ -90,12 +90,18 @@
                 plotLon1: null,
                 plotLat2: null,
                 plotLon2: null,
+                uavsarLatlon: null,
+                uavsarEntry: null,
+
 
 
 
 
 
             };
+        },
+        props: {
+
         },
         mounted() {
 
@@ -106,7 +112,7 @@
             var legend2 = L.control({position: 'bottomleft'});
             legend2.onAdd = function () {
                 var div = L.DomUtil.create('div', 'info legend2');
-                div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="margin-bottom: 10px; height: 30px; width: 82px">';
+                div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="height: 30px; width: 82px">';
                 return div;
             };
             legend2.addTo(this.map);
@@ -189,6 +195,8 @@
                 this.uavsarLegend.remove();
                 this.resetUavsar();
             });
+            bus.$on('changeLayerOpacity', (value) =>
+                this.changeUavsarOpacity(value));
             bus.$on('FormUpdatePlotLine', (activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength) =>
                 this.updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength));
             bus.$on('placePlotMarkers', (southwest, northeast, clickloc, latlon, entry) =>
@@ -212,6 +220,10 @@
                     }
                 )
 
+            },
+
+            changeUavsarOpacity(value){
+                this.layers['highResUavsar'].setOpacity(value);
             },
             //sets uavsar to overview mode
             resetUavsar() {
@@ -288,8 +300,22 @@
                     }
                 }
             },
+            markerClick(e) {
+                var clickloc = e.latlng;
 
-            //UAVSAR overview layer
+                var latlon = this.uavsarLatlon;
+                var entry = this.uavsarEntry;
+
+                var southwest = L.latLng(latlon[0][1], latlon[0][0]);
+                var northeast = L.latLng(latlon[3][1], latlon[3][0]);
+
+                var rect = L.latLngBounds(southwest, northeast);
+
+                console.log(southwest, northeast, rect.contains(clickloc));
+
+                bus.$emit('placePlotMarkers', southwest, northeast, clickloc, latlon, entry);
+            },
+            //UAVSAR plot tile layer (for use with dygraphs)
             uavsarWMS(entry, latlon) {
                 if (this.layers['highResUavsar'] !== null) {
                     this.map.removeLayer(this.layers['highResUavsar']);
@@ -299,6 +325,8 @@
 
                 var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
+                this.uavsarLatlon = latlon;
+                this.uavsarEntry = entry;
 
                 this.layers['highResUavsar'] = L.tileLayer.wms(baseURI, {
                     layers: layername,
@@ -311,22 +339,9 @@
 
                 this.map.addLayer(this.layers['highResUavsar']);
 
-                function markerClick(e) {
-                    var clickloc = e.latlng;
+                this.layers['highResUavsar'].setOpacity(.5)
 
-                    console.log(latlon);
-
-                    var southwest = L.latLng(latlon[0][1], latlon[0][0]);
-                    var northeast = L.latLng(latlon[3][1], latlon[3][0]);
-
-                    var rect = L.latLngBounds(southwest, northeast);
-
-                    console.log(southwest, northeast, rect.contains(clickloc));
-
-                    bus.$emit('placePlotMarkers', southwest, northeast, clickloc, latlon, entry);
-                }
-
-                this.map.on('click', markerClick)
+                this.map.on('click', this.markerClick);
 
 
             },
@@ -371,6 +386,8 @@
 
                     this.plotActive = true;
 
+                    this.map.off('click', this.markerClick);
+
                     // this.map.fitBounds([this.plotLat1, this.plotLon1], [this.plotLat2, this.plotLon2])
 
                     bus.$emit('getCSV', entry, [this.plotLat1, this.plotLon1, this.plotLat2, this.plotLon2]);
@@ -390,8 +407,9 @@
             reactivateUavsarLayer(name) {
                 this.map.addLayer(this.uavsarLayers[name]);
             },
-            uavsarOverview() {
+            uavsarOverview(
 
+            ) {
                 this.uavsarLegend = L.control({position: 'bottomleft'});
                 this.uavsarLegend.onAdd = function () {
                     var div = L.DomUtil.create('div', 'uavsarLegend');
@@ -408,6 +426,8 @@
                         zIndex: 2
                     }
                 ).addTo(this.map);
+                this.layers['uavsarWMS'].setOpacity(.7)
+
             },
             // high res plotting images + add map legend
             uavsarOverlay(entry) {
@@ -516,7 +536,9 @@
                         this.layers[layerName] = new L.KML(kml);
                         this.map.addLayer(this.layers[layerName]);
                         this.map.fitBounds(this.layers[layerName].getBounds());
+
                     });
+
             },
 
             removeLayer(layerName) {

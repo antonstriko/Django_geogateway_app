@@ -13,7 +13,7 @@
             <b-tab title="Seismicity"><b-card-text>
                 <Seismicity />
             </b-card-text></b-tab>
-            <b-tab title="Forecast"><b-card-text>
+            <b-tab title="Nowcast"><b-card-text>
                 <Nowcast />
             </b-card-text></b-tab>
             <b-tab title="Magnitude"><b-card-text>
@@ -62,7 +62,7 @@
 
 <style scoped>
 #tabs {
-    width: 500px;
+    width: 525px;
     background-color: #343a40;
 }
     .tab-text {

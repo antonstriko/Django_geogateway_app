@@ -22,7 +22,7 @@
 
     #sidebar-1 {
         height: 100%;
-        width: 520px;
+        width: 525px;
         overflow: auto;
         float: left;
         background-color: #343a40;
