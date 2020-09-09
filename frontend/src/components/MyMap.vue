@@ -147,8 +147,6 @@
 
             bus.$on('RemoveLayer', (name) =>
                 this.removeLayer(name));
-            bus.$on('newRemoveLayer', (name) =>
-                this.newRemoveLayer(name));
 
             bus.$on('nowcast', (data, lat, lon) =>
                 this.seismicityPlots(data, lat, lon));
@@ -206,6 +204,8 @@
                 this.uavsarLegend.remove();
                 this.resetUavsar();
             });
+            bus.$on('reactivateKmlUploadLayer', (name) =>
+                this.addExistingLayer(name));
             bus.$on('changeLayerOpacity', (value) =>
                 this.changeUavsarOpacity(value));
             bus.$on('FormUpdatePlotLine', (activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength) =>
@@ -328,6 +328,10 @@
             },
             //UAVSAR plot tile layer (for use with dygraphs)
             uavsarWMS(entry, latlon) {
+                if(this.uavsarLegend !== null){
+                    this.uavsarLegend.remove();
+                }
+
                 if (this.layers['highResUavsar'] !== null) {
                     this.map.removeLayer(this.layers['highResUavsar']);
                     this.layers['highResUavsar'] = null;
@@ -346,11 +350,27 @@
                     zIndex: 2
                 })
 
+
                 // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
 
                 this.map.addLayer(this.layers['highResUavsar']);
 
+                var baseUri = 'http://js-168-89.jetstream-cloud.org/uavsarlegend1/uid';
+
+                var uidUri = entry.info['uid'] + '_unw_default.png';
+
+                var finalUri = baseUri + uidUri;
+
                 this.layers['highResUavsar'].setOpacity(.5)
+
+                this.uavsarLegend = L.control({position: 'bottomleft'});
+                this.uavsarLegend.onAdd = function () {
+                    var div = L.DomUtil.create('div', 'uavsarLegend');
+                    div.innerHTML = '<img src=' + finalUri + '>';
+                    return div;
+                };
+
+                this.uavsarLegend.addTo(this.map)
 
                 this.map.on('click', this.markerClick);
 
@@ -421,14 +441,7 @@
             uavsarOverview(
 
             ) {
-                this.uavsarLegend = L.control({position: 'bottomleft'});
-                this.uavsarLegend.onAdd = function () {
-                    var div = L.DomUtil.create('div', 'uavsarLegend');
-                    div.innerHTML = '<img src="https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d">';
-                    return div;
-                };
 
-                this.uavsarLegend.addTo(this.map)
 
                 this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
                         layers: 'InSAR:thumbnailmosaic',
@@ -558,9 +571,7 @@
             addExistingLayer(layerName) {
                 this.map.addLayer(this.layers[layerName]);
             },
-            newRemoveLayer(layername) {
-                this.map.removeLayer(this.layers[layername])
-            },
+
             seismicityPlots(data, lat, lon) {
                 var style = " style=width:200px;height:150px;"
                 //fa-line-chart

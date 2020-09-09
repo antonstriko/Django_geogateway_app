@@ -17,6 +17,7 @@ GdacsUrl = 'https://www.gdacs.org/xml/gdacsEQ.geojson'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
 uavsarOverUrl = 'http://gf8.ucs.indiana.edu/geoserver/InSAR/wms'
 uavsarJsonUrl = 'https://geo-gateway.org/uavsar_query/?querystr='
+geoServerUrl='http://gf2.ucs.indiana.edu/quaketables/uavsar/search?searchstring='
 
 
 def gps_service(request):
@@ -125,6 +126,14 @@ def uavsarGeometry(request):
         responseData = HttpResponse(data)
         return responseData
 
+
+def uavsarFlight(request):
+    if request.method == 'GET':
+        path = request.GET.get('queryStr')
+        fullUri = geoServerUrl + path
+        data = requests.get(fullUri)
+        responseData = HttpResponse(data)
+        return responseData
 
 def uavsarTest(request):
     if request.method == 'GET':

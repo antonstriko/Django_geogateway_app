@@ -11,14 +11,16 @@
         ><label for="overview">Show Overview</label>
 
         <div v-if="overview">
+            <p>Fill one of the following fields to search catalog:</p>
             <b-input-group prepend="Flight name/path">
                 <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
             </b-input-group>
+            <br/>
             <b-input-group prepend="Latitude, Longitude">
                 <b-form-input v-model="lat_lon" name="lat_lon" placeholder=""></b-form-input>
             </b-input-group>
             <br/>
-            <b-button variant="success" @click="pointQuery(lat_lon.split(',')[0], lat_lon.split(',')[1])">Search KMLs</b-button>
+            <b-button variant="success" @click="uavsarQuery()">Search KMLs</b-button>
         </div>
         <br />
 
@@ -33,20 +35,18 @@
                 </b-button>
             </div>
             <br/>
-            <div class="collapsed"  v-for="entry in layers" :key="entry.info['uid']">
+            <div class="collapsed"  v-for="entry in layers" :key="entry.info['uid']" @click="extendEntry(entry)">
                 <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"> <span style="font-size: 15px">{{entry.info['dataname']}}</span><br>
+                <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
                 <div  v-if="!entry.extended && !entry.clicked" @click="extendEntry(entry)">
                     <b-icon-arrows-expand ></b-icon-arrows-expand>
                 </div>
 <!--                shows history of entry clicks-->
-                <div  v-if="!entry.extended && entry.clicked" @click="extendEntry(entry)" style="background-color: #A5B9CC;">
+                <div  v-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC;">
                    <b-icon-eye></b-icon-eye>
                 </div>
 
                 <div v-if="entry.extended" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
-                    <div class="extended">
-                        <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
-                    </div>
                     <div class="extended">
                         <b>UID: </b>{{entry.info['uid']}}  |  <b>Heading: </b> {{entry.info['heading']}} | <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                         <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
@@ -100,10 +100,8 @@
 <script>
     import {bus} from '../main'
     import axios from "axios";
-    // import Zingchart from 'zingchart'
-    // import Chart from 'chart.js'
-    // import * as d3 from 'd3'
-    // import Dygraph from 'dygraphs'
+    import 'leaflet-kmz';
+
 
     export default {
         name: "UAVSAR",
@@ -154,6 +152,18 @@
                 this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
         methods: {
+            uavsarQuery(){
+              if(this.lat_lon === '') {
+                  if (this.flight_path === '') {
+                      alert('Please fill one of the input boxes');
+                  } else {
+                      this.flightPathQuery(this.flight_path);
+                  }
+              }else {
+                  this.pointQuery(this.lat_lon.split(',')[0], this.lat_lon.split(',')[1]);
+              }
+
+            },
             openDataSource(){
                 window.open('http://gf2.ucs.indiana.edu/quaketables/uavsar?uid='+this.activePlot, '_blank');
             },
@@ -228,49 +238,49 @@
                 })
             },
             extendEntry(entry){
-                var layerFound = null;
-                bus.$emit('hidePlot');
-                this.activeEntry = entry;
-                this.activePlot = entry.info['uid'];
-                entry.clicked = true;
                 if(!entry.extended) {
-                    for (var i = 0; i < this.layers.length; i++) {
-                        this.layers[i].extended = false
-                        this.layers[i].active = false
-                        this.kmlLayerChange(this.layers[i]);
+                    var layerFound = null;
+                    bus.$emit('hidePlot');
+                    this.activeEntry = entry;
+                    this.activePlot = entry.info['uid'];
+                    entry.clicked = true;
+                    if (!entry.extended) {
+                        for (var i = 0; i < this.layers.length; i++) {
+                            this.layers[i].extended = false
+                            this.layers[i].active = false
+                            this.kmlLayerChange(this.layers[i]);
 
+                        }
+                        entry.extended = true;
+
+                        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
+
+                        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
+
+                        bus.$emit('removeLayer', 'highResUavsar');
+
+
+                        //get wms description and check for exception
+
+                        axios.get(testURI, {
+                            params: {
+                                'uid': layername,
+                            }
+                        }).then(function (response) {
+                            var datajson = response.data
+                            if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions')) {
+                                layerFound = true;
+                                console.log(datajson);
+                                bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
+                            } else if (Object.prototype.hasOwnProperty.call(datajson, 'exceptions')) {
+                                layerFound = false;
+                            }
+                            bus.$emit('layerAlert', layerFound);
+
+                        })
+                    } else {
+                        entry.extended = false;
                     }
-                    entry.extended = true;
-
-                    var testURI =  'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
-
-                    var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
-
-                    bus.$emit('removeLayer', 'highResUavsar');
-
-
-
-                    //get wms description and check for exception
-
-                    axios.get(testURI, {
-                        params: {
-                            'uid':layername,
-                        }
-                    }).then( function (response){
-                        var datajson = response.data
-                        if(Object.prototype.hasOwnProperty.call(datajson,'layerDescriptions')) {
-                            layerFound = true;
-                            bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
-                        }
-                        else if(Object.prototype.hasOwnProperty.call(datajson,'exceptions')) {
-                            layerFound = false;
-                        }
-                        bus.$emit('layerAlert', layerFound);
-
-                    })
-                }
-                else {
-                    entry.extended = false;
                 }
             },
             selDeselAll(){
@@ -295,6 +305,37 @@
                     this.LosPlot = false;
                     bus.$emit('deactivateUavsar');
 
+                }
+            },
+            flightPathQuery(path){
+                if(this.overview) {
+
+                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
+                    axios.get(baseURI, {
+                        params: {
+                            //
+                            "type": "path",
+                            "queryStr": path + '',
+                        }
+                    }).then(function (response) {
+                        var entries = response.data;
+
+                        for (var i = 0; i < entries.length; i++) {
+                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                            axios.get(baseURI, {
+                                params: {
+                                    //
+                                    "json": JSON.stringify(entries[i]),
+                                }
+                            }).then(function (response) {
+                                var entry = response.data;
+                                bus.$emit('uavsarKMLs', entry)
+                                bus.$emit('assignEntry', entry);
+
+                            })
+                        }
+
+                    })
                 }
             },
             pointQuery(lat, lon){
@@ -467,6 +508,7 @@
         box-sizing: border-box;
         border-radius: 8px;
         background-color: #8494A3;
+        cursor: pointer;
         /*A5B9CC*/
     }
 

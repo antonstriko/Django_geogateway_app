@@ -50,13 +50,20 @@
                     <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
                 </label>
                 <button @click="submitFile()">Submit</button>
-            </div>
+                <div v-for="entry in kmlLayers" :key="entry" >
+                    <div class="fileEntry" >
+                        <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)" > <span style="font-size: 15px; color: #222222">{{entry.name}}</span><br>
+                    </div>
+
+                </div>
+
 <!--            <div v-if="boundaries">-->
 <!--                <label for="opacity">Example range with min and max</label>-->
 <!--                <b-form-input id="opacity" @change="updateOpacity(value)" v-model="value" type="range" min="0" max="100"></b-form-input>-->
 <!--                <div class="mt-2">Value: {{ value }}</div>-->
 <!--            </div>-->
         </div>
+    </div>
     </div>
 </template>
 
@@ -80,6 +87,7 @@
                 kmlFile: null,
                 selected: 'grey',
                 value: 50,
+                kmlLayers: [],
 
 
             }
@@ -88,6 +96,13 @@
             // updateOpacity(value){
             //   bus.$emit('stateBoundaryOpacity', (value/100))
             // },
+            kmlLayerChange(entry){
+                if(entry.active) {
+                    bus.$emit('reactivateKmlUploadLayer', entry.name);
+                }else {
+                    bus.$emit('RemoveLayer', entry.name);
+                }
+            },
             updateColor(selected){
                 this.selected = selected;
                 bus.$emit('RemoveLayer', 'ucerfL');
@@ -129,17 +144,19 @@
             handleFileUpload(event){
                 console.log(event)
                 this.kmlFile = event.target.files[0];
-                console.log(this.kmlFile)
+
             },
             submitFile(){
                 var uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/';
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
+                var fileName = this.kmlFile['name'];
+                this.kmlLayers.push({name: fileName, active: true})
                 console.log(formData)
                 axios.post( uploadUrl, formData
                 ).then(function(response){
-                    console.log('SUCCESS!!');
-                    bus.$emit('TextAddLayer', response.data, 'kmlUpload');
+                    console.log(response);
+                    bus.$emit('TextAddLayer', response.data, fileName);
                 })
                     .catch(function(response){
                         console.log(response)
@@ -153,7 +170,15 @@
 
 <style scoped>
 
-
+.fileEntry {
+    width: auto;
+    height: auto;
+    box-sizing: border-box;
+    font-size: 15px;
+    border-radius: 8px;
+    background-color: #8494A3;
+    margin-bottom: 5px;
+}
 
 </style>
 
