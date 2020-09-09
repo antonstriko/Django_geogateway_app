@@ -201,7 +201,6 @@
             bus.$on('showPlotDiv', () =>
                 this.showPlotDiv());
             bus.$on('resetUavsar', () => {
-                this.uavsarLegend.remove();
                 this.resetUavsar();
             });
             bus.$on('reactivateKmlUploadLayer', (name) =>
