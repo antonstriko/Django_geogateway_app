@@ -54,9 +54,10 @@ export function convertEpochToSpecificTimezone(offset, d){
 }
 
 export function gnssPopup(feature, layer){
-    layer.bindPopup(
-        feature.properties.description
-    );
+            layer.bindPopup(
+            feature.properties.description
+        );
+
 }
 
 export function gdacsPopup(feature, layer){
@@ -66,3 +67,5 @@ export function gdacsPopup(feature, layer){
         feature.properties.longitude + '</p>'
     );
 }
+
+

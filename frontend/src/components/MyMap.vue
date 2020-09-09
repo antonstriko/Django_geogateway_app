@@ -5,19 +5,19 @@
               crossorigin=""/>
         <TopNav/>
         <ToolBar/>
-                <DraggableDiv class="col-11" v-if="plotActive" id="plot-window">
-                    <template slot="header">
-                        <p>LOS Plot</p>
-                    </template>
-                    <template slot="main" >
-                        <div id="dygraph-LOS"></div>
-                    </template>
+        <DraggableDiv class="col-11" v-if="plotActive" id="plot-window">
+            <template slot="header">
+                <p>LOS Plot</p>
+            </template>
+            <template slot="main" >
+                <div id="dygraph-LOS"></div>
+            </template>
 
-                </DraggableDiv>
-<!--        <div v-if="plotActive" class="plot-window">-->
-<!--            <div id="los-header"><h4>LOS Plot</h4></div>-->
-<!--            <div id="dygraph-LOS"></div>-->
-<!--        </div>-->
+        </DraggableDiv>
+        <!--        <div v-if="plotActive" class="plot-window">-->
+        <!--            <div id="los-header"><h4>LOS Plot</h4></div>-->
+        <!--            <div id="dygraph-LOS"></div>-->
+        <!--        </div>-->
 
         <div id="map">
         </div>
@@ -65,6 +65,7 @@
                     'gdacsL': null,
                     'gnssV': null,
                     'gnssH': null,
+                    'gnssPlotPt': null,
                     'nowcastL': null,
                     'usgs_layer': null,
                     'markerLayer': null,
@@ -105,10 +106,6 @@
                 uavsarEntry: null,
 
 
-
-
-
-
             };
         },
         props: {
@@ -142,8 +139,8 @@
 
             //convert to above abstracted event listener
 
-            bus.$on('gnssLayer', (text, type) =>
-                this.gnssGeoJson(text, type));
+            bus.$on('gnssLayer', (text, type, markerSize) =>
+                this.gnssGeoJson(text, type, markerSize));
 
             bus.$on('RemoveLayer', (name) =>
                 this.removeLayer(name));
@@ -249,7 +246,10 @@
                 }
             },
             deactivateUavsar() {
-                this.uavsarLegend.remove();
+                if(this.uavsarLegend !== null){
+                    this.uavsarLegend.remove();
+                }
+
                 if (this.layers['uavsarWMS'] !== null) {
                     this.layers['uavsarWMS'].remove();
                 }
@@ -539,17 +539,72 @@
             addGeoJson(text, layer) {
                 this.layers[layer] = L.geoJSON(text, {}).addTo(this.map);
             },
-            gnssGeoJson(text, type) {
+
+
+            gnssGeoJson(text, type, markerSize) {
+
+                var geojsonMarkerOptions = {
+                    radius: markerSize,
+                    fillColor: "#1bf53c",
+                    color: "#000",
+                    weight: 1,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                };
+
+                ///////////////////// geojson styling. Should be simplified in the future
+
                 if (type === 'gnssV') {
                     this.layers['gnssV'] = L.geoJSON(text, {
-                        onEachFeature: function (feature, layer) {
-                            //what properties of each feature are most important to display?
-                            gnssPopup(feature, layer);
+                        //point and polygon
+
+                        style: function (feature) {
+                            if (feature.geometry.type === 'Polygon') {
+                                return {color: "#0000ff"};
+                            }
                         },
+                        filter: function (feature){
+                            return feature.geometry.type !== 'Point';
+                        },
+                        pointToLayer: function (feature, latlng) {
+                            return L.circleMarker(latlng, geojsonMarkerOptions);
+                        }
                     }).addTo(this.map);
-                } else {
-                    this.layers['gnssH'] = L.geoJSON(text).addTo(this.map);
+                }else {
+                    this.layers['gnssH'] = L.geoJSON(text, {
+                        //point and linestring
+                        style: function(feature) {
+                            if(feature.geometry.type === 'LineString')  {
+                                return {color: "#25F76F"};
+                            }
+                        },
+                        filter: function (feature){
+                            return feature.geometry.type !== 'Point';
+                        },
+                        pointToLayer: function (feature, latlng) {
+                            return L.circleMarker(latlng, geojsonMarkerOptions);
+                        }
+                    }).addTo(this.map);
                 }
+
+                this.layers['gnssPlotPt'] = L.geoJSON(text, {
+                    //point and polygon
+                    filter: function (feature) {
+                        return feature.geometry.type === 'Point';
+                    },
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng, geojsonMarkerOptions);
+                    },
+                    onEachFeature: function (feature, layer) {
+                        gnssPopup(feature, layer);
+                    },
+                }).addTo(this.map)
+
+                ////////////////////////////////////////////////
+
+
+
+
             },
             kmlUrl(url, layerName) {
                 fetch(url).then(res => res.text())

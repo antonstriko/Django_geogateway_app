@@ -24,19 +24,19 @@
                 <br/>
 
                 <b-input-group prepend="Latitude">
-                    <b-form-input v-model="gs_latitude" placeholder="1 degree" name="gs_latitude"></b-form-input>
+                    <b-form-input v-model="gs_latitude"  name="gs_latitude"></b-form-input>
                 </b-input-group>
 
                 <b-input-group prepend="Longitude">
-                    <b-form-input v-model="gs_longitude" placeholder="1 degree" name="gs_longitude"></b-form-input>
+                    <b-form-input v-model="gs_longitude" placeholder="" name="gs_longitude"></b-form-input>
                 </b-input-group>
 
                 <b-input-group prepend="Width">
-                    <b-form-input v-model="gs_width"  name="gs_width"></b-form-input>
+                    <b-form-input v-model="gs_width"  name="gs_width" placeholder="1 degree"></b-form-input>
                 </b-input-group>
 
                 <b-input-group prepend="Height">
-                    <b-form-input v-model="gs_height" placeholder="" name="gs_height"></b-form-input>
+                    <b-form-input v-model="gs_height" placeholder="1 degree" name="gs_height"></b-form-input>
                 </b-input-group>
 
                 <div class="input-group" id="epoch_show" v-if="this.kmltype_sel === 'getcoseismic' || this.kmltype_sel === 'getpostseismic'">
@@ -84,6 +84,11 @@
                     <b-form-input v-model="gs_outputprefix" name="gs_outputprefix"></b-form-input>
                 </b-input-group>
 
+                <br />
+                <div>
+                    <b-form-input id="markerSize" v-model="markerSize" type="range" min="0" max="15"></b-form-input>
+                    <p style="color: white">Marker Size: {{markerSize}}</p>
+                </div>
                 <div class="checkbox">
                     <label class="checkbox">
                         <input v-model="gs_vabs" name="vabs" type="checkbox" id="gs_vabs" value= ""/>
@@ -92,18 +97,16 @@
                 </div>
                 <div class="checkbox">
                     <label class="checkbox">
-                        <input v-model="gs_mon" name="mon" type="checkbox" id="gs_mon" value=""/>
-                        Minimize marker size
-                    </label>
-                </div>
-                <div class="checkbox">
-                    <label class="checkbox">
                         <input v-model="gs_eon" name="mon" type="checkbox" id="gs_eon" value=""/>
                         Include error ellipses
                     </label>
                 </div>
+
+                <br />
                 <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
                 </button>
+                <br />
+                <br />
 
                 <div id="gpsservice_results"></div>
                 <div><strong>Data source: <a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
@@ -134,6 +137,8 @@
     import {bus} from '../main'
     import axios from 'axios'
     import toGeoJSON from 'togeojson'
+    // import L from 'leaflet';
+
     // import {convertEpochToSpecificTimezone} from '../assets/mapMethods'
     // import qs from 'qs'
 
@@ -144,26 +149,26 @@
             return {
                 selected: [],
                 kmltype_sel: '',
-                gs_latitude: '',
-                gs_longitude: '',
-                gs_width: '',
-                gs_height: '',
+                gs_latitude: '38.89103282648846',
+                gs_longitude: '-120.49804687500001',
+                gs_width: '1.966552734375',
+                gs_height: '1.966552734375',
                 gs_epoch: '',
                 gs_epoch1: '',
                 gs_epoch2: '',
-                gs_refsite: '',
-                gs_scale: '',
+                gs_refsite: 'CCCC',
+                gs_scale: '320',
                 gs_ctwin: '',
                 gs_ptwin: '',
                 gs_dwin1: '',
                 gs_dwin2: '',
-                gs_outputprefix: '',
+                gs_outputprefix: 'test',
                 kmlData: '',
                 gs_eon: '',
                 gs_vabs: '',
-                gs_mon: '',
                 ranLayers: [],
                 activeLayers: [],
+                markerSize: 8,
 
 
             }
@@ -189,13 +194,14 @@
                 var fileName3;
                 var folder;
                 var props;
+                var markerSize = this.markerSize;
                 var queries = this.ranLayers;
                 if(this.kmltype_sel === ''){
                     alert("Please select as least one plot!");
                 }
                 else {
                     // this.layerCheckbox = true;
-                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/gps_service'
+                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
                     //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
@@ -218,7 +224,7 @@
                             "dwin2": this.gs_dwin2,
                             "prefix": this.gs_outputprefix,
                             //need default false value?
-                            "mon": this.gs_mon,
+                            "mon": null,
                             "eon": this.gs_eon,
                             "vabs": this.gs_vabs
                             //
@@ -251,35 +257,35 @@
                                 folder: folder,
                                 active: true,
                             })
-                        const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
-                        axios.get(kmlURI, {
-                            params: {
-                                "file": fileName1,
-                                "folder": folder
-                            },
-                            responseType: 'text',
-                            //emit raw kml text to parent map component
-                        }).then(function (response) {
-                            // console.log(toGeoJSON.kml(response.data));
-                            var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'), {styles: true})
-                            bus.$emit('gnssLayer', geojson, 'gnssV');
+                            const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
+                            axios.get(kmlURI, {
+                                params: {
+                                    "file": fileName1,
+                                    "folder": folder
+                                },
+                                responseType: 'text',
+                                //emit raw kml text to parent map component
+                            }).then(function (response) {
+                                // console.log(toGeoJSON.kml(response.data));
+                                var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'), {styles: true})
+                                bus.$emit('gnssLayer', geojson, 'gnssV', markerSize);
                             })
-                        axios.get(kmlURI, {
-                            params: {
-                                "file": fileName3,
-                                "folder": folder
-                            },
-                            responseType: 'text',
-                            //emit raw kml text to parent map component
-                        }).then(function (response) {
-                            // console.log(toGeoJSON.kml(response.data));
-                            var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
-                            console.log(geojson)
-                            bus.$emit('gnssLayer', geojson, 'gnssH');
+                            axios.get(kmlURI, {
+                                params: {
+                                    "file": fileName3,
+                                    "folder": folder
+                                },
+                                responseType: 'text',
+                                //emit raw kml text to parent map component
+                            }).then(function (response) {
+                                // console.log(toGeoJSON.kml(response.data));
+                                var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
+                                console.log(geojson)
+                                bus.$emit('gnssLayer', geojson, 'gnssH', markerSize);
+
+                            })
 
                         })
-
-                    })
                 }
 
             },
