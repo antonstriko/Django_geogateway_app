@@ -18,8 +18,9 @@
                 </select>
                 <br/>
 
-                <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" v-b-tooltip.hover title="Use toolbar -->" @click="drawToolbar()">
+                <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" v-b-tooltip.hover title="Use toolbar -->" @click="drawToolbar()">
                     <b-icon-pencil></b-icon-pencil>Draw an area on map</b-button>
+                <b-button variant="warning" id="clearGnss" @click="clearGnss()">Clear GNSS Layers</b-button>
                 <br/>
                 <br/>
 
@@ -87,7 +88,7 @@
                 <br />
                 <div>
                     <b-form-input id="markerSize" v-model="markerSize" type="range" min="0" max="15"></b-form-input>
-                    <p style="color: white">Marker Size: {{markerSize}}</p>
+                    <p>Marker Size: {{markerSize}}</p>
                 </div>
                 <div class="checkbox">
                     <label class="checkbox">
@@ -136,7 +137,7 @@
 
     import {bus} from '../main'
     import axios from 'axios'
-    import toGeoJSON from 'togeojson'
+    // import toGeoJSON from 'togeojson'
     // import L from 'leaflet';
 
     // import {convertEpochToSpecificTimezone} from '../assets/mapMethods'
@@ -267,8 +268,8 @@
                                 //emit raw kml text to parent map component
                             }).then(function (response) {
                                 // console.log(toGeoJSON.kml(response.data));
-                                var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'), {styles: true})
-                                bus.$emit('gnssLayer', geojson, 'gnssV', markerSize);
+                                // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'), {styles: true})
+                                bus.$emit('TextAddLayer', response.data, 'gnssV');
                             })
                             axios.get(kmlURI, {
                                 params: {
@@ -279,9 +280,10 @@
                                 //emit raw kml text to parent map component
                             }).then(function (response) {
                                 // console.log(toGeoJSON.kml(response.data));
-                                var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
-                                console.log(geojson)
-                                bus.$emit('gnssLayer', geojson, 'gnssH', markerSize);
+                                // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
+                                // console.log(geojson)
+                                bus.$emit('TextAddLayer', response.data, 'gnssH');
+                                console.log(markerSize)
 
                             })
 
@@ -290,9 +292,12 @@
 
             },
             drawToolbar() {
-
                 bus.$emit('drawToolbar');
-
+            },
+            clearGnss(){
+                // bus.$emit('RemovePlotPtGnss', 'gnssPlotPt');
+                bus.$emit('RemoveLayer', 'gnssH');
+                bus.$emit('RemoveLayer', 'gnssV');
             },
             setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
                 this.gs_latitude = centerLat;

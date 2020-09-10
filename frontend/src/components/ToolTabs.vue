@@ -1,31 +1,32 @@
 <template>
     <div id="tabs">
-        <b-tabs pills card>
-            <b-tab title="Map Tools" active><b-card-text id="map-tools" class="tab-text">
+        <b-tabs pills card >
+            <b-tab title="Map Tools" active title-link-class="tab">
+                <b-card-text id="map-tools" class="tab-text">
                 <MapTools />
             </b-card-text></b-tab>
-            <b-tab title="UAVSAR">
+            <b-tab title="UAVSAR" title-link-class="tab">
                 <UAVSAR />
             </b-tab>
-            <b-tab title="GNSS"><b-card-text class="tab-text">
+            <b-tab title="GNSS" title-link-class="tab"><b-card-text>
                 <GNSS />
             </b-card-text></b-tab>
-            <b-tab title="Seismicity"><b-card-text>
+            <b-tab title="Seismicity" title-link-class="tab"><b-card-text>
                 <Seismicity />
             </b-card-text></b-tab>
-            <b-tab title="Nowcast"><b-card-text>
+            <b-tab title="Nowcast" title-link-class="tab"><b-card-text>
                 <Nowcast />
             </b-card-text></b-tab>
-            <b-tab title="Magnitude"><b-card-text>
+            <b-tab title="Magnitude" title-link-class="tab"><b-card-text>
                 <MMCalc/>
             </b-card-text></b-tab>
-            <b-tab title="Disloc"><b-card-text>
+            <b-tab title="Disloc" title-link-class="tab"><b-card-text>
                 <Disloc />
             </b-card-text></b-tab>
-            <b-tab title="Saves"><b-card-text>
+            <b-tab title="Saves" title-link-class="tab"><b-card-text>
                 <Saves />
             </b-card-text></b-tab>
-            <b-tab title="Help"><b-card-text>
+            <b-tab title="Help" title-link-class="tab"><b-card-text>
                 <help />
             </b-card-text></b-tab>
         </b-tabs>
@@ -60,16 +61,24 @@
     }
 </script>
 
-<style scoped>
-#tabs {
-    width: 525px;
-    background-color: #343a40;
-}
+<style >
+    #tabs {
+        width: 525px;
+        background-color: #e6e6ff;
+    }
     .tab-text {
         width: 500px;
         position: relative;
         align-content: center;
         height: 100% ;
         overflow: auto;
+    }
+
+    .nav-pills .nav-link.active {
+        background-color: #343a40;
+
+    }
+    .nav-link.tab {
+        color: #343a40;
     }
 </style>

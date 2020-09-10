@@ -38,7 +38,7 @@
                 <h5>Magnitude-Frequency relations and Nowcast</h5>
                 <hr/>
                 <div id="nowcast_input">
-                    <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
+                    <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
                         <b-icon-pencil></b-icon-pencil> Place Marker</b-button>
                     <br/>
                     <br/>

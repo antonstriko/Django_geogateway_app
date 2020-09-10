@@ -58,7 +58,7 @@
         </select>
         <hr/>
         <h4>Search Earthquake Catalog</h4>
-        <b-button variant="outline-primary" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
+        <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
             <b-icon-pencil></b-icon-pencil>Draw an area on map</b-button>
         <br/><br/>
         <b-input-group prepend="Min Lat">

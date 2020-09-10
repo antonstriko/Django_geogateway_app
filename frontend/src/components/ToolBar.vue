@@ -25,9 +25,8 @@
         width: 525px;
         overflow: auto;
         float: left;
-        background-color: #343a40;
+        background-color: #e6e6ff;
     }
-
 
 
 </style>

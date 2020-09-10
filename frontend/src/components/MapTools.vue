@@ -184,9 +184,9 @@
 
 <style>
     label {
-        color: #71A7DD;
+        color: #626B73;
     }
     p {
-        color: #71A7DD;
+        color: #343a40;
     }
 </style>

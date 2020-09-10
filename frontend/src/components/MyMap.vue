@@ -81,17 +81,15 @@
                 plottingMarker2: null,
                 plotLine: null,
                 plotActive: false,
-                greenIcon: new L.Icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                startIcon: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blueA.png',
                     iconSize: [25, 41],
                     iconAnchor: [12, 41],
                     popupAnchor: [1, -34],
                     shadowSize: [41, 41]
                 }),
-                redIcon: new L.Icon({
-                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+                endIcon: new L.Icon({
+                    iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_redB.png',
                     iconSize: [25, 41],
                     iconAnchor: [12, 41],
                     popupAnchor: [1, -34],
@@ -208,6 +206,8 @@
                 this.updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength));
             bus.$on('placePlotMarkers', (southwest, northeast, clickloc, latlon, entry) =>
                 this.placePlotMarkers(southwest, northeast, clickloc, latlon, entry));
+            bus.$on('RemovePlotPtGnss', ()=>
+                this.removePlotGnss());
         },
 
 
@@ -243,6 +243,9 @@
                 }
                 if (this.plottingMarker1 !== null) {
                     this.resetPlot();
+                }
+                if(this.uavsarLegend !== null){
+                    this.uavsarLegend.remove();
                 }
             },
             deactivateUavsar() {
@@ -393,10 +396,10 @@
 
 
                     this.plottingMarker1 = L.marker([this.plotLat1, this.plotLon1],
-                        {draggable: true, icon: this.greenIcon});
+                        {draggable: true, icon: this.startIcon});
                     // console.log(this.plottingMarker1)
                     this.plottingMarker2 = L.marker([this.plotLat2, this.plotLon2],
-                        {draggable: true, icon: this.redIcon});
+                        {draggable: true, icon: this.endIcon});
 
                     this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()],
                         {color: 'red'});
@@ -502,10 +505,7 @@
                             var minLat = layer.getLatLngs()[0][3].lat;
                             var minLon = layer.getLatLngs()[0][0].lng;
                             this.removeLayer(layer)
-                            // var ne = layer.getLatLngs()[0][3];
 
-                            // console.log(this.gs_latitude, this.gs_longitude);
-                            // console.log(this.gs_height, this.gs_width)
                             bus.$emit('rectDim', maxLat, minLon, minLat, maxLon, centerLat, centerLng);
                         } else if (type === 'marker') {
                             this.markerLayer = e.layer;
@@ -527,7 +527,6 @@
                 }).addTo(this.map);
             },
             kmlText(text, layerName) {
-                // console.log(this.globalLayers.gnss1)
                 const parser = new DOMParser();
                 const kml = parser.parseFromString(text, 'text/xml');
                 this.layers[layerName] = new L.KML(kml);
@@ -551,7 +550,7 @@
                     opacity: 1,
                     fillOpacity: 0.8
                 };
-
+                console.log(markerSize)
                 ///////////////////// geojson styling. Should be simplified in the future
 
                 if (type === 'gnssV') {
@@ -566,9 +565,6 @@
                         filter: function (feature){
                             return feature.geometry.type !== 'Point';
                         },
-                        pointToLayer: function (feature, latlng) {
-                            return L.circleMarker(latlng, geojsonMarkerOptions);
-                        }
                     }).addTo(this.map);
                 }else {
                     this.layers['gnssH'] = L.geoJSON(text, {
@@ -581,9 +577,6 @@
                         filter: function (feature){
                             return feature.geometry.type !== 'Point';
                         },
-                        pointToLayer: function (feature, latlng) {
-                            return L.circleMarker(latlng, geojsonMarkerOptions);
-                        }
                     }).addTo(this.map);
                 }
 
@@ -600,11 +593,9 @@
                     },
                 }).addTo(this.map)
 
-                ////////////////////////////////////////////////
-
-
-
-
+            },
+            removePlotGnss(){
+              console.log(this.layers['gnssPlotPt'].remove());
             },
             kmlUrl(url, layerName) {
                 fetch(url).then(res => res.text())
