@@ -81,4 +81,11 @@
     .nav-link.tab {
         color: #343a40;
     }
+
+    label {
+        color: #343a40 ;
+    }
+    p {
+        color: #343a40;
+    }
 </style>

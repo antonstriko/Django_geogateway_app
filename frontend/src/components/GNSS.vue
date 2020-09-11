@@ -119,7 +119,7 @@
             <!--            </span>-->
             <br/>
             <br/>
-            <div v-if="ranLayers.length!==0" style="color: #B8C7D6; text-align: left">
+            <div v-if="ranLayers.length!==0" style="color: #343a40; text-align: left">
                 <div v-for="layer in ranLayers" :key="layer.name">
                     <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label">{{layer.name}}</span> <br>
                     <hr/>
@@ -190,6 +190,7 @@
                 }
             },
             rungpsservice(){
+                alert("This tool is under maintanence. Popups will not work.")
                 var fileName1;
                 var fileName2;
                 var fileName3;
@@ -202,7 +203,7 @@
                 }
                 else {
                     // this.layerCheckbox = true;
-                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
+                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/gps_service'
                     //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
@@ -258,7 +259,7 @@
                                 folder: folder,
                                 active: true,
                             })
-                            const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
+                            const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
                             axios.get(kmlURI, {
                                 params: {
                                     "file": fileName1,
@@ -320,6 +321,6 @@
         width: 440px;
     }
     strong {
-        color: #B8C7D6;
+        color: #343a40;
     }
 </style>

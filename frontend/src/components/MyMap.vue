@@ -7,7 +7,7 @@
         <ToolBar/>
         <DraggableDiv class="col-11" v-if="plotActive" id="plot-window">
             <template slot="header">
-                <p>LOS Plot</p>
+                <p style="color: #e6e6ff">LOS Plot</p>
             </template>
             <template slot="main" >
                 <div id="dygraph-LOS"></div>
@@ -745,7 +745,7 @@
     #plot-window {
         position: absolute;
         z-index: 1500;
-        background-color: #CCFFCC;
+        background-color: #ccffcc;
         height: 250px;
         width: 725px;
         border-radius: 20px;

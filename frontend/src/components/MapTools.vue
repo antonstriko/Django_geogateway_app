@@ -182,11 +182,3 @@
 
 </style>
 
-<style>
-    label {
-        color: #626B73;
-    }
-    p {
-        color: #343a40;
-    }
-</style>
