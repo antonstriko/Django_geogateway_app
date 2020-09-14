@@ -26,6 +26,9 @@
             <b-tab title="Saves" title-link-class="tab"><b-card-text>
                 <Saves />
             </b-card-text></b-tab>
+            <b-tab title="Report a Bug" title-link-class="tab"><b-card-text>
+                <report />
+            </b-card-text></b-tab>
             <b-tab title="Help" title-link-class="tab"><b-card-text>
                 <help />
             </b-card-text></b-tab>
@@ -42,6 +45,7 @@
     import Disloc from "./Disloc";
     import Saves  from "./Saves";
     import UAVSAR from "./UAVSAR";
+    import report from "./report";
     import help from "./help";
     export default {
         name: "ToolTabs",
@@ -54,6 +58,7 @@
             Disloc,
             Saves,
             UAVSAR,
+            report,
             help
 
 

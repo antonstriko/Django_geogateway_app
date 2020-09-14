@@ -102,6 +102,7 @@
                 plotLon2: null,
                 uavsarLatlon: null,
                 uavsarEntry: null,
+                usgsLegend: null,
 
 
             };
@@ -208,10 +209,18 @@
                 this.placePlotMarkers(southwest, northeast, clickloc, latlon, entry));
             bus.$on('RemovePlotPtGnss', ()=>
                 this.removePlotGnss());
+            bus.$on('ClearUsgs', () =>
+                this.clearUsgsLayers());
         },
 
 
         methods: {
+            clearUsgsLayers(){
+              this.layers['usgs_layer'].remove();
+              this.layers['usgs_layer'] = null;
+              this.usgsLegend.remove();
+              this.usgsLegend = null;
+            },
             showPlot(csv_final) {
                 new Dygraph(
                     document.getElementById("dygraph-LOS"),
@@ -663,6 +672,18 @@
                         return circleMaker(feature, layer, iconScale, startDate, endDate);
                     }
                 }).addTo(this.map)
+
+                if(this.usgsLegend === null) {
+
+                    this.usgsLegend = L.control({position: 'bottomleft'});
+                    this.usgsLegend.onAdd = function () {
+                        var div = L.DomUtil.create('div', 'usgsLegend');
+                        div.innerHTML = '<img src="https://raw.githubusercontent.com/cosmic-tichy/GeoGatewayStaticResources/master/icons/color_gradient.jpg">';
+                        return div;
+                    };
+
+                    this.usgsLegend.addTo(this.map);
+                }
             },
 
             addGdacsLayers(text) {

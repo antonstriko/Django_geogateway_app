@@ -4,11 +4,6 @@
 
         <h3>Recent Earthquakes from USGS</h3>
         <hr />
-
-        <p><i>Earthquake magnitude shown by circle size. Click on earthquake markers for event data.</i></p>
-        <i id="buttonText">Most recent events represented by hotter colors, and older events by cooler colors</i>
-        <img src="../assets/color_gradient.png">
-        <hr />
         <fieldset id="group1">
             <input
                     type="radio"
@@ -59,8 +54,11 @@
         <hr/>
         <h4>Search Earthquake Catalog</h4>
         <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
-            <b-icon-pencil></b-icon-pencil>Draw an area on map</b-button>
+            <b-icon-pencil></b-icon-pencil> Draw an area on map</b-button>
+        <b-button variant="warning" id="clearUsgs" @click="clearUsgs()">
+            <b-icon-trash></b-icon-trash> Clear USGS Layers</b-button>
         <br/><br/>
+
         <b-input-group prepend="Min Lat">
             <b-form-input v-model="minLat" placeholder="1 degree" name="minLat" value="32.0"></b-form-input>
         </b-input-group>
@@ -106,6 +104,7 @@
     import axios from "axios";
     import {bus} from '../main'
     import 'leaflet-ajax';
+    // import L from "leaflet";
     export default {
         name: "seismicity",
         data() {
@@ -133,6 +132,10 @@
                 this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
         methods: {
+            clearUsgs(){
+              bus.$emit('ClearUsgs', 'usgs_layer');
+
+            },
             showSelected(time) {
                 var dFilter = this.dFilter;
                 var mFilter = this.mFilter;
@@ -157,6 +160,7 @@
                         startD.setDate(startD.getDate()-30);
                         break;
                 }
+
                 axios.get(timeUrl).then(function(response){
                     bus.$emit('filterCat', response.data, dFilter, mFilter, 1, startD, endD)
                 })
