@@ -5067,10 +5067,9 @@ leaflet-geometryutil@^0.9.3:
   dependencies:
     leaflet ">=0.7.0"
 
-leaflet-kml@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/leaflet-kml/-/leaflet-kml-1.0.1.tgz#92aec859325cf96d62acb84931a5539e03f75c2a"
-  integrity sha512-9eL2gb+3aGpzM1YMqX864JYdKmd6Rzdg1KX/lu0dVfZOJtqA44YFh2VS6BFcY6LDnBdnKX0U+88DtPM5s65u5Q==
+"leaflet-kml@https://github.com/webgisdeveloper/leaflet-kml.git":
+  version "1.1.0"
+  resolved "https://github.com/webgisdeveloper/leaflet-kml.git#ad748f1859a8c76bb6642e33ec7e241d83e2a121"
 
 leaflet-kmz@^0.3.8:
   version "0.3.8"
@@ -8411,11 +8410,6 @@ vue-template-es2015-compiler@^1.9.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/vue-template-es2015-compiler/-/vue-template-es2015-compiler-1.9.1.tgz#1ee3bc9a16ecbf5118be334bb15f9c46f82f5825"
   integrity sha512-4gDntzrifFnCEvyoO8PqyJDmguXgVPxKiIxrBKjIowvL9l+N66196+72XVYR8BBf1Uv1Fgt3bGevJ+sEmxfZzw==
-
-vue2-leaflet@^2.5.2:
-  version "2.5.2"
-  resolved "https://registry.yarnpkg.com/vue2-leaflet/-/vue2-leaflet-2.5.2.tgz#b89c056fe741c7ce7cb9df5aca90809092e5eb8d"
-  integrity sha512-9eN0TxqCkyXbaI7waO3u+n0OAezkxjb811tstG6gRLAZy/ocXlNLC3JqTWE0FwBUlqBbMpyzsIk6LrEhs8oVBQ==
 
 vue@^2.6.11:
   version "2.6.11"

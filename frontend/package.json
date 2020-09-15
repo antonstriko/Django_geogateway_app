@@ -18,7 +18,7 @@
     "leaflet-draw": "^1.0.4",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-geometryutil": "^0.9.3",
-    "leaflet-kml": "^1.0.1",
+    "leaflet-kml": "https://github.com/webgisdeveloper/leaflet-kml.git",
     "leaflet-kmz": "^0.3.8",
     "leaflet.awesome-markers": "^2.0.5",
     "qs": "^6.9.4",
@@ -26,7 +26,6 @@
     "vue": "^2.6.11",
     "vue-resource": "^1.5.1",
     "vue-router": "^3.3.3",
-    "vue2-leaflet": "^2.5.2",
     "vuex": "^3.4.0",
     "vuex-persistedstate": "^3.0.1",
     "webpack-bundle-tracker": "0.4.3"

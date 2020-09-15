@@ -23,6 +23,8 @@ Vue.http.options.emulateJSON = true;
 
 export const bus = new Vue();
 
+// initialize router
+
 new Vue({
   store: store,
   router,

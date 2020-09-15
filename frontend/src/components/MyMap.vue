@@ -32,7 +32,7 @@
 
     import 'leaflet/dist/leaflet.css';
     import L from 'leaflet';
-    import "leaflet-kml"
+    import 'leaflet-kml'
     import ToolBar from "./ToolBar";
     import TopNav from "./TopNav";
     import {bus} from '../main'

@@ -86,9 +86,11 @@
                 </b-input-group>
 
                 <br />
-                <div>
-                    <b-form-input id="markerSize" v-model="markerSize" type="range" min="0" max="15"></b-form-input>
-                    <p>Marker Size: {{markerSize}}</p>
+                <div class="checkbox">
+                    <label class="checkbox">
+                        <input v-model="markerSize" name="vabs" type="checkbox" id="markerSize"/>
+                        Minimize Marker Size
+                    </label>
                 </div>
                 <div class="checkbox">
                     <label class="checkbox">
@@ -137,11 +139,6 @@
 
     import {bus} from '../main'
     import axios from 'axios'
-    // import toGeoJSON from 'togeojson'
-    // import L from 'leaflet';
-
-    // import {convertEpochToSpecificTimezone} from '../assets/mapMethods'
-    // import qs from 'qs'
 
     export default {
 
@@ -169,7 +166,8 @@
                 gs_vabs: '',
                 ranLayers: [],
                 activeLayers: [],
-                markerSize: 8,
+                markerSize: false,
+                layersActive: false,
 
 
             }
@@ -190,7 +188,11 @@
                 }
             },
             rungpsservice(){
-                alert("This tool is under maintanence. Popups will not work.")
+                //if service has already been run and not cleared, replace old layer with new
+                if(this.layersActive){
+                    bus.$emit('RemoveLayer', 'gnssV');
+                    bus.$emit('RemoveLayer', 'gnssH');
+                }
                 var fileName1;
                 var fileName2;
                 var fileName3;
@@ -226,7 +228,7 @@
                             "dwin2": this.gs_dwin2,
                             "prefix": this.gs_outputprefix,
                             //need default false value?
-                            "mon": null,
+                            "mon":this.markerSize,
                             "eon": this.gs_eon,
                             "vabs": this.gs_vabs
                             //
@@ -269,7 +271,7 @@
                                 //emit raw kml text to parent map component
                             }).then(function (response) {
                                 // console.log(toGeoJSON.kml(response.data));
-                                // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'), {styles: true})
+
                                 bus.$emit('TextAddLayer', response.data, 'gnssV');
                             })
                             axios.get(kmlURI, {
@@ -289,6 +291,7 @@
                             })
 
                         })
+                    this.layersActive = true;
                 }
 
             },
@@ -296,7 +299,7 @@
                 bus.$emit('drawToolbar');
             },
             clearGnss(){
-                // bus.$emit('RemovePlotPtGnss', 'gnssPlotPt');
+                this.layersActive = false;
                 bus.$emit('RemoveLayer', 'gnssH');
                 bus.$emit('RemoveLayer', 'gnssV');
             },
