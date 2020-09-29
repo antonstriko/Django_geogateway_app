@@ -7,7 +7,11 @@ import subprocess
 import requests
 import zipfile
 import io
+from io import StringIO
 
+from django.shortcuts import render
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 
 DislocUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/disloc'
 
@@ -38,5 +42,9 @@ class KmzUpload(APIView):
     def post(self, request, *args, **kwargs):
 
         file = request.FILES['file']
-        zip_file = open(file.open(), 'rb')
+        zipdata = StringIO()
+        zipdata.write(file)
+        myzipfile = zipfile.ZipFile(zipdata)
         return FileResponse(zip_file)
+
+

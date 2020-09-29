@@ -123,7 +123,7 @@
             <br/>
             <div v-if="ranLayers.length!==0" style="color: #343a40; text-align: left">
                 <div v-for="layer in ranLayers" :key="layer.name">
-                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.name}}</a> </span> <br>
+                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.name}}</a> </span> <br>
                     <hr/>
                 </div>
             </div>
@@ -181,28 +181,28 @@
 
         methods: {
             showHideLayers(active, layer){
+                var hName = 'gnssH'.concat(layer.pre);
+                var vName = 'gnssV'.concat(layer.pre);
                 if(active){
-                    layer === 'H' ? bus.$emit('addExisting', 'gnssH') :
-                        bus.$emit('addExisting', 'gnssV');
+                    layer.type === 'H' ? bus.$emit('addExisting', hName) :
+                        bus.$emit('addExisting', vName);
                 }else{
-                    layer === 'H' ? bus.$emit('RemoveLayer', 'gnssH') :
-                        bus.$emit('RemoveLayer', 'gnssV');
+                    layer.type === 'H' ? bus.$emit('RemoveLayer', hName) :
+                        bus.$emit('RemoveLayer', vName);
                 }
             },
             rungpsservice(){
                 //if service has already been run and not cleared, replace old layer with new
-                if(this.layersActive){
-                    bus.$emit('RemoveLayer', 'gnssV');
-                    bus.$emit('RemoveLayer', 'gnssH');
-                }
-                var fileName1;
-                var fileName3;
+
+                var fileNameH;
+                var fileNameV;
                 var folder;
                 var props;
                 var markerSize = this.markerSize;
                 var queries = this.ranLayers;
                 var verticalUrl;
                 var horizontalUrl;
+                var prefix = this.gs_outputprefix;
                 if(this.kmltype_sel === ''){
                     alert("Please select as least one plot!");
                 }
@@ -240,41 +240,55 @@
                         //use JSON results (filename and folder) to request raw kml text
                         .then(function (response) {
                             props = response.data
+                            function getExtension(f) {
+                                var parts = f.split('_');
+                                return parts[parts.length - 1];
+                            }
+                            for(var i = 0;i < 3;i++){
+                                var ext = getExtension(props.urls[i]);
+                                if(ext == 'vertical.kml'){
+                                    verticalUrl = props.urls[i];
+                                    fileNameV = props.results[i];
+                                }else if(ext == 'horizontal.kml'){
+                                    horizontalUrl = props.urls[i];
+                                    fileNameH = props.results[i];
+                                }
+                            }
                             console.log(props)
-                            horizontalUrl = props.urls[2];
-                            verticalUrl = props.urls[0];
+
                             folder = props.folder;
-                            fileName1 = props.results[0];
                             queries.push({
-                                pre: 'H',
-                                name: fileName1,
+                                pre: prefix,
+                                name: fileNameH,
                                 folder: folder,
                                 active: true,
                                 url: verticalUrl,
+                                type: 'H',
                             })
-                            fileName3 = props.results[2];
                             queries.push({
-                                pre: 'V',
-                                name: fileName3,
+                                pre: prefix,
+                                name: fileNameV,
                                 folder: folder,
                                 active: true,
                                 url: horizontalUrl,
+                                type: 'V',
                             })
                             const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
                             axios.get(kmlURI, {
                                 params: {
-                                    "file": fileName1,
+                                    "file": fileNameH,
                                     "folder": folder
                                 },
                                 responseType: 'text',
                                 //emit raw kml text to parent map component
                             }).then(function (response) {
                                 // console.log(toGeoJSON.kml(response.data));
-                                bus.$emit('TextAddLayer', response.data, 'gnssH');
+                                console.log(response.data)
+                                bus.$emit('addGnssLayer', response.data, 'gnssH', prefix);
                             })
                             axios.get(kmlURI, {
                                 params: {
-                                    "file": fileName3,
+                                    "file": fileNameV,
                                     "folder": folder
                                 },
                                 responseType: 'text',
@@ -283,7 +297,8 @@
                                 // console.log(toGeoJSON.kml(response.data));
                                 // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
                                 // console.log(geojson)
-                                bus.$emit('TextAddLayer', response.data, 'gnssV');
+
+                                bus.$emit('addGnssLayer', response.data, 'gnssV', prefix);
                                 console.log(markerSize)
                             })
                         })
@@ -299,8 +314,14 @@
             },
             clearGnss(){
                 this.layersActive = false;
-                bus.$emit('RemoveLayer', 'gnssH');
-                bus.$emit('RemoveLayer', 'gnssV');
+                for(var i = 0; i < this.ranLayers.length; i++){
+                    var layer = this.ranLayers[i];
+                    var hName = 'gnssH'.concat(layer.pre);
+                    var vName = 'gnssV'.concat(layer.pre);
+                    bus.$emit('RemoveLayer', hName);
+                    bus.$emit('RemoveLayer', vName);
+                }
+                this.ranLayers = [];
             },
             setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
                 this.gs_latitude = centerLat;

@@ -4,9 +4,12 @@ import subprocess
 import zipfile
 import csv
 
+
 import requests
 from django.http import HttpResponse, FileResponse, JsonResponse
-
+from django.shortcuts import render
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
 # TODO: add error catching
 
 GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
@@ -208,3 +211,11 @@ def uavsarCSV(request):
         writer.writerows(data)
 
         return response
+
+def kmz_upload(request):
+    if request.method == 'POST' and request.FILES['file']:
+        file = request.FILES['file']
+        fs = FileSystemStorage()
+        filename = fs.save(file.name, file)
+        uploaded_file_url = fs.url(filename)
+        return HttpResponse(uploaded_file_url, content_type='text/plain')

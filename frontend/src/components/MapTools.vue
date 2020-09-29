@@ -98,7 +98,7 @@
             // },
             kmlLayerChange(entry){
                 if(entry.active) {
-                    bus.$emit('reactivateKmlUploadLayer', entry.name);
+                    bus.$emit('addExisting', entry.name);
                 }else {
                     bus.$emit('RemoveLayer', entry.name);
                 }
@@ -142,41 +142,34 @@
 
             },
             handleFileUpload(event){
-                console.log(event)
                 this.kmlFile = event.target.files[0];
 
             },
 
             submitFile(){
-
+                var fileName = this.kmlFile['name'];
                 function getExtension(filename) {
                     var parts = filename.split('.');
                     return parts[parts.length - 1];
                 }
-
                 var uploadUrl;
+                var ext = getExtension(fileName);
+                        if(ext == 'kmz'){
+                            uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kmz_upload/'
+                        }else {
+                            uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/'
+                        }
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
-                var fileName = this.kmlFile['name'];
-                this.kmlLayers.push({name: fileName, active: true});
-
-                var ext = getExtension(fileName);
-                if(ext == 'kmz'){
-                    uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kmz_upload/'
-                }else {
-                    uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/'
-                }
-
-                    console.log(formData)
-                    axios.post(uploadUrl, formData
-                    ).then(function (response) {
-                        console.log(response);
-                        bus.$emit('addKmlUploadLayer', response.data, fileName);
-                    })
-                        .catch(function (response) {
-                            console.log(response)
-                            console.log('FAILURE!!');
-                        });
+                this.kmlLayers.push({name: fileName, active: true})
+                axios.post( uploadUrl, formData
+                ).then(function(response){
+                    bus.$emit('addkmlUploadLayer', response.data, fileName);
+                })
+                    .catch(function(response){
+                        console.log(response)
+                        console.log('FAILURE!!');
+                    });
             },
         },
 

@@ -39,7 +39,7 @@
     import 'leaflet-draw'
     import "leaflet-draw/dist/leaflet.draw.css";
 
-    import {circleMaker, gdacsPopup, gnssPopup, popupMaker} from '../assets/mapMethods'
+    import {circleMaker, gdacsPopup, popupMaker} from '../assets/mapMethods'
     import Dygraph from "dygraphs";
     import DraggableDiv from "./DraggableDiv";
     import 'leaflet-kmz';
@@ -64,8 +64,6 @@
                     'boundariesL': null,
                     'coastsL': null,
                     'gdacsL': null,
-                    'gnssV': null,
-                    'gnssH': null,
                     'gnssPlotPt': null,
                     'nowcastL': null,
                     'usgs_layer': null,
@@ -77,6 +75,9 @@
                     'highResUavsar': null,
                     'disloc': null,
                 },
+                kmlLayers: [],
+                gnssV: [],
+                gnssH: [],
                 uavsarLayers: [],
                 plottingMarker1: null,
                 plottingMarker2: null,
@@ -108,9 +109,7 @@
 
             };
         },
-        props: {
-
-        },
+        props: {},
         mounted() {
 
             //create layers
@@ -135,7 +134,7 @@
                 this.drawToolbar());
 
             bus.$on('addExisting', (layerName) =>
-                this.addExistingLayer(layerName));
+                this.map.addLayer(this.layers[layerName]));
 
             //convert to above abstracted event listener
 
@@ -143,7 +142,7 @@
                 this.gnssGeoJson(text, type, markerSize));
 
             bus.$on('RemoveLayer', (name) =>
-                this.removeLayer(name));
+                this.map.removeLayer(this.layers[name]));
 
             bus.$on('nowcast', (data, lat, lon) =>
                 this.seismicityPlots(data, lat, lon));
@@ -200,29 +199,29 @@
             bus.$on('resetUavsar', () => {
                 this.resetUavsar();
             });
-            bus.$on('reactivateKmlUploadLayer', (name) =>
-                this.addExistingLayer(name));
             bus.$on('changeLayerOpacity', (value) =>
                 this.changeUavsarOpacity(value));
             bus.$on('FormUpdatePlotLine', (activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength) =>
                 this.updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength));
             bus.$on('placePlotMarkers', (southwest, northeast, clickloc, latlon, entry) =>
                 this.placePlotMarkers(southwest, northeast, clickloc, latlon, entry));
-            bus.$on('RemovePlotPtGnss', ()=>
+            bus.$on('RemovePlotPtGnss', () =>
                 this.removePlotGnss());
             bus.$on('ClearUsgs', () =>
                 this.clearUsgsLayers());
-            bus.$on('addKmlUploadLayer', (file, filename) =>
+            bus.$on('addkmlUploadLayer', (file, filename) =>
                 this.addkmlUploadLayer(file, filename));
+            bus.$on('addGnssLayer', (file, type, prefix) =>
+                this.addGnssLayer(file, type, prefix));
         },
 
 
         methods: {
-            clearUsgsLayers(){
-              this.layers['usgs_layer'].remove();
-              this.layers['usgs_layer'] = null;
-              this.usgsLegend.remove();
-              this.usgsLegend = null;
+            clearUsgsLayers() {
+                this.layers['usgs_layer'].remove();
+                this.layers['usgs_layer'] = null;
+                this.usgsLegend.remove();
+                this.usgsLegend = null;
             },
             showPlot(csv_final) {
                 new Dygraph(
@@ -240,29 +239,21 @@
                 )
 
             },
-            addkmlUploadLayer(file, filename){
-                function getExtension(filename) {
-                    var parts = filename.split('.');
+            addkmlUploadLayer(file, filename) {
+                function getExtension(f) {
+                    var parts = f.split('.');
                     return parts[parts.length - 1];
                 }
+
                 var extension = getExtension(filename);
-                if(extension == 'kmz'){
-                    console.log(extension)
-                    var kmz = L.kmzLayer().addTo(this.map);
-                    kmz.on('load', function(e) {
-
-                        this.map.control.addOverlay(e.layer, e.name);
-                        // e.layer.addTo(map);
-                    });
-
-                    // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
-                    kmz.load(file);
-                }
-                else{
+                if (extension == 'kmz') {
+                    this.layers[filename] = L.kmzLayer(file);
+                    this.map.addLayer(this.layers[filename]);
+                } else {
                     this.kmlText(file, filename);
                 }
             },
-            changeUavsarOpacity(value){
+            changeUavsarOpacity(value) {
                 this.layers['highResUavsar'].setOpacity(value);
             },
             //sets uavsar to overview mode
@@ -277,12 +268,12 @@
                 if (this.plottingMarker1 !== null) {
                     this.resetPlot();
                 }
-                if(this.uavsarLegend !== null){
+                if (this.uavsarLegend !== null) {
                     this.uavsarLegend.remove();
                 }
             },
             deactivateUavsar() {
-                if(this.uavsarLegend !== null){
+                if (this.uavsarLegend !== null) {
                     this.uavsarLegend.remove();
                 }
 
@@ -302,12 +293,12 @@
             },
             hidePlot() {
                 this.plotActive = false
-                if(this.plottingMarker1 !== null) {
+                if (this.plottingMarker1 !== null) {
                     this.resetPlot();
                 }
 
             },
-            resetPlot(){
+            resetPlot() {
                 this.plottingMarker1.remove();
                 this.plottingMarker2.remove();
                 this.plotLine.remove();
@@ -317,9 +308,9 @@
             },
 
             updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len) {
-                console.log(az, len);
                 this.plottingMarker2.setLatLng([lat2, lon2]);
                 this.plottingMarker1.setLatLng([lat1, lon1]);
+                console.log(az, len);
                 var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
                 this.plotLine.setLatLngs([[lat1, lon1],
                     [lat2, lon2]]);
@@ -363,7 +354,7 @@
             },
             //UAVSAR plot tile layer (for use with dygraphs)
             uavsarWMS(entry, latlon) {
-                if(this.uavsarLegend !== null){
+                if (this.uavsarLegend !== null) {
                     this.uavsarLegend.remove();
                 }
 
@@ -411,9 +402,9 @@
 
 
             },
-            placePlotMarkers(southwest, northeast, clickloc, latlon, entry){
+            placePlotMarkers(southwest, northeast, clickloc, latlon, entry) {
 
-                if(this.plottingMarker1 == null) {
+                if (this.plottingMarker1 == null) {
 
                     // if(rect.contains(clickloc)) {
 
@@ -473,10 +464,7 @@
             reactivateUavsarLayer(name) {
                 this.map.addLayer(this.uavsarLayers[name]);
             },
-            uavsarOverview(
-
-            ) {
-
+            uavsarOverview() {
 
                 this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
                         layers: 'InSAR:thumbnailmosaic',
@@ -548,7 +536,6 @@
                         } else if (type === 'polygon') {
                             var placedPolygon = e.layer;
                             var arrLatLon = placedPolygon.getLatLngs();
-                            console.log(arrLatLon)
                             bus.$emit('polyDrawn', arrLatLon);
                         }
                     });
@@ -571,64 +558,12 @@
             addGeoJson(text, layer) {
                 this.layers[layer] = L.geoJSON(text, {}).addTo(this.map);
             },
-
-
-            gnssGeoJson(text, type, markerSize) {
-
-                var geojsonMarkerOptions = {
-                    radius: markerSize,
-                    fillColor: "#1bf53c",
-                    color: "#000",
-                    weight: 1,
-                    opacity: 1,
-                    fillOpacity: 0.8
-                };
-                console.log(markerSize)
-                ///////////////////// geojson styling. Should be simplified in the future
-
-                if (type === 'gnssV') {
-                    this.layers['gnssV'] = L.geoJSON(text, {
-                        //point and polygon
-
-                        style: function (feature) {
-                            if (feature.geometry.type === 'Polygon') {
-                                return {color: "#0000ff"};
-                            }
-                        },
-                        filter: function (feature){
-                            return feature.geometry.type !== 'Point';
-                        },
-                    }).addTo(this.map);
-                }else {
-                    this.layers['gnssH'] = L.geoJSON(text, {
-                        //point and linestring
-                        style: function(feature) {
-                            if(feature.geometry.type === 'LineString')  {
-                                return {color: "#25F76F"};
-                            }
-                        },
-                        filter: function (feature){
-                            return feature.geometry.type !== 'Point';
-                        },
-                    }).addTo(this.map);
-                }
-
-                this.layers['gnssPlotPt'] = L.geoJSON(text, {
-                    //point and polygon
-                    filter: function (feature) {
-                        return feature.geometry.type === 'Point';
-                    },
-                    pointToLayer: function (feature, latlng) {
-                        return L.circleMarker(latlng, geojsonMarkerOptions);
-                    },
-                    onEachFeature: function (feature, layer) {
-                        gnssPopup(feature, layer);
-                    },
-                }).addTo(this.map)
+            addGnssLayer(file, type, prefix) {
+                this.kmlText(file, type.concat(prefix));
 
             },
-            removePlotGnss(){
-              console.log(this.layers['gnssPlotPt'].remove());
+            removePlotGnss() {
+                console.log(this.layers['gnssPlotPt'].remove());
             },
             kmlUrl(url, layerName) {
                 fetch(url).then(res => res.text())
@@ -645,9 +580,6 @@
 
             removeLayer(layerName) {
                 this.map.removeLayer(this.layers[layerName])
-            },
-            addExistingLayer(layerName) {
-                this.map.addLayer(this.layers[layerName]);
             },
 
             seismicityPlots(data, lat, lon) {
@@ -697,7 +629,7 @@
                     }
                 }).addTo(this.map)
 
-                if(this.usgsLegend === null) {
+                if (this.usgsLegend === null) {
 
                     this.usgsLegend = L.control({position: 'bottomleft'});
                     this.usgsLegend.onAdd = function () {
@@ -727,12 +659,9 @@
                         return L.marker([lat, lon], {icon: gdacsIcon})
                     }
                 }).addTo(this.map)
-            }
-
-
-        },
-
-    };
+            },
+        }
+    }
 </script>
 <style scoped>
     #map {

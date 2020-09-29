@@ -30,7 +30,7 @@ urlpatterns = [
     url(r"^UAVSAR_test/", GeoGatewayData.uavsarTest),
     url(r"^UAVSAR_csv/", GeoGatewayData.uavsarCSV),
     url(r"^UAVSAR_flight/", GeoGatewayData.uavsarFlight),
-    url(r'^kmz_upload/$', views.KmzUpload.as_view(), name='kmz-upload'),
+    url(r'^kmz_upload/$', GeoGatewayData.kmz_upload),
 
 
 
