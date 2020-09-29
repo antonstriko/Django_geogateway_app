@@ -9,7 +9,7 @@
             <form>
 
                 <!-- <label for="sel1">Select list:</label> -->
-                <select class="form-control" v-model="kmltype_sel" id="kmltype_sel">
+                <select class="form-control" v-model="kmltype_sel" id="kmltype_sel" >
                     <option value='getvelocities'>Velocities</option>
                     <option value='getcoseismic'>Coseismic</option>
                     <option value='getpostseismic'>Postseismic</option>
@@ -123,7 +123,7 @@
             <br/>
             <div v-if="ranLayers.length!==0" style="color: #343a40; text-align: left">
                 <div v-for="layer in ranLayers" :key="layer.name">
-                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label">{{layer.name}}</span> <br>
+                    <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer.pre)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.name}}</a> </span> <br>
                     <hr/>
                 </div>
             </div>
@@ -146,7 +146,7 @@
         data() {
             return {
                 selected: [],
-                kmltype_sel: '',
+                kmltype_sel: 'getvelocities',
                 gs_latitude: '38.89103282648846',
                 gs_longitude: '-120.49804687500001',
                 gs_width: '1.966552734375',
@@ -168,6 +168,8 @@
                 activeLayers: [],
                 markerSize: false,
                 layersActive: false,
+                horizUrl: '',
+                vertUrl: '',
 
 
             }
@@ -194,12 +196,13 @@
                     bus.$emit('RemoveLayer', 'gnssH');
                 }
                 var fileName1;
-                var fileName2;
                 var fileName3;
                 var folder;
                 var props;
                 var markerSize = this.markerSize;
                 var queries = this.ranLayers;
+                var verticalUrl;
+                var horizontalUrl;
                 if(this.kmltype_sel === ''){
                     alert("Please select as least one plot!");
                 }
@@ -238,6 +241,8 @@
                         .then(function (response) {
                             props = response.data
                             console.log(props)
+                            horizontalUrl = props.urls[2];
+                            verticalUrl = props.urls[0];
                             folder = props.folder;
                             fileName1 = props.results[0];
                             queries.push({
@@ -245,21 +250,15 @@
                                 name: fileName1,
                                 folder: folder,
                                 active: true,
+                                url: verticalUrl,
                             })
-
-                            fileName2 = props.results[1];
-                            queries.push({
-                                name: fileName2,
-                                folder: folder,
-                                active: true,
-                            })
-
                             fileName3 = props.results[2];
                             queries.push({
                                 pre: 'V',
                                 name: fileName3,
                                 folder: folder,
                                 active: true,
+                                url: horizontalUrl,
                             })
                             const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
                             axios.get(kmlURI, {
@@ -271,8 +270,7 @@
                                 //emit raw kml text to parent map component
                             }).then(function (response) {
                                 // console.log(toGeoJSON.kml(response.data));
-
-                                bus.$emit('TextAddLayer', response.data, 'gnssV');
+                                bus.$emit('TextAddLayer', response.data, 'gnssH');
                             })
                             axios.get(kmlURI, {
                                 params: {
@@ -285,12 +283,13 @@
                                 // console.log(toGeoJSON.kml(response.data));
                                 // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
                                 // console.log(geojson)
-                                bus.$emit('TextAddLayer', response.data, 'gnssH');
+                                bus.$emit('TextAddLayer', response.data, 'gnssV');
                                 console.log(markerSize)
-
                             })
-
                         })
+                    this.horizUrl = horizontalUrl;
+                    this.vertUrl = verticalUrl;
+
                     this.layersActive = true;
                 }
 

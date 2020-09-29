@@ -24,13 +24,16 @@
                 <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
             </label>
             <button @click="submitFile()">Submit</button>
+
+            <div class="container" v-html="fileInfo">
+            </div>
     </div>
     </div>
 </template>
 
 <script>
     import axios from "axios";
-    // import {bus} from '../main'
+    import {bus} from '../main'
 
     axios.defaults.xsrfHeaderName = 'X-CSRFToken'
     axios.defaults.xsrfCookieName = 'csrftoken'
@@ -40,7 +43,12 @@
         data(){
             return {
                 file: null,
+                fileInfo: null,
             }
+        },
+        mounted() {
+            bus.$on('updateDisloc', (html) =>
+                this.fileInfo = html);
         },
         methods: {
             handleFileUpload(event){
@@ -55,7 +63,9 @@
                 console.log(formData)
                 axios.post( uploadUrl, formData
                 ).then(function(response){
-                    console.log(response)
+                    var kml = response.data;
+                    console.log(kml)
+                    bus.$emit('updateDisloc', kml);
                 })
                     .catch(function(response){
                         console.log(response)

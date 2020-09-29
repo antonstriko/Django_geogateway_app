@@ -19,7 +19,7 @@
     "leaflet-easybutton": "^2.4.0",
     "leaflet-geometryutil": "^0.9.3",
     "leaflet-kml": "https://github.com/webgisdeveloper/leaflet-kml.git",
-    "leaflet-kmz": "^0.3.8",
+    "leaflet-kmz": "^1.0.6",
     "leaflet.awesome-markers": "^2.0.5",
     "qs": "^6.9.4",
     "togeojson": "^0.16.0",

@@ -146,22 +146,25 @@
                 this.kmlFile = event.target.files[0];
 
             },
+
             submitFile(){
+
                 var uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/';
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
                 var fileName = this.kmlFile['name'];
-                this.kmlLayers.push({name: fileName, active: true})
-                console.log(formData)
-                axios.post( uploadUrl, formData
-                ).then(function(response){
-                    console.log(response);
-                    bus.$emit('TextAddLayer', response.data, fileName);
-                })
-                    .catch(function(response){
-                        console.log(response)
-                        console.log('FAILURE!!');
-                    });
+                this.kmlLayers.push({name: fileName, active: true});
+
+                    console.log(formData)
+                    axios.post(uploadUrl, formData
+                    ).then(function (response) {
+                        console.log(response);
+                        bus.$emit('addKmlUploadLayer', response.data, fileName);
+                    })
+                        .catch(function (response) {
+                            console.log(response)
+                            console.log('FAILURE!!');
+                        });
             },
         },
 

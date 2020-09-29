@@ -208,24 +208,3 @@ def uavsarCSV(request):
         writer.writerows(data)
 
         return response
-
-# def uavsarHighRes(request):
-#
-#
-#     wmsParams = [
-#         "version=1.1.1",
-#         "request=DescribeLayer",
-#         "outputFormat=application/json",
-#         "exceptions=application/json"
-#     ]
-#     paramChunk = "&".join(wmsParams) + "&layers=" + "InSAR:uid"
-#     if request.method == 'GET':
-#         uid = request.GET.get('uid')
-#         fullUri = wms + paramChunk + uid + "_unw"
-#         data = requests.get(fullUri)
-#         print(fullUri)
-#         print(uid)
-#         print(data)
-#         response = HttpResponse(data)
-#         return response
-#

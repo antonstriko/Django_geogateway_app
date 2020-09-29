@@ -3891,11 +3891,6 @@ gensync@^1.0.0-beta.1:
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.1.tgz#58f4361ff987e5ff6e1e7a210827aa371eaac269"
   integrity sha512-r8EC6NO1sngH/zdD9fiRDLdcgnbayXah+mLgManTaIZJqEC1MZstmnox8KpnI2/fxQwrp5OpCOYWLp4rBl4Jcg==
 
-geojson-vt@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/geojson-vt/-/geojson-vt-3.2.1.tgz#f8adb614d2c1d3f6ee7c4265cad4bbf3ad60c8b7"
-  integrity sha512-EvGQQi/zPrDA6zr6BnJD/YhwAkBP8nnJ9emh3EnHQKVMfg/MRVtPbMYdgVy/IaEmn4UfagD2a6fafPDL5hbtwg==
-
 get-caller-file@^2.0.1:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/get-caller-file/-/get-caller-file-2.0.5.tgz#4f94412a82db32f36e3b0b9741f8a97feb031f7e"
@@ -4980,7 +4975,7 @@ jsprim@^1.2.2:
     json-schema "0.2.3"
     verror "1.10.0"
 
-jszip@^3.2.2:
+jszip@^3.5.0:
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/jszip/-/jszip-3.5.0.tgz#b4fd1f368245346658e781fec9675802489e15f6"
   integrity sha512-WRtu7TPCmYePR1nazfrtuF216cIVon/3GWOvHS9QR5bIwSbnxtdpma6un3jyGGNhHsKCSzn5Ypk+EkDRvTGiFA==
@@ -5071,20 +5066,13 @@ leaflet-geometryutil@^0.9.3:
   version "1.1.0"
   resolved "https://github.com/webgisdeveloper/leaflet-kml.git#ad748f1859a8c76bb6642e33ec7e241d83e2a121"
 
-leaflet-kmz@^0.3.8:
-  version "0.3.8"
-  resolved "https://registry.yarnpkg.com/leaflet-kmz/-/leaflet-kmz-0.3.8.tgz#860716c53fcde7789adf3e93cee951cb463a9a76"
-  integrity sha512-3Yu+Ez++CGvEhoj9TOoPaQsaqXDoib/H4I/Ymkd6ejmV6jNfotXOX56vW2FgR3XlbOGBrEBhZ4x5Tnpr9kESkA==
+leaflet-kmz@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/leaflet-kmz/-/leaflet-kmz-1.0.6.tgz#f9a15670f3d086be318c4137c94d3f3abde9eb96"
+  integrity sha512-5Bu/q8otQCpLn2O8dXnDXJkx5C9PTiNmpYQGd9LUiA3BZB1yKk51rvQwjmK5yLV9mtjM3ujcRuMemURIZwbtng==
   dependencies:
     "@tmcw/togeojson" "^3.2.0"
-    geojson-vt "^3.2.1"
-    jszip "^3.2.2"
-    leaflet-pointable "0.0.3"
-
-leaflet-pointable@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/leaflet-pointable/-/leaflet-pointable-0.0.3.tgz#d1e6cbcdc6697fb78d386eb446c06eb9f38e4d68"
-  integrity sha512-dGwxaCST4F/9kqfDoa4dqR7sNESDyqAjjZlxB3GBd81ayG8Z6hb2lxqnz9LTc0mQ3+OesYGhhjflt5UkRlAA5A==
+    jszip "^3.5.0"
 
 leaflet.awesome-markers@^2.0.5:
   version "2.0.5"

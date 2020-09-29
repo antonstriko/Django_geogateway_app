@@ -42,6 +42,7 @@
     import {circleMaker, gdacsPopup, gnssPopup, popupMaker} from '../assets/mapMethods'
     import Dygraph from "dygraphs";
     import DraggableDiv from "./DraggableDiv";
+    import 'leaflet-kmz';
     // import axios from "axios";
     // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -211,6 +212,8 @@
                 this.removePlotGnss());
             bus.$on('ClearUsgs', () =>
                 this.clearUsgsLayers());
+            bus.$on('addKmlUploadLayer', (file, filename) =>
+                this.addkmlUploadLayer(file, filename));
         },
 
 
@@ -237,7 +240,28 @@
                 )
 
             },
+            addkmlUploadLayer(file, filename){
+                function getExtension(filename) {
+                    var parts = filename.split('.');
+                    return parts[parts.length - 1];
+                }
+                var extension = getExtension(filename);
+                if(extension == 'kmz'){
+                    console.log(extension)
+                    var kmz = L.kmzLayer().addTo(this.map);
+                    kmz.on('load', function(e) {
 
+                        this.map.control.addOverlay(e.layer, e.name);
+                        // e.layer.addTo(map);
+                    });
+
+                    // Add remote KMZ files as layers (NB if they are 3rd-party servers, they MUST have CORS enabled)
+                    kmz.load(file);
+                }
+                else{
+                    this.kmlText(file, filename);
+                }
+            },
             changeUavsarOpacity(value){
                 this.layers['highResUavsar'].setOpacity(value);
             },
