@@ -149,11 +149,23 @@
 
             submitFile(){
 
-                var uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/';
+                function getExtension(filename) {
+                    var parts = filename.split('.');
+                    return parts[parts.length - 1];
+                }
+
+                var uploadUrl;
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
                 var fileName = this.kmlFile['name'];
                 this.kmlLayers.push({name: fileName, active: true});
+
+                var ext = getExtension(fileName);
+                if(ext == 'kmz'){
+                    uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kmz_upload/'
+                }else {
+                    uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/'
+                }
 
                     console.log(formData)
                     axios.post(uploadUrl, formData

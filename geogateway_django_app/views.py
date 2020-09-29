@@ -30,3 +30,12 @@ class KmlUpload(APIView):
         file = request.FILES['file']
 
         return FileResponse(file)
+
+
+class KmzUpload(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+
+        zip_file = open(file, 'rb')
+        return FileResponse(zip_file)
