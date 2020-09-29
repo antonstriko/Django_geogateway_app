@@ -37,5 +37,6 @@ class KmzUpload(APIView):
 
     def post(self, request, *args, **kwargs):
 
+        file = request.FILES['file']
         zip_file = open(file, 'rb')
         return FileResponse(zip_file)
