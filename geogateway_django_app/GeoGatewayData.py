@@ -219,3 +219,12 @@ def kmz_upload(request):
         filename = fs.save(file.name, file)
         uploaded_file_url = fs.url(filename)
         return HttpResponse(uploaded_file_url, content_type='text/plain')
+
+def kml_upload(request):
+    if request.method == 'POST' and request.FILES['file']:
+        file = request.FILES['file']
+        fs = FileSystemStorage()
+        filename = fs.save(file.name, file)
+        uploaded_file_url = fs.url(filename)
+        return HttpResponse(uploaded_file_url, content_type='text/plain')
+

@@ -71,8 +71,8 @@
         border-radius: 15px;
     }
     #close-button {
-        height: 25px;
-        width: 25px;
+        height: 20px;
+        width: 20px;
         float: right;
         color: #B8C7D6;
         cursor: pointer;

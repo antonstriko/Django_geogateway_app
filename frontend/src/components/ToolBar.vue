@@ -19,10 +19,9 @@
 
 <style scoped>
 
-
     #sidebar-1 {
         height: 100%;
-        width: 525px;
+        width: 27%;
         overflow: auto;
         float: left;
         background-color: #e6e6ff;

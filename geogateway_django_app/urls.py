@@ -23,7 +23,7 @@ urlpatterns = [
     url(r"^gdacs/", GeoGatewayData.gdacs),
     url(r"^nowcast/", GeoGatewayData.nowcast_plots),
     url(r"^disloc/", GeoGatewayData.runDisloc),
-    url(r'^kml_upload/$', views.KmlUpload.as_view(), name='kml-upload'),
+    url(r'^kml_upload/$', GeoGatewayData.kml_upload),
     url(r"^UAVSAR_overview/", GeoGatewayData.uavsarOverview),
     url(r"^UAVSAR_geom/", GeoGatewayData.uavsarGeometry),
     url(r"^UAVSAR_KML/", GeoGatewayData.uavsarKML),

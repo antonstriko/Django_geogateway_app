@@ -250,7 +250,7 @@
                     this.layers[filename] = L.kmzLayer(file);
                     this.map.addLayer(this.layers[filename]);
                 } else {
-                    this.kmlText(file, filename);
+                    this.kmlUrl(file, filename);
                 }
             },
             changeUavsarOpacity(value) {
