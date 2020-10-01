@@ -31,7 +31,7 @@
                     Select/Deselect All
                 </b-button>
                 <b-button @click="clearQuery" variant="warning">
-                    Clear Query
+                      Clear Query
                 </b-button>
             </div>
             <br/>
