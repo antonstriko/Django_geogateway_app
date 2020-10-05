@@ -1,6 +1,6 @@
 <template>
 
-    <b-collapse id="sidebar-1" bg-variant="dark">
+    <b-collapse visible id="sidebar-1" bg-variant="dark">
         <ToolTabs />
     </b-collapse>
 
