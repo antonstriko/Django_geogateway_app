@@ -212,6 +212,7 @@ def uavsarCSV(request):
 
         return response
 
+
 def kmz_upload(request):
     if request.method == 'POST' and request.FILES['file']:
         file = request.FILES['file']

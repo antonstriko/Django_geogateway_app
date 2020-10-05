@@ -105,6 +105,13 @@
                 uavsarLatlon: null,
                 uavsarEntry: null,
                 usgsLegend: null,
+                drawControl: null,
+                centerLat: null,
+                centerLng: null,
+                maxLat: null,
+                maxLon: null,
+                minLat: null,
+                minLon: null,
 
 
             };
@@ -123,6 +130,24 @@
                 return div;
             };
             legend2.addTo(this.map);
+
+            var drawnItems = new L.FeatureGroup();
+            this.map.addLayer(drawnItems);
+            this.drawControl = new L.Control.Draw({
+                draw: {
+                    polygon: false,
+                    marker: false,
+                    polyline: false,
+                    circle: false,
+                    rectangle: false,
+                    circlemarker: false,
+                },
+                edit: {
+                    featureGroup: drawnItems
+                }
+            });
+            this.map.addControl(this.drawControl);
+            this.map.addLayer(drawnItems);
 
             bus.$on('UrlAddLayer', (url, layerName) =>
                 this.kmlUrl(url, layerName));
@@ -213,10 +238,71 @@
                 this.addkmlUploadLayer(file, filename));
             bus.$on('addGnssLayer', (file, type, prefix) =>
                 this.addGnssLayer(file, type, prefix));
+            bus.$on('uavsarRect', () =>
+                this.uavsarDraw('rect'));
+            bus.$on('dropPin', () =>
+                this.uavsarDraw('point'));
+            bus.$on('uavsarDraw', (shape) =>
+                this.uavsarDraw(shape));
+            bus.$on('seisDraw', () =>
+                this.seismicityDraw());
+            bus.$on('drawListenerOff', () =>
+                this.map.off('draw:created'));
         },
 
 
         methods: {
+            uavsarDraw(shape){
+                if(shape == 'rect'){
+                    new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
+                }else if(shape == 'point'){
+                    new L.Draw.Marker(this.map, this.drawControl.options.marker).enable();
+                }
+
+                this.drawListener('uavsar');
+
+
+            },
+            seismicityDraw(){
+                new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
+
+                this.drawListener('seismicity');
+
+            },
+            drawListener(tool){
+                this.map.on('draw:created', function (e) {
+                    var type = e.layerType;
+                    if (type === 'rectangle') {
+                        var layer = e.layer;
+                        this.addLayer(layer);
+                        this.centerLat = layer.getCenter().lat;
+                        this.centerLng = layer.getCenter().lng;
+                        this.maxLat = layer.getLatLngs()[0][1].lat;
+                        this.maxLon = layer.getLatLngs()[0][2].lng;
+                        this.minLat = layer.getLatLngs()[0][3].lat;
+                        this.minLon = layer.getLatLngs()[0][0].lng;
+                        this.removeLayer(layer)
+
+
+                        if(tool === 'uavsar'){
+                            bus.$emit('uavsarDrawQuery', this.maxLat, this.minLon, this.minLat, this.maxLon, this.centerLat, this.centerLng);
+                        }else if(tool === 'seismicity'){
+                            bus.$emit('seisDrawQuery', this.maxLat, this.minLon, this.minLat, this.maxLon, this.centerLat, this.centerLng);
+                        }
+                        //control which tool hears bus event for drawing rect
+                    } else if (type === 'marker') {
+                        this.markerLayer = e.layer;
+                        var lat = this.markerLayer.getLatLng().lat;
+                        var lng = this.markerLayer.getLatLng().lng;
+                        bus.$emit('markPlace', lat, lng, tool);
+                    } else if (type === 'polygon') {
+                        var placedPolygon = e.layer;
+                        var arrLatLon = placedPolygon.getLatLngs();
+                        bus.$emit('polyDrawn', arrLatLon);
+                    }
+                });
+
+            },
             clearUsgsLayers() {
                 this.layers['usgs_layer'].remove();
                 this.layers['usgs_layer'] = null;
@@ -493,52 +579,11 @@
             drawToolbar() {
                 if (!this.drawToolShow) {
                     this.drawToolShow = true
-                    var drawnItems = new L.FeatureGroup();
-                    this.map.addLayer(drawnItems);
-                    var drawControl = new L.Control.Draw({
-                        draw: {
-                            polygon: false,
-                            marker: true,
-                            polyline: false,
-                            circle: false,
-                            rectangle: true,
-                            circlemarker: false,
-                        },
-                        edit: {
-                            featureGroup: drawnItems
-                        }
-                    });
-                    this.map.addControl(drawControl);
-                    this.map.addLayer(drawnItems);
+
 
                     //gets lat long width height of drawn rectangle and prints in console.
                     // TODO dynamically fill form input with results from drawn rectangle
 
-                    this.map.on('draw:created', function (e) {
-                        var type = e.layerType;
-                        if (type === 'rectangle') {
-                            var layer = e.layer;
-                            this.addLayer(layer);
-                            var centerLat = layer.getCenter().lat;
-                            var centerLng = layer.getCenter().lng;
-                            var maxLat = layer.getLatLngs()[0][1].lat;
-                            var maxLon = layer.getLatLngs()[0][2].lng;
-                            var minLat = layer.getLatLngs()[0][3].lat;
-                            var minLon = layer.getLatLngs()[0][0].lng;
-                            this.removeLayer(layer)
-
-                            bus.$emit('rectDim', maxLat, minLon, minLat, maxLon, centerLat, centerLng);
-                        } else if (type === 'marker') {
-                            this.markerLayer = e.layer;
-                            var lat = this.markerLayer.getLatLng().lat;
-                            var lng = this.markerLayer.getLatLng().lng;
-                            bus.$emit('markPlace', lat, lng);
-                        } else if (type === 'polygon') {
-                            var placedPolygon = e.layer;
-                            var arrLatLon = placedPolygon.getLatLngs();
-                            bus.$emit('polyDrawn', arrLatLon);
-                        }
-                    });
                 }
             },
             tileLayer() {

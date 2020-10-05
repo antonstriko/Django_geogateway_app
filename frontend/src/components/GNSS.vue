@@ -18,7 +18,7 @@
                 </select>
                 <br/>
 
-                <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" v-b-tooltip.hover title="Use toolbar -->" @click="drawToolbar()">
+                <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
                     <b-icon-pencil></b-icon-pencil> Draw an area on map</b-button>
                 <b-button variant="warning" id="clearGnss" @click="clearGnss()"><b-icon-trash></b-icon-trash> Clear GNSS Layers</b-button>
                 <br/>
@@ -310,7 +310,7 @@
 
             },
             drawToolbar() {
-                bus.$emit('drawToolbar');
+                bus.$emit('drawRect');
             },
             clearGnss(){
                 this.layersActive = false;
@@ -338,10 +338,10 @@
     #GNSS-panel {
         overflow: auto;
         height: auto;
-        width: 500px;
+        width: 100%;
     }
     .input-group {
-        width: 440px;
+        width: 100%;
     }
     strong {
         color: #343a40;

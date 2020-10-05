@@ -128,8 +128,8 @@
             }
         },
         mounted() {
-            bus.$on('rectDim', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
-                this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
+            bus.$on('seisDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
+                this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng ));
         },
         methods: {
             clearUsgs(){
@@ -188,14 +188,15 @@
                 })
             },
             drawToolbar(){
-              bus.$emit('drawToolbar');
+              bus.$emit('seisDraw');
             },
-            setRect(maxLat, minLon, minLat, maxLon,){
+            // eslint-disable-next-line no-unused-vars
+            setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng) {
+                bus.$emit('drawListenerOff')
                 this.maxLat = maxLat;
                 this.minLon = minLon;
                 this.minLat = minLat;
                 this.maxLon = maxLon;
-
             }
         }
     }

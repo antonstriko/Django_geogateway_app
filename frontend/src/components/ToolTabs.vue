@@ -68,11 +68,12 @@
 
 <style >
     #tabs {
-        width: 100%;
+        width: auto;
         background-color: #e6e6ff;
+
     }
     .tab-text {
-        width: 100%;
+        width: auto;
         position: relative;
         align-content: center;
         height: 100% ;

@@ -4,16 +4,16 @@ from rest_framework import routers
 from . import GeoGatewayData
 from . import views
 
-
-router = routers.DefaultRouter()
+from django.contrib.auth.decorators import login_required
+from django.views.generic import TemplateView
 
 app_name = "geogateway_django_app"
 
 
 urlpatterns = [
     url(r"^$",
-        TemplateView.as_view(template_name="geogateway_django_app/main.html"),
-        name="app",
+        views.HomeView.as_view(),
+        name="home",
         ),
     url(r'^upload/$', views.MyFileView.as_view(), name='file-upload'),
     url(r"^gps_service/", GeoGatewayData.gps_service),

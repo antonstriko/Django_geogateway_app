@@ -10,8 +10,14 @@
                 @change="showOverview"
         ><label for="overview">Show Overview</label>
 
+
+
         <div v-if="overview">
             <p>Fill one of the following fields to search catalog:</p>
+            <b-button variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
+            <b-button variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
+            <br/>
+            <br/>
             <b-input-group prepend="Flight name/path">
                 <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
             </b-input-group>
@@ -35,14 +41,20 @@
                 </b-button>
             </div>
             <br/>
-            <div class="collapsed"  v-for="entry in layers" :key="entry.info['uid']" @click="extendEntry(entry)">
-                <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"> <span style="font-size: 15px">{{entry.info['dataname']}}</span><br>
+
+            <div class="collapsed"  v-for="entry in layers" :key="entry.info['uid']">
+
+                <b-col>
+                <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
+                </b-col>
+                <b-col @click="extendEntry(entry)" style="cursor:pointer;" >
+                    <div id="dataname">{{entry.info['dataname']}}</div>
                 <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
                 <div  v-if="!entry.extended && !entry.clicked" @click="extendEntry(entry)">
                     <b-icon-arrows-expand ></b-icon-arrows-expand>
                 </div>
 <!--                shows history of entry clicks-->
-                <div  v-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC;">
+                <div  v-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC; border-radius: 5px">
                    <b-icon-eye></b-icon-eye>
                 </div>
 
@@ -91,7 +103,7 @@
                     </div>
 
                 </div>
-
+                </b-col>
             </div>
         </div>
     </div>
@@ -148,10 +160,18 @@
                 this.chartData(csv));
             bus.$on('polyDrawn', (latlngs)=>
                 this.polyQuery(latlngs));
-            bus.$on('rectDim', (maxLat, minLon, minLat, maxLon, centerLat, centerLng)=>
+            //tool argument for identifying currently active tool
+            bus.$on('uavsarDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng)=>
                 this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
         methods: {
+            uavsarDrawRect(){
+                bus.$emit('uavsarDraw', 'rect');
+            },
+            uavsarPinDrop(){
+                bus.$emit('uavsarDraw', 'point');
+            },
+
             uavsarQuery(){
               if(this.lat_lon === '') {
                   if (this.flight_path === '') {
@@ -393,36 +413,38 @@
                 })
             },
             rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
+                bus.$emit('drawListenerOff');
                 if(this.overview) {
-                    console.log(centerLng, centerLat);
-                    var queryStr = '';
-                    queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
-                    axios.get(baseURI, {
-                        params: {
-                            //
-                            "type": 'rectangle',
-                            "queryStr": queryStr
-                        }
-                    }).then(function (response) {
-                        var entries = response.data;
+                        console.log(centerLng, centerLat);
+                        var queryStr = '';
+                        queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
+                        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                        axios.get(baseURI, {
+                            params: {
+                                //
+                                "type": 'rectangle',
+                                "queryStr": queryStr
+                            }
+                        }).then(function (response) {
+                            var entries = response.data;
 
-                        for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
-                            axios.get(baseURI, {
-                                params: {
-                                    //
-                                    "json": JSON.stringify(entries[i]),
-                                }
-                            }).then(function (response) {
-                                var entry = response.data;
-                                bus.$emit('uavsarKMLs', entry)
-                                bus.$emit('assignEntry', entry);
+                            for (var i = 0; i < entries.length; i++) {
+                                var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                                axios.get(baseURI, {
+                                    params: {
+                                        //
+                                        "json": JSON.stringify(entries[i]),
+                                    }
+                                }).then(function (response) {
+                                    var entry = response.data;
+                                    bus.$emit('uavsarKMLs', entry)
+                                    bus.$emit('assignEntry', entry);
 
-                            })
-                        }
+                                })
+                            }
 
-                    })
+                        })
+
                 }
             },
             kmlLayerChange(entry){
@@ -508,7 +530,6 @@
         box-sizing: border-box;
         border-radius: 8px;
         background-color: #8494a3;
-        cursor: pointer;
         /*A5B9CC*/
     }
 
@@ -521,6 +542,12 @@
     }
     #active-plot {
         border-radius: 8px;
+    }
+    #dataname {
+        width:100%;
+        font-size:14px;
+        word-break:break-all;
+
     }
 </style>
 
