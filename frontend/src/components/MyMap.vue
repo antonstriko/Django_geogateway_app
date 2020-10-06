@@ -248,6 +248,9 @@
                 this.seismicityDraw());
             bus.$on('drawListenerOff', () =>
                 this.map.off('draw:created'));
+            bus.$on('gnssDraw', () =>
+                this.gnssDraw());
+
         },
 
 
@@ -260,14 +263,16 @@
                 }
 
                 this.drawListener('uavsar');
-
-
             },
             seismicityDraw(){
                 new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
 
                 this.drawListener('seismicity');
+            },
+            gnssDraw(){
+                new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
 
+                this.drawListener('gnss');
             },
             drawListener(tool){
                 this.map.on('draw:created', function (e) {
@@ -288,7 +293,10 @@
                             bus.$emit('uavsarDrawQuery', this.maxLat, this.minLon, this.minLat, this.maxLon, this.centerLat, this.centerLng);
                         }else if(tool === 'seismicity'){
                             bus.$emit('seisDrawQuery', this.maxLat, this.minLon, this.minLat, this.maxLon, this.centerLat, this.centerLng);
+                        }else if(tool === 'gnss'){
+                            bus.$emit('gnssDrawQuery', this.maxLat, this.minLon, this.minLat, this.maxLon, this.centerLat, this.centerLng);
                         }
+
                         //control which tool hears bus event for drawing rect
                     } else if (type === 'marker') {
                         this.markerLayer = e.layer;

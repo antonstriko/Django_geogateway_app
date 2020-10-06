@@ -175,7 +175,7 @@
             }
         },
         mounted() {
-            bus.$on('rectDim', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
+            bus.$on('gnssDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
                 this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
         },
 
@@ -310,7 +310,7 @@
 
             },
             drawToolbar() {
-                bus.$emit('drawRect');
+                bus.$emit('gnssDraw');
             },
             clearGnss(){
                 this.layersActive = false;
@@ -324,6 +324,7 @@
                 this.ranLayers = [];
             },
             setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
+                bus.$emit('drawListenerOff');
                 this.gs_latitude = centerLat;
                 this.gs_longitude = centerLng;
                 this.gs_height = Math.abs(maxLat - minLat);
