@@ -207,8 +207,18 @@
                     alert("Please select as least one plot!");
                 }
                 else {
+
+                    for(var i = 0;i<queries.length;i++){
+                        console.log(fileNameH)
+                        var fullNameV = this.gs_outputprefix + '_velocity_vertical.kml'
+                        var fullNameH = this.gs_outputprefix + '_velocity_horizontal.kml'
+                        if(queries[i].name === fullNameV || queries[i].name === fullNameH){
+                            alert('There is already an existing query with that name, please rename and resubmit')
+                            return;
+                        }
+                    }
                     // this.layerCheckbox = true;
-                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/gps_service'
+                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
                     //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
@@ -273,7 +283,7 @@
                                 url: horizontalUrl,
                                 type: 'V',
                             })
-                            const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
+                            const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
                             axios.get(kmlURI, {
                                 params: {
                                     "file": fileNameH,

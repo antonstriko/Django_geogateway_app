@@ -37,74 +37,87 @@
                     Select/Deselect All
                 </b-button>
                 <b-button @click="clearQuery" variant="warning">
-                      Clear Query
+                    Clear Query
                 </b-button>
+                <br />
+                <br />
+                <b-input-group prepend="Filter by UID">
+                    <b-form-input v-model="uid" name="uid" placeholder="" @update="filterUid"></b-form-input>
+                </b-input-group>
+                <br />
+                <b-input-group prepend="Filter by Flight Path">
+                    <b-form-input v-model="path" name="path" placeholder="" @update="filterPath"></b-form-input>
+                </b-input-group>
+
             </div>
             <br/>
 
-            <div class="collapsed"  v-for="entry in layers" :key="entry.info['uid']">
 
-                <b-col>
-                <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
-                </b-col>
-                <b-col @click="extendEntry(entry)" style="cursor:pointer;" >
-                    <div id="dataname">{{entry.info['dataname']}}</div>
-                <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
-                <div  v-if="!entry.extended && !entry.clicked" @click="extendEntry(entry)">
-                    <b-icon-arrows-expand ></b-icon-arrows-expand>
-                </div>
-<!--                shows history of entry clicks-->
-                <div  v-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC; border-radius: 5px">
-                   <b-icon-eye></b-icon-eye>
-                </div>
 
-                <div v-if="entry.extended" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
-                    <div class="extended">
-                        <b>UID: </b>{{entry.info['uid']}}  |  <b>Heading: </b> {{entry.info['heading']}} | <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
-                        <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
-                    </div>
-                    <div v-if="layerFound">
-                        <b-button variant="success" @click="activatePlotButton(entry)">Hide LOS Plot</b-button>
-                        <br/>
-                        <i style="font-size: small">Click UAVSAR tile to instantiate LOS plot</i>
+                <div class="collapsed"  v-for="entry in filteredLayers" :key="entry.info['uid']">
 
-                        <br />
-
-                        <div v-if="LosPlot && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
-                            <b-input-group>
-                                <b-input-group prepend="Start Lat/Lon" class="mb-2">
-                                    <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
-                                    <b-form-input v-model="lon1" name="lon1" placeholder=""></b-form-input>
-                                </b-input-group>
-                            </b-input-group>
-                            <b-input-group>
-                                <b-input-group prepend="End Lat/Lon" class="mb-2">
-                                    <b-form-input v-model="lat2" name="lat2" placeholder=""></b-form-input>
-                                    <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
-                                </b-input-group>
-                            </b-input-group>
-
-                            <b-input-group prepend="LOS Length">
-                                <b-form-input v-model="losLength" name="length" placeholder=""></b-form-input>
-                            </b-input-group>
-                            <b-input-group prepend="Azimuth">
-                                <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
-                            </b-input-group>
-                            <br/>
-                            <b-button variant="success" @click="updatePlot(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">Update LOS Plot</b-button>
-                            <br/>
-                            <br />
-                            <label for="opacity"><i style="font-size: small; color: #222222">Set Layer Opacity</i></label>
-                            <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
-                            <div class="mt-2">Value: {{ opVal }}% </div>
-                            <br/>
-                            <span @click="openDataSource" style="cursor: pointer; color: #2e6da4"><b-icon-chart></b-icon-chart><b>Open Data Source</b></span>
+                    <b-col>
+                        <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
+                    </b-col>
+                    <b-col @click="extendEntry(entry)" style="cursor:pointer;" >
+                        <div id="dataname">{{entry.info['dataname']}}</div>
+                        <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
+                        <div  v-if="!entry.extended && !entry.clicked" @click="extendEntry(entry)">
+                            <b-icon-arrows-expand ></b-icon-arrows-expand>
                         </div>
-                    </div>
+                        <!--                shows history of entry clicks-->
+                        <div  v-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC; border-radius: 5px">
+                            <b-icon-eye></b-icon-eye>
+                        </div>
 
+                        <div v-if="entry.extended" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
+                            <div class="extended">
+                                <b>UID: </b>{{entry.info['uid']}}  |  <b>Heading: </b> {{entry.info['heading']}} | <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
+                                <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
+                            </div>
+                            <div v-if="layerFound">
+                                <b-button variant="success" @click="activatePlotButton(entry)">Hide LOS Plot</b-button>
+                                <br/>
+                                <i style="font-size: small">Click UAVSAR tile to instantiate LOS plot</i>
+
+                                <br />
+
+                                <div v-if="LosPlot && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
+                                    <b-input-group>
+                                        <b-input-group prepend="Start Lat/Lon" class="mb-2">
+                                            <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
+                                            <b-form-input v-model="lon1" name="lon1" placeholder=""></b-form-input>
+                                        </b-input-group>
+                                    </b-input-group>
+                                    <b-input-group>
+                                        <b-input-group prepend="End Lat/Lon" class="mb-2">
+                                            <b-form-input v-model="lat2" name="lat2" placeholder=""></b-form-input>
+                                            <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
+                                        </b-input-group>
+                                    </b-input-group>
+
+                                    <b-input-group prepend="LOS Length">
+                                        <b-form-input v-model="losLength" name="length" placeholder=""></b-form-input>
+                                    </b-input-group>
+                                    <b-input-group prepend="Azimuth">
+                                        <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
+                                    </b-input-group>
+                                    <br/>
+                                    <b-button variant="success" @click="updatePlot(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">Update LOS Plot</b-button>
+                                    <br/>
+                                    <br />
+                                    <label for="opacity"><i style="font-size: small; color: #222222">Set Layer Opacity</i></label>
+                                    <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
+                                    <div class="mt-2">Value: {{ opVal }}% </div>
+                                    <br/>
+                                    <span @click="openDataSource" style="cursor: pointer; color: #2e6da4"><b-icon-chart></b-icon-chart><b>Open Data Source</b></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </b-col>
                 </div>
-                </b-col>
-            </div>
+
         </div>
     </div>
 </template>
@@ -139,6 +152,9 @@
                 csv_final: '',
                 activeEntry: null,
                 opVal: 50,
+                uid: '',
+                filteredLayers: [],
+                path: '',
 
 
             }
@@ -163,6 +179,8 @@
             //tool argument for identifying currently active tool
             bus.$on('uavsarDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng)=>
                 this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
+
+            this.filteredLayers = this.layers;
         },
         methods: {
             uavsarDrawRect(){
@@ -171,17 +189,32 @@
             uavsarPinDrop(){
                 bus.$emit('uavsarDraw', 'point');
             },
+            filterUid(){
+                var uidSearch = this.uid;
+                function checkUid(entry){
+                    return entry.info['uid'].includes(uidSearch);
+                }
+                console.log(this.layers)
+                this.filteredLayers = this.layers.filter(checkUid);
+            },
+            filterPath(){
+                var pathSearch = this.path;
+                function checkPath(entry){
+                    return entry.info['dataname'].includes(pathSearch);
+                }
+                this.filteredLayers = this.layers.filter(checkPath);
+            },
 
             uavsarQuery(){
-              if(this.lat_lon === '') {
-                  if (this.flight_path === '') {
-                      alert('Please fill one of the input boxes');
-                  } else {
-                      this.flightPathQuery(this.flight_path);
-                  }
-              }else {
-                  this.pointQuery(this.lat_lon.split(',')[0], this.lat_lon.split(',')[1]);
-              }
+                if(this.lat_lon === '') {
+                    if (this.flight_path === '') {
+                        alert('Please fill one of the input boxes');
+                    } else {
+                        this.flightPathQuery(this.flight_path);
+                    }
+                }else {
+                    this.pointQuery(this.lat_lon.split(',')[0], this.lat_lon.split(',')[1]);
+                }
 
             },
             openDataSource(){
@@ -224,9 +257,8 @@
             },
             activatePlotButton(){
 
-                    this.LosPlot = false;
-                    bus.$emit('hidePlot');
-
+                this.LosPlot = false;
+                bus.$emit('hidePlot');
 
             },
             updatePlot(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength){
@@ -415,35 +447,35 @@
             rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
                 bus.$emit('drawListenerOff');
                 if(this.overview) {
-                        console.log(centerLng, centerLat);
-                        var queryStr = '';
-                        queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-                        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
-                        axios.get(baseURI, {
-                            params: {
-                                //
-                                "type": 'rectangle',
-                                "queryStr": queryStr
-                            }
-                        }).then(function (response) {
-                            var entries = response.data;
+                    console.log(centerLng, centerLat);
+                    var queryStr = '';
+                    queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
+                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                    axios.get(baseURI, {
+                        params: {
+                            //
+                            "type": 'rectangle',
+                            "queryStr": queryStr
+                        }
+                    }).then(function (response) {
+                        var entries = response.data;
 
-                            for (var i = 0; i < entries.length; i++) {
-                                var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
-                                axios.get(baseURI, {
-                                    params: {
-                                        //
-                                        "json": JSON.stringify(entries[i]),
-                                    }
-                                }).then(function (response) {
-                                    var entry = response.data;
-                                    bus.$emit('uavsarKMLs', entry)
-                                    bus.$emit('assignEntry', entry);
+                        for (var i = 0; i < entries.length; i++) {
+                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                            axios.get(baseURI, {
+                                params: {
+                                    //
+                                    "json": JSON.stringify(entries[i]),
+                                }
+                            }).then(function (response) {
+                                var entry = response.data;
+                                bus.$emit('uavsarKMLs', entry)
+                                bus.$emit('assignEntry', entry);
 
-                                })
-                            }
+                            })
+                        }
 
-                        })
+                    })
 
                 }
             },
@@ -530,6 +562,7 @@
         box-sizing: border-box;
         border-radius: 8px;
         background-color: #8494a3;
+        overflow-y: auto;
         /*A5B9CC*/
     }
 
@@ -548,6 +581,11 @@
         font-size:14px;
         word-break:break-all;
 
+    }
+    .entryWindow {
+        width: 200px;
+        height: 400px;
+        overflow-y: auto;
     }
 </style>
 
