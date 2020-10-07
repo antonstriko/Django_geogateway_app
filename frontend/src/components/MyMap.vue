@@ -21,7 +21,7 @@
 
         <div id="map">
         </div>
-        <b-button id="clearMap" onclick="location.href='/geogateway_django_app'" type="button">
+        <b-button id="clearMap" @onclick="resetMap">
             Clear Map
         </b-button>
 
@@ -255,6 +255,11 @@
 
 
         methods: {
+            resetMap(){
+                this.map = null;
+                this.map = new L.map('map').setView([51.505, -0.09], 3);
+                this.tileLayer();
+            },
             uavsarDraw(shape){
                 if(shape == 'rect'){
                     new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
@@ -596,7 +601,6 @@
             },
             tileLayer() {
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-                    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey, Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community'
                 }).addTo(this.map);
             },
             kmlText(text, layerName) {

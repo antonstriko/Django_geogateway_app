@@ -40,14 +40,19 @@
                     Clear Query
                 </b-button>
                 <br />
+
                 <br />
-                <b-input-group prepend="Filter by UID">
-                    <b-form-input v-model="uid" name="uid" placeholder="" @update="filterUid"></b-form-input>
+                <b-input-group prepend="Filter by Heading">
+                    <b-form-input v-model="path" name="path" placeholder="" @update="filterHeading"></b-form-input>
+
                 </b-input-group>
-                <br />
-                <b-input-group prepend="Filter by Flight Path">
-                    <b-form-input v-model="path" name="path" placeholder="" @update="filterPath"></b-form-input>
-                </b-input-group>
+
+
+                    <b-form-select v-model="sortBy" @change="sortEntries" name="Sort By" class="mb-3">
+                        <b-form-select-option :value="null">Sort By</b-form-select-option>
+                        <b-select-option value="rating">Rating</b-select-option>
+                    </b-form-select>
+
 
             </div>
             <br/>
@@ -62,6 +67,30 @@
                     <b-col @click="extendEntry(entry)" style="cursor:pointer;" >
                         <div id="dataname">{{entry.info['dataname']}}</div>
                         <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
+                        <br />
+                        <div id="rating">
+                            <div v-if="entry.info['rating'] === '0'">
+                                <b-icon-star/>
+                                <b-icon-star/>
+                                <b-icon-star/>
+
+                            </div>
+                            <div v-else-if="entry.info['rating'] === '1'">
+                                <b-icon-star-fill/>
+                                <b-icon-star/>
+                                <b-icon-star/>
+                            </div>
+                            <div v-else-if="entry.info['rating'] === '2'">
+                                <b-icon-star-fill/>
+                                <b-icon-star-fill/>
+                                <b-icon-star/>
+                            </div>
+                            <div v-else-if="entry.info['rating'] === '3'">
+                                <b-icon-star-fill/>
+                                <b-icon-star-fill/>
+                                <b-icon-star-fill/>
+                            </div>
+                        </div>
                         <div  v-if="!entry.extended && !entry.clicked" @click="extendEntry(entry)">
                             <b-icon-arrows-expand ></b-icon-arrows-expand>
                         </div>
@@ -72,7 +101,7 @@
 
                         <div v-if="entry.extended" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
                             <div class="extended">
-                                <b>UID: </b>{{entry.info['uid']}}  |  <b>Heading: </b> {{entry.info['heading']}} | <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
+                                  <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                                 <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
                             </div>
                             <div v-if="layerFound">
@@ -155,9 +184,14 @@
                 uid: '',
                 filteredLayers: [],
                 path: '',
+                activeRating: '',
+                sortBy: 'null',
 
 
             }
+        },
+        components: {
+
         },
         mounted() {
             bus.$on('markPlace', (lat, lon) =>
@@ -189,20 +223,22 @@
             uavsarPinDrop(){
                 bus.$emit('uavsarDraw', 'point');
             },
-            filterUid(){
-                var uidSearch = this.uid;
-                function checkUid(entry){
-                    return entry.info['uid'].includes(uidSearch);
-                }
-                console.log(this.layers)
-                this.filteredLayers = this.layers.filter(checkUid);
+            returnRating(){
+
             },
-            filterPath(){
+            filterHeading(){
                 var pathSearch = this.path;
                 function checkPath(entry){
-                    return entry.info['dataname'].includes(pathSearch);
+                    return entry.info['heading'].includes(pathSearch);
                 }
                 this.filteredLayers = this.layers.filter(checkPath);
+            },
+
+            sortEntries(){
+                if(this.sortBy === 'rating') {
+                    this.filteredLayers = this.layers.sort((a, b) =>
+                        (a.info['rating'] > b.info['rating']) ? -1 : 1);
+                }
             },
 
             uavsarQuery(){
@@ -274,7 +310,7 @@
                 this.lat2 = latlon[2];
                 this.lon2 = latlon[3];
 
-                axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
+                axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
                     params: {
                         'entry':JSON.stringify(entry),
                         'lat1':this.lat1,
@@ -305,7 +341,7 @@
                         }
                         entry.extended = true;
 
-                        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
+                        var testURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_test/'
 
                         var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
@@ -344,6 +380,7 @@
             },
             clearQuery(){
                 this.layers = [];
+                this.filteredLayers = [];
                 this.LosPlot = false;
                 bus.$emit('resetUavsar');
                 this.showOverview();
@@ -354,6 +391,7 @@
                     bus.$emit('drawToolbar');
                 }else {
                     this.layers = [];
+                    this.filteredLayers = [];
                     this.LosPlot = false;
                     bus.$emit('deactivateUavsar');
 
@@ -362,7 +400,7 @@
             flightPathQuery(path){
                 if(this.overview) {
 
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_flight/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -373,7 +411,7 @@
                         var entries = response.data;
 
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
                             axios.get(baseURI, {
                                 params: {
                                     //
@@ -394,7 +432,7 @@
                 if(this.overview) {
                     this.lat_lon = lat.toString() + ',' + lon.toString();
                     var queryStr = '(' + this.lat_lon + ')'
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -405,7 +443,7 @@
                         var entries = response.data;
 
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
                             axios.get(baseURI, {
                                 params: {
                                     //
@@ -430,7 +468,7 @@
                 }
                 queryStr = queryStr.replace(/,\s*$/, "");
 
-                var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                 axios.get(baseURI, {
                     params: {
                         //
@@ -450,7 +488,7 @@
                     console.log(centerLng, centerLat);
                     var queryStr = '';
                     queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -461,7 +499,7 @@
                         var entries = response.data;
 
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
                             axios.get(baseURI, {
                                 params: {
                                     //
@@ -493,7 +531,7 @@
 
             },
             uavsarKML(jsonEntry){
-                var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
                 axios.get(baseURI, {
                     params: {
                         //

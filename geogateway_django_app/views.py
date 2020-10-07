@@ -63,9 +63,9 @@ class KmzUpload(APIView):
 class HomeView(TemplateView):
     template_name = "geogateway_django_app/main.html"
 
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+#     @method_decorator(login_required)
+#     def dispatch(self, *args, **kwargs):
+#         return super().dispatch(*args, **kwargs)
 
 
 

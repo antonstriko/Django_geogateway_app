@@ -25,6 +25,8 @@
         overflow-y: scroll;
         float: left;
         background-color: #e6e6ff;
+        -webkit-transition: none;
+        transition: none;
     }
 
 
