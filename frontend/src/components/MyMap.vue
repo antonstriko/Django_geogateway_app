@@ -78,7 +78,7 @@
                 kmlLayers: [],
                 gnssV: [],
                 gnssH: [],
-                uavsarLayers: [],
+                uavsarLayers: new Map(),
                 plottingMarker1: null,
                 plottingMarker2: null,
                 plotLine: null,
@@ -155,13 +155,9 @@
             bus.$on('TextAddLayer', (text, layerName) =>
                 this.kmlText(text, layerName));
 
-            bus.$on('drawToolbar', () =>
-                this.drawToolbar());
-
             bus.$on('addExisting', (layerName) =>
                 this.map.addLayer(this.layers[layerName]));
 
-            //convert to above abstracted event listener
 
             bus.$on('gnssLayer', (text, type, markerSize) =>
                 this.gnssGeoJson(text, type, markerSize));
@@ -190,16 +186,13 @@
             bus.$on('clearSaveLayer', (layers) =>
                 this.clearSave(layers));
 
+            // UAVSAR listeners
             bus.$on('UAVSAR_overview', () => {
                 this.uavsarOverview();
             });
 
             bus.$on('deactivateUavsar', () =>
                 this.deactivateUavsar());
-
-
-            bus.$on('uavsarKMLs', (results) =>
-                this.uavsarOverlay(results));
 
             bus.$on('reactivateUavsarLayer', (name) =>
                 this.reactivateUavsarLayer(name));
@@ -250,16 +243,22 @@
                 this.map.off('draw:created'));
             bus.$on('gnssDraw', () =>
                 this.gnssDraw());
-
+            bus.$on('addEntryToUavsar', (entry) =>
+                this.addEntryToUavsar(entry));
         },
 
 
         methods: {
+            removeLayer(layerName) {
+                this.map.removeLayer(this.layers[layerName])
+            },
             resetMap(){
                 this.map = null;
                 this.map = new L.map('map').setView([51.505, -0.09], 3);
                 this.tileLayer();
             },
+
+            // Draw tool methods ////////////////////////
             uavsarDraw(shape){
                 if(shape == 'rect'){
                     new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
@@ -364,6 +363,7 @@
                 for (var key in this.uavsarLayers) {
                     this.uavsarLayers[key].remove();
                 }
+                this.uavsarLayers = new Map();
                 if (this.plottingMarker1 !== null) {
                     this.resetPlot();
                 }
@@ -371,6 +371,7 @@
                     this.uavsarLegend.remove();
                 }
             },
+            // removes all UAVSAR layers
             deactivateUavsar() {
                 if (this.uavsarLegend !== null) {
                     this.uavsarLegend.remove();
@@ -576,29 +577,18 @@
 
             },
             // high res plotting images + add map legend
-            uavsarOverlay(entry) {
+            addEntryToUavsar(entry) {
                 if (this.layers['uavsarWMS']) {
                     this.removeLayer('uavsarWMS');
                 }
-                var id = entry.info['uid']
-                let text = entry.kml;
-                const parser = new DOMParser();
-                const kml = parser.parseFromString(text, 'text/xml');
-                this.uavsarLayers[id] = new L.KML(kml);
-                this.map.addLayer(this.uavsarLayers[id]);
+                    var id = entry.info['uid']
+                    let text = entry.kml;
+                    const parser = new DOMParser();
+                    const kml = parser.parseFromString(text, 'text/xml');
+                    this.uavsarLayers[id] = new L.KML(kml);
+                    this.map.addLayer(this.uavsarLayers[id]);
+                },
 
-
-            },
-            drawToolbar() {
-                if (!this.drawToolShow) {
-                    this.drawToolShow = true
-
-
-                    //gets lat long width height of drawn rectangle and prints in console.
-                    // TODO dynamically fill form input with results from drawn rectangle
-
-                }
-            },
             tileLayer() {
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
                 }).addTo(this.map);
@@ -635,9 +625,7 @@
 
             },
 
-            removeLayer(layerName) {
-                this.map.removeLayer(this.layers[layerName])
-            },
+
 
             seismicityPlots(data, lat, lon) {
                 var style = " style=width:200px;height:150px;"

@@ -30,7 +30,7 @@
         </div>
         <br />
 
-        <div v-if="layers.length !== 0">
+        <div v-if="layers.length !== 0 && !activeQuery">
             <br/>
             <div class="layer-options">
                 <b-button @click="selDeselAll">
@@ -48,17 +48,17 @@
                 </b-input-group>
 
 
-                    <b-form-select v-model="sortBy" @change="sortEntries" name="Sort By" class="mb-3">
-                        <b-form-select-option :value="null">Sort By</b-form-select-option>
-                        <b-select-option value="rating">Rating</b-select-option>
-                    </b-form-select>
+                <b-form-select v-model="sortBy" @change="sortEntries" name="Sort By" class="mb-3">
+                    <b-form-select-option :value="null">Sort By</b-form-select-option>
+                    <b-select-option value="rating">Rating</b-select-option>
+                </b-form-select>
 
 
             </div>
             <br/>
 
 
-
+            <div id="queryWindow">
                 <div class="collapsed"  v-for="entry in filteredLayers" :key="entry.info['uid']">
 
                     <b-col>
@@ -101,7 +101,7 @@
 
                         <div v-if="entry.extended" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
                             <div class="extended">
-                                  <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
+                                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                                 <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
                             </div>
                             <div v-if="layerFound">
@@ -146,7 +146,10 @@
                         </div>
                     </b-col>
                 </div>
-
+            </div>
+        </div>
+        <div v-else-if="activeQuery" style="overflow: hidden">
+            <b-spinner variant="success" label="Spinning"></b-spinner>
         </div>
     </div>
 </template>
@@ -165,7 +168,6 @@
                 flight_path: '',
                 lat_lon: '',
                 layers: [],
-                clickedEntries: [],
                 extendedColor: '',
                 extendedBorder: '',
                 layerFound: false,
@@ -186,6 +188,7 @@
                 path: '',
                 activeRating: '',
                 sortBy: 'null',
+                activeQuery: false,
 
 
             }
@@ -213,19 +216,26 @@
             //tool argument for identifying currently active tool
             bus.$on('uavsarDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng)=>
                 this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
-
-            this.filteredLayers = this.layers;
+            bus.$on('uavsarQueryDone', () => {
+                    this.queryToMap();
+                }
+            );
+            bus.$on('addEntry', (entry) =>
+                this.addEntry(entry));
         },
         methods: {
+            queryToMap(){
+                this.activeQuery = false;
+                this.filteredLayers = this.layers;
+
+            },
             uavsarDrawRect(){
                 bus.$emit('uavsarDraw', 'rect');
             },
             uavsarPinDrop(){
                 bus.$emit('uavsarDraw', 'point');
             },
-            returnRating(){
 
-            },
             filterHeading(){
                 var pathSearch = this.path;
                 function checkPath(entry){
@@ -310,7 +320,7 @@
                 this.lat2 = latlon[2];
                 this.lon2 = latlon[3];
 
-                axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
+                axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
                     params: {
                         'entry':JSON.stringify(entry),
                         'lat1':this.lat1,
@@ -333,15 +343,15 @@
                     this.activePlot = entry.info['uid'];
                     entry.clicked = true;
                     if (!entry.extended) {
-                        for (var i = 0; i < this.layers.length; i++) {
-                            this.layers[i].extended = false
-                            this.layers[i].active = false
-                            this.kmlLayerChange(this.layers[i]);
+                        for (var i = 0; i < this.filteredLayers.length; i++) {
+                            this.filteredLayers[i].extended = false
+                            this.filteredLayers[i].active = false
+                            this.kmlLayerChange(this.filteredLayers[i]);
 
                         }
                         entry.extended = true;
 
-                        var testURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_test/'
+                        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
 
                         var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
@@ -358,7 +368,7 @@
                             var datajson = response.data
                             if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions')) {
                                 layerFound = true;
-                                console.log(datajson);
+
                                 bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
                             } else if (Object.prototype.hasOwnProperty.call(datajson, 'exceptions')) {
                                 layerFound = false;
@@ -372,15 +382,15 @@
                 }
             },
             selDeselAll(){
-                for(var i = this.layers.length-1; i >= 0; i--){
-                    this.layers[i].active = this.selDesel;
-                    this.kmlLayerChange(this.layers[i]);
+                for(var i = this.filteredLayers.length-1; i >= 0; i--){
+                    this.filteredLayers[i].active = this.selDesel;
+                    this.kmlLayerChange(this.filteredLayers[i]);
                 }
                 this.selDesel = !this.selDesel;
             },
             clearQuery(){
-                this.layers = [];
                 this.filteredLayers = [];
+                this.layers = [];
                 this.LosPlot = false;
                 bus.$emit('resetUavsar');
                 this.showOverview();
@@ -388,7 +398,7 @@
             showOverview(){
                 if(this.overview) {
                     bus.$emit('UAVSAR_overview');
-                    bus.$emit('drawToolbar');
+
                 }else {
                     this.layers = [];
                     this.filteredLayers = [];
@@ -399,8 +409,7 @@
             },
             flightPathQuery(path){
                 if(this.overview) {
-
-                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_flight/'
+                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -411,7 +420,7 @@
                         var entries = response.data;
 
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
                             axios.get(baseURI, {
                                 params: {
                                     //
@@ -419,20 +428,26 @@
                                 }
                             }).then(function (response) {
                                 var entry = response.data;
-                                bus.$emit('uavsarKMLs', entry)
-                                bus.$emit('assignEntry', entry);
-
+                                bus.$emit('addEntry', entry);
                             })
                         }
 
+                    }).then(function (){
+                        bus.$emit('uavsarQueryDone');
                     })
                 }
             },
+
+            addEntry(entry){
+                this.layers.push(entry);
+                bus.$emit('addEntryToUavsar', entry);
+            },
             pointQuery(lat, lon){
+                this.activeQuery = true;
                 if(this.overview) {
                     this.lat_lon = lat.toString() + ',' + lon.toString();
                     var queryStr = '(' + this.lat_lon + ')'
-                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -443,7 +458,7 @@
                         var entries = response.data;
 
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
                             axios.get(baseURI, {
                                 params: {
                                     //
@@ -451,16 +466,17 @@
                                 }
                             }).then(function (response) {
                                 var entry = response.data;
-                                bus.$emit('uavsarKMLs', entry)
-                                bus.$emit('assignEntry', entry);
-
+                                bus.$emit('addEntry', entry);
                             })
                         }
 
+                    }).then(function (){
+                        bus.$emit('uavsarQueryDone');
                     })
                 }
             },
             polyQuery(latlngs){
+                this.activeQuery = true;
                 var queryResponse;
                 var queryStr = '';
                 for(var i = 0;i<latlngs[0].length;i++){
@@ -468,7 +484,7 @@
                 }
                 queryStr = queryStr.replace(/,\s*$/, "");
 
-                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
                 axios.get(baseURI, {
                     params: {
                         //
@@ -478,17 +494,18 @@
                 }).then(function (response){
                     queryResponse = response.data;
                     bus.$emit('uavsarGeom', queryResponse)
-                    bus.$emit('uavsarKMLs', this.layers)
+                    // bus.$emit('uavsarKMLs', this.filteredLayers)
 
                 })
             },
             rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
+                this.activeQuery = true;
                 bus.$emit('drawListenerOff');
                 if(this.overview) {
                     console.log(centerLng, centerLat);
                     var queryStr = '';
                     queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -499,7 +516,7 @@
                         var entries = response.data;
 
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
                             axios.get(baseURI, {
                                 params: {
                                     //
@@ -507,12 +524,12 @@
                                 }
                             }).then(function (response) {
                                 var entry = response.data;
-                                bus.$emit('uavsarKMLs', entry)
-                                bus.$emit('assignEntry', entry);
-
+                                bus.$emit('addEntry', entry);
                             })
                         }
 
+                    }).then(function (){
+                        bus.$emit('uavsarQueryDone');
                     })
 
                 }
@@ -523,29 +540,6 @@
                 }else {
                     bus.$emit('removeUavsarLayer', entry.info['uid'])
                 }
-            },
-            kmlQueries(entries){
-                for(var i = 0;i < entries.length; i++){
-                    this.uavsarKML(entries[i]);
-                }
-
-            },
-            uavsarKML(jsonEntry){
-                var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
-                axios.get(baseURI, {
-                    params: {
-                        //
-                        "json": JSON.stringify(jsonEntry),
-                    }
-                }).then(function (response) {
-                    var entry = response.data;
-                    bus.$emit('assignEntry', entry);
-                })
-
-            },
-            assignKmls(entry){
-
-                this.layers.push(entry);
             },
 
             setLosLength(latlon){
@@ -625,6 +619,12 @@
         height: 400px;
         overflow-y: auto;
     }
+
+    #queryWindow {
+        height: 600px;
+        width: 100%;
+        overflow-y: auto;
+    }
 </style>
 
 <style>
@@ -633,6 +633,7 @@
         background-color: #e6e6ff;
         height:100%;
         overflow-x: hidden;
+        overflow-y: hidden;
     }
     h3, h4, h5 {
         color: #343a40;
