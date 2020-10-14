@@ -147,6 +147,8 @@
             },
 
             submitFile(){
+                axios.defaults.xsrfCookieName = 'csrftoken'
+                axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
                 var fileName = this.kmlFile['name'];
                 function getExtension(filename) {
                     var parts = filename.split('.');
