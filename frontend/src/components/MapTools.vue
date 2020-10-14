@@ -70,6 +70,8 @@
 <script>
     import {bus} from '../main'
     import axios from "axios";
+    axios.defaults.withCredentials = true;
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
     export default {
         name: "MapTools",
         data() {
@@ -147,8 +149,6 @@
             },
 
             submitFile(){
-                axios.defaults.xsrfCookieName = 'csrftoken'
-                axios.defaults.xsrfHeaderName = 'X-CSRFTOKEN'
                 var fileName = this.kmlFile['name'];
                 function getExtension(filename) {
                     var parts = filename.split('.');
@@ -164,6 +164,7 @@
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
                 this.kmlLayers.push({name: fileName, active: true})
+
                 axios.post( uploadUrl, formData
                 ).then(function(response){
                     bus.$emit('addkmlUploadLayer', response.data, fileName);
