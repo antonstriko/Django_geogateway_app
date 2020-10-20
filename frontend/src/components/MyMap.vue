@@ -120,7 +120,7 @@
         mounted() {
 
             //create layers
-            this.map = L.map('map').setView([51.505, -0.09], 3);
+            this.map = L.map('map').setView([37.5,-116.0], 6);
             this.tileLayer();
 
             var legend2 = L.control({position: 'bottomleft'});
