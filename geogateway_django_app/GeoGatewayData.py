@@ -79,6 +79,12 @@ def gdacs(request):
         responseData = HttpResponse(data)
         return responseData
 
+def seismicity(request):
+    if request.method == 'GET':
+        uri = request.GET.get('fullUri')
+        data = requests.get(uri)
+        responseData = HttpResponse(data)
+        return responseData
 
 def nowcast_plots(request):
     if request.method == 'GET':
