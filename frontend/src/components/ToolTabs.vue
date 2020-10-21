@@ -20,18 +20,18 @@
             <b-tab title="Magnitude" title-link-class="tab"><b-card-text>
                 <MMCalc/>
             </b-card-text></b-tab>
-            <b-tab title="Disloc" title-link-class="tab"><b-card-text>
-                <Disloc />
-            </b-card-text></b-tab>
+<!--            <b-tab title="Disloc" title-link-class="tab" disabled><b-card-text>-->
+<!--                <Disloc />-->
+<!--            </b-card-text></b-tab>-->
             <b-tab title="Saves" title-link-class="tab"><b-card-text>
                 <Saves />
             </b-card-text></b-tab>
             <b-tab title="Report a Bug" title-link-class="tab"><b-card-text>
                 <report />
             </b-card-text></b-tab>
-            <b-tab title="Help" title-link-class="tab"><b-card-text>
-                <help />
-            </b-card-text></b-tab>
+<!--            <b-tab title="Help" title-link-class="tab"><b-card-text>-->
+<!--                <help />-->
+<!--            </b-card-text></b-tab>-->
         </b-tabs>
     </div>
 </template>
@@ -42,11 +42,11 @@
     import MMCalc from "./MMCalc";
     import Nowcast from "./Nowcast";
     import Seismicity from "./Seismicity";
-    import Disloc from "./Disloc";
+    // import Disloc from "./Disloc";
     import Saves  from "./Saves";
     import UAVSAR from "./UAVSAR";
     import report from "./report";
-    import help from "./help";
+    // import help from "./help";
     export default {
         name: "ToolTabs",
         components: {
@@ -55,11 +55,11 @@
             MMCalc,
             Nowcast,
             Seismicity,
-            Disloc,
+            // Disloc,
             Saves,
             UAVSAR,
             report,
-            help
+            // help
 
 
         }
