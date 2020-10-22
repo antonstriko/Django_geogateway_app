@@ -41,8 +41,8 @@
         },
         methods: {
             runMMC(){
-                this.SM = (this.mm_length * this.mm_width * this.mm_slip * this.mm_shear * 1e23).toExponential(1);
-                this.MM = (2 / 3 * Math.log(this.SM) / Math.log(10) - 10.7).toFixed(1);
+                this.SM = this.mm_length * this.mm_width * this.mm_slip * this.mm_shear * 1e23;
+                this.MM = 2 / 3 * Math.log(this.SM) / Math.log(10) - 10.7;
             }
         }
     }

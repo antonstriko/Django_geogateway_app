@@ -65,16 +65,16 @@
     }
     #draggable-header {
         z-index: 10;
-        background-color: #343a40;
+        /*background-color: #343a40;*/
         align-content: center;
         cursor: move;
-        border-radius: 15px;
+        /*border-radius: 15px;*/
     }
     #close-button {
-        height: 20px;
-        width: 20px;
+        height: 25px;
+        width: 25px;
         float: right;
-        color: #B8C7D6;
+        color: #000000;
         cursor: pointer;
 
     }

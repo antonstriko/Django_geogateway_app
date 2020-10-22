@@ -7,7 +7,7 @@
         <ToolBar/>
         <DraggableDiv class="col-11" v-if="plotActive" id="plot-window">
             <template slot="header">
-                <p style="color: #e6e6ff">LOS Plot</p>
+                <p style="color: #000000">LOS Plot</p>
             </template>
             <template slot="main" >
                 <div id="dygraph-LOS"></div>
@@ -36,6 +36,7 @@
     import ToolBar from "./ToolBar";
     import TopNav from "./TopNav";
     import {bus} from '../main'
+    // import {store} from "../store/store";
     import 'leaflet-draw'
     import "leaflet-draw/dist/leaflet.draw.css";
 
@@ -43,6 +44,7 @@
     import Dygraph from "dygraphs";
     import DraggableDiv from "./DraggableDiv";
     import 'leaflet-kmz';
+    import { mapFields } from 'vuex-map-fields';
     // import axios from "axios";
     // import GeometryUtil from 'leaflet-geometryutil'
 
@@ -55,30 +57,11 @@
         },
         data() {
             return {
-                map: null,
                 drawToolShow: false,
-                layers: {
-                    'ucerfL': null,
-                    'woForecastL': null,
-                    'caForecastL': null,
-                    'boundariesL': null,
-                    'coastsL': null,
-                    'gdacsL': null,
-                    'gnssPlotPt': null,
-                    'nowcastL': null,
-                    'usgs_layer': null,
-                    'markerLayer': null,
-                    'kmlUpload': null,
-                    'nowcastLayer': null,
-                    'uavsarWMS': null,
-                    'uavsarOverlay': null,
-                    'highResUavsar': null,
-                    'disloc': null,
-                },
+
                 kmlLayers: [],
                 gnssV: [],
                 gnssH: [],
-                uavsarLayers: new Map(),
                 plottingMarker1: null,
                 plottingMarker2: null,
                 plotLine: null,
@@ -97,7 +80,6 @@
                     popupAnchor: [1, -34],
                     shadowSize: [41, 41]
                 }),
-                uavsarLegend: null,
                 plotLat1: null,
                 plotLon1: null,
                 plotLat2: null,
@@ -105,7 +87,6 @@
                 uavsarLatlon: null,
                 uavsarEntry: null,
                 usgsLegend: null,
-                drawControl: null,
                 centerLat: null,
                 centerLng: null,
                 maxLat: null,
@@ -116,11 +97,14 @@
 
             };
         },
-        props: {},
+        computed: {
+            ...mapFields(['uavsar.uavsarLayers', 'map.globalMap', 'map.layers', 'map.drawControl'
+            ,'map.uavsarLegend']),
+        },
         mounted() {
 
             //create layers
-            this.map = L.map('map').setView([37.5,-116.0], 6);
+            this.globalMap = new L.map('map').setView([36.9915, -119.7889], 5);
             this.tileLayer();
 
             var legend2 = L.control({position: 'bottomleft'});
@@ -129,10 +113,10 @@
                 div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="height: 30px; width: 82px">';
                 return div;
             };
-            legend2.addTo(this.map);
+            legend2.addTo(this.globalMap);
 
             var drawnItems = new L.FeatureGroup();
-            this.map.addLayer(drawnItems);
+            this.globalMap.addLayer(drawnItems);
             this.drawControl = new L.Control.Draw({
                 draw: {
                     polygon: false,
@@ -146,8 +130,8 @@
                     featureGroup: drawnItems
                 }
             });
-            this.map.addControl(this.drawControl);
-            this.map.addLayer(drawnItems);
+            this.globalMap.addControl(this.drawControl);
+            this.globalMap.addLayer(drawnItems);
 
             bus.$on('UrlAddLayer', (url, layerName) =>
                 this.kmlUrl(url, layerName));
@@ -156,14 +140,14 @@
                 this.kmlText(text, layerName));
 
             bus.$on('addExisting', (layerName) =>
-                this.map.addLayer(this.layers[layerName]));
+                this.globalMap.addLayer(this.layers[layerName]));
 
 
             bus.$on('gnssLayer', (text, type, markerSize) =>
                 this.gnssGeoJson(text, type, markerSize));
 
             bus.$on('RemoveLayer', (name) =>
-                this.map.removeLayer(this.layers[name]));
+                this.globalMap.removeLayer(this.layers[name]));
 
             bus.$on('nowcast', (data, lat, lon) =>
                 this.seismicityPlots(data, lat, lon));
@@ -203,8 +187,8 @@
             bus.$on('uavsarWMS', (layer, latlon) =>
                 this.uavsarWMS(layer, latlon));
 
-            // this.map.on('click', (e) =>
-            //     this.mapListener(e));
+            // this.globalMap.on('click', (e) =>
+            //     this.globalMapListener(e));
 
             bus.$on('updatePlotLine', (entry) =>
                 this.updatePlotLine(entry));
@@ -240,46 +224,46 @@
             bus.$on('seisDraw', () =>
                 this.seismicityDraw());
             bus.$on('drawListenerOff', () =>
-                this.map.off('draw:created'));
+                this.globalMap.off('draw:created'));
             bus.$on('gnssDraw', () =>
                 this.gnssDraw());
-            bus.$on('addEntryToUavsar', (entry) =>
-                this.addEntryToUavsar(entry));
+            bus.$on('displayUavsarQuery', () =>
+                this.displayUavsarQuery());
         },
 
 
         methods: {
             removeLayer(layerName) {
-                this.map.removeLayer(this.layers[layerName])
+                this.globalMap.removeLayer(this.layers[layerName])
             },
             resetMap(){
-                this.map = null;
-                this.map = new L.map('map').setView([51.505, -0.09], 3);
+                this.globalMap = null;
+                this.globalMap = new L.map('map').setView([36.9915, -119.7889], 10);
                 this.tileLayer();
             },
 
             // Draw tool methods ////////////////////////
             uavsarDraw(shape){
                 if(shape == 'rect'){
-                    new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
+                    new L.Draw.Rectangle(this.globalMap, this.drawControl.options.rectangle).enable();
                 }else if(shape == 'point'){
-                    new L.Draw.Marker(this.map, this.drawControl.options.marker).enable();
+                    new L.Draw.Marker(this.globalMap, this.drawControl.options.marker).enable();
                 }
 
                 this.drawListener('uavsar');
             },
             seismicityDraw(){
-                new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
+                new L.Draw.Rectangle(this.globalMap, this.drawControl.options.rectangle).enable();
 
                 this.drawListener('seismicity');
             },
             gnssDraw(){
-                new L.Draw.Rectangle(this.map, this.drawControl.options.rectangle).enable();
+                new L.Draw.Rectangle(this.globalMap, this.drawControl.options.rectangle).enable();
 
                 this.drawListener('gnss');
             },
             drawListener(tool){
-                this.map.on('draw:created', function (e) {
+                this.globalMap.on('draw:created', function (e) {
                     var type = e.layerType;
                     if (type === 'rectangle') {
                         var layer = e.layer;
@@ -346,7 +330,7 @@
                 var extension = getExtension(filename);
                 if (extension == 'kmz') {
                     this.layers[filename] = L.kmzLayer(file);
-                    this.map.addLayer(this.layers[filename]);
+                    this.globalMap.addLayer(this.layers[filename]);
                 } else {
                     this.kmlUrl(file, filename);
                 }
@@ -414,7 +398,7 @@
                 var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
                 this.plotLine.setLatLngs([[lat1, lon1],
                     [lat2, lon2]]);
-                bus.$emit('updatedPlot', latlon, entry)
+                bus.$emit('updatedPlot', latlon, entry);
             },
 
             //update LOS plotline when markers move or field entries are changed
@@ -423,7 +407,7 @@
 
             updatePlotLine(entry) {
                 this.updatePlotLineForm(entry, this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng)
-                // this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.map)
+                // this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()], {color: 'red'}).addTo(this.globalMap)
                 // var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
                 // bus.$emit('updatedPlot', latlon, entry)
             },
@@ -433,7 +417,7 @@
             displaySave(layers) {
                 for (var key in layers) {
                     if (layers[key] !== null) {
-                        this.map.addLayer(layers[key])
+                        this.globalMap.addLayer(layers[key])
                     }
                 }
             },
@@ -453,55 +437,7 @@
                 bus.$emit('placePlotMarkers', southwest, northeast, clickloc, latlon, entry);
             },
             //UAVSAR plot tile layer (for use with dygraphs)
-            uavsarWMS(entry, latlon) {
-                if (this.uavsarLegend !== null) {
-                    this.uavsarLegend.remove();
-                }
 
-                if (this.layers['highResUavsar'] !== null) {
-                    this.map.removeLayer(this.layers['highResUavsar']);
-                    this.layers['highResUavsar'] = null;
-                }
-                var baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?"
-
-                var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
-
-                this.uavsarLatlon = latlon;
-                this.uavsarEntry = entry;
-
-                this.layers['highResUavsar'] = L.tileLayer.wms(baseURI, {
-                    layers: layername,
-                    transparent: true,
-                    format: 'image/png',
-                    zIndex: 2
-                })
-
-
-                // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
-
-                this.map.addLayer(this.layers['highResUavsar']);
-
-                var baseUri = 'http://js-168-89.jetstream-cloud.org/uavsarlegend1/uid';
-
-                var uidUri = entry.info['uid'] + '_unw_default.png';
-
-                var finalUri = baseUri + uidUri;
-
-                this.layers['highResUavsar'].setOpacity(.5)
-
-                this.uavsarLegend = L.control({position: 'bottomleft'});
-                this.uavsarLegend.onAdd = function () {
-                    var div = L.DomUtil.create('div', 'uavsarLegend');
-                    div.innerHTML = '<img src=' + finalUri + '>';
-                    return div;
-                };
-
-                this.uavsarLegend.addTo(this.map)
-
-                this.map.on('click', this.markerClick);
-
-
-            },
             placePlotMarkers(southwest, northeast, clickloc, latlon, entry) {
 
                 if (this.plottingMarker1 == null) {
@@ -528,9 +464,9 @@
                     this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()],
                         {color: 'red'});
 
-                    this.plottingMarker1.addTo(this.map)
-                    this.plottingMarker2.addTo(this.map)
-                    this.plotLine.addTo(this.map)
+                    this.plottingMarker1.addTo(this.globalMap)
+                    this.plottingMarker2.addTo(this.globalMap)
+                    this.plotLine.addTo(this.globalMap)
 
 
                     this.plottingMarker1.on('dragend', function () {
@@ -543,9 +479,9 @@
 
                     this.plotActive = true;
 
-                    this.map.off('click', this.markerClick);
+                    this.globalMap.off('click', this.markerClick);
 
-                    // this.map.fitBounds([this.plotLat1, this.plotLon1], [this.plotLat2, this.plotLon2])
+                    // this.globalMap.fitBounds([this.plotLat1, this.plotLon1], [this.plotLat2, this.plotLon2])
 
                     bus.$emit('getCSV', entry, [this.plotLat1, this.plotLon1, this.plotLat2, this.plotLon2]);
                 }
@@ -554,15 +490,15 @@
             clearSave(layers) {
                 for (var key in layers) {
                     if (layers[key] !== null) {
-                        this.map.removeLayer(layers[key]);
+                        this.globalMap.removeLayer(layers[key]);
                     }
                 }
             },
             removeUavsarLayer(name) {
-                this.map.removeLayer(this.uavsarLayers[name]);
+                this.globalMap.removeLayer(this.uavsarLayers[name]);
             },
             reactivateUavsarLayer(name) {
-                this.map.addLayer(this.uavsarLayers[name]);
+                this.globalMap.addLayer(this.uavsarLayers[name]);
             },
             uavsarOverview() {
 
@@ -572,38 +508,26 @@
                         format: 'image/png',
                         zIndex: 2
                     }
-                ).addTo(this.map);
+                ).addTo(this.globalMap);
                 this.layers['uavsarWMS'].setOpacity(.7)
 
             },
-            // high res plotting images + add map legend
-            addEntryToUavsar(entry) {
-                if (this.layers['uavsarWMS']) {
-                    this.removeLayer('uavsarWMS');
-                }
-                    var id = entry.info['uid']
-                    let text = entry.kml;
-                    const parser = new DOMParser();
-                    const kml = parser.parseFromString(text, 'text/xml');
-                    this.uavsarLayers[id] = new L.KML(kml);
-                    this.map.addLayer(this.uavsarLayers[id]);
-                },
 
             tileLayer() {
                 L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-                }).addTo(this.map);
+                }).addTo(this.globalMap);
             },
             kmlText(text, layerName) {
                 const parser = new DOMParser();
                 const kml = parser.parseFromString(text, 'text/xml');
                 this.layers[layerName] = new L.KML(kml);
-                this.map.addLayer(this.layers[layerName]);
+                this.globalMap.addLayer(this.layers[layerName]);
                 const bounds = this.layers[layerName].getBounds();
-                this.map.fitBounds(bounds);
+                this.globalMap.fitBounds(bounds);
 
             },
             addGeoJson(text, layer) {
-                this.layers[layer] = L.geoJSON(text, {}).addTo(this.map);
+                this.layers[layer] = L.geoJSON(text, {}).addTo(this.globalMap);
             },
             addGnssLayer(file, type, prefix) {
                 this.kmlText(file, type.concat(prefix));
@@ -618,8 +542,8 @@
                         const parser = new DOMParser();
                         var kml = parser.parseFromString(kmltext, "text/xml");
                         this.layers[layerName] = new L.KML(kml);
-                        this.map.addLayer(this.layers[layerName]);
-                        this.map.fitBounds(this.layers[layerName].getBounds());
+                        this.globalMap.addLayer(this.layers[layerName]);
+                        this.globalMap.fitBounds(this.layers[layerName].getBounds());
 
                     });
 
@@ -635,7 +559,7 @@
                     color: 'green',
                     fillColor: 'lightgreen',
                     radius: 10,
-                }).addTo(this.map);
+                }).addTo(this.globalMap);
 
                 var eps = data.urls[0]
                 var numMag = data.urls[1]
@@ -647,12 +571,12 @@
                     + "<img src=" + numMag + style + " >"
                     + "<img src=" + seis + style + " >");
 
-                this.map.panTo(new L.latLng(lat, lon));
+                this.globalMap.panTo(new L.latLng(lat, lon));
             },
             catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate) {
                 var toFilterM;
                 if (this.layers['usgs_layer'] != null) {
-                    this.map.removeLayer(this.layers['usgs_layer'])
+                    this.globalMap.removeLayer(this.layers['usgs_layer'])
                 }
                 //Better way to do this?
                 //To add depth filter (what feature property represents depth?)
@@ -672,7 +596,7 @@
                     pointToLayer: function (feature, layer) {
                         return circleMaker(feature, layer, iconScale, startDate, endDate);
                     }
-                }).addTo(this.map)
+                }).addTo(this.globalMap)
 
                 if (this.usgsLegend === null) {
 
@@ -683,7 +607,7 @@
                         return div;
                     };
 
-                    this.usgsLegend.addTo(this.map);
+                    this.usgsLegend.addTo(this.globalMap);
                 }
             },
 
@@ -703,7 +627,7 @@
                         var lon = feature.properties.longitude;
                         return L.marker([lat, lon], {icon: gdacsIcon})
                     }
-                }).addTo(this.map)
+                }).addTo(this.globalMap)
             },
         }
     }
@@ -766,6 +690,8 @@
         z-index: 1500;
         background-color: #ccffcc;
         height: 250px;
+        resize: both;
+        overflow: auto;
         width: 725px;
         border-radius: 20px;
         border: solid #343a40;

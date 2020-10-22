@@ -1,67 +1,116 @@
 <template>
     <div id="tabs">
-        <b-tabs pills card >
-            <b-tab title="Map Tools" active title-link-class="tab">
-                <b-card-text id="map-tools" class="tab-text">
-                <MapTools />
-            </b-card-text></b-tab>
-            <b-tab title="UAVSAR" title-link-class="tab">
-                <UAVSAR />
-            </b-tab>
-            <b-tab title="GNSS" title-link-class="tab"><b-card-text>
-                <GNSS />
-            </b-card-text></b-tab>
-            <b-tab title="Seismicity" title-link-class="tab"><b-card-text>
-                <Seismicity />
-            </b-card-text></b-tab>
-            <b-tab title="Nowcast" title-link-class="tab"><b-card-text>
-                <Nowcast />
-            </b-card-text></b-tab>
-            <b-tab title="Magnitude" title-link-class="tab"><b-card-text>
-                <MMCalc/>
-            </b-card-text></b-tab>
-<!--            <b-tab title="Disloc" title-link-class="tab" disabled><b-card-text>-->
-<!--                <Disloc />-->
-<!--            </b-card-text></b-tab>-->
-            <b-tab title="Saves" title-link-class="tab"><b-card-text>
-                <Saves />
-            </b-card-text></b-tab>
-            <b-tab title="Report a Bug" title-link-class="tab"><b-card-text>
-                <report />
-            </b-card-text></b-tab>
-<!--            <b-tab title="Help" title-link-class="tab"><b-card-text>-->
-<!--                <help />-->
-<!--            </b-card-text></b-tab>-->
+        <b-tabs v-model="tabIndex" pills card>
+            <b-tab title="maptools" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="uavsar" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="gnss" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="seismicity" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="nowcast" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="magnitude"><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="disloc" disabled ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="saves"><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="report" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="help" ><b-card-text><router-view></router-view></b-card-text></b-tab>
         </b-tabs>
     </div>
 </template>
 
 <script>
-    import MapTools from "./MapTools";
-    import GNSS from './GNSS'
-    import MMCalc from "./MMCalc";
-    import Nowcast from "./Nowcast";
-    import Seismicity from "./Seismicity";
-    // import Disloc from "./Disloc";
-    import Saves  from "./Saves";
-    import UAVSAR from "./UAVSAR";
-    import report from "./report";
-    // import help from "./help";
+    import 'vue-router'
     export default {
         name: "ToolTabs",
         components: {
-            MapTools,
-            GNSS,
-            MMCalc,
-            Nowcast,
-            Seismicity,
-            // Disloc,
-            Saves,
-            UAVSAR,
-            report,
-            // help
-
-
+        },
+        data (){
+            return {
+                tabIndex: 0,
+            }
+        },
+        mounted() {
+            this.toPage(this.tabIndex);
+        },
+        watch: {
+            tabIndex: function(val){
+                this.toPage(val);
+            },
+            tabUrl: function(val){
+                this.directUrl(val);
+            }
+        },
+        computed: {
+            tabUrl: function(){
+                return this.$route.fullPath;
+            }
+        },
+        methods: {
+            toPage(page){
+                switch (page) {
+                    case 0:
+                        this.$router.push('/maptools');
+                        break;
+                    case 1:
+                        this.$router.push('/uavsar');
+                        break;
+                    case 2:
+                        this.$router.push('/gnss');
+                        break;
+                    case 3:
+                        this.$router.push('/seismicity');
+                        break;
+                    case 4:
+                        this.$router.push('/nowcast');
+                        break;
+                    case 5:
+                        this.$router.push('/momentmagnitude');
+                        break;
+                    case 6:
+                        this.$router.push('/disloc');
+                        break;
+                    case 7:
+                        this.$router.push('/mapsaves');
+                        break;
+                    case 8:
+                        this.$router.push('/report');
+                        break;
+                    case 9:
+                        this.$router.push('/help');
+                        break;
+                }
+            },
+            directUrl(page) {
+                switch (page) {
+                    case "/maptools":
+                        this.tabIndex = 0;
+                        break;
+                    case "/uavsar":
+                        this.tabIndex = 1;
+                        break;
+                    case "/gnss":
+                        this.tabIndex = 2;
+                        break;
+                    case "/seismicity":
+                        this.tabIndex = 3;
+                        break;
+                    case "/nowcast":
+                        this.tabIndex = 4;
+                        break;
+                    case "/momentmagnitude":
+                        this.tabIndex = 5;
+                        break;
+                    case "/disloc":
+                        this.tabIndex = 6;
+                        break;
+                    case "/mapsaves":
+                        this.tabIndex = 7;
+                        break;
+                    case "/report":
+                        this.tabIndex = 8;
+                        break;
+                    case "/help":
+                        this.tabIndex = 9;
+                        break;
+                }
+            },
         }
     }
 </script>

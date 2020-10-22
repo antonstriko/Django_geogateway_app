@@ -79,12 +79,6 @@ def gdacs(request):
         responseData = HttpResponse(data)
         return responseData
 
-def seismicity(request):
-    if request.method == 'GET':
-        uri = request.GET.get('fullUri')
-        data = requests.get(uri)
-        responseData = HttpResponse(data)
-        return responseData
 
 def nowcast_plots(request):
     if request.method == 'GET':
@@ -120,6 +114,7 @@ def uavsarOverview(request):
 
 
 def uavsarGeometry(request):
+    print('Geometry Ran /////////////////////////////////////')
     if request.method == 'GET':
         if request.GET.get('type') == 'point':
             point = request.GET.get('queryStr')
@@ -200,8 +195,10 @@ def uavsarCSV(request):
 
         data = str(data.content.decode())
 
+        data = data.replace('""', '')
+
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename=' + '"' + uid + '.csv"'
+        response['Content-Disposition'] = 'attachment; filename=' + uid + '.csv"'
 
         writer = csv.writer(response)
         writer.writerow([image_name])

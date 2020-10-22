@@ -35,10 +35,10 @@
         <div id="tools-show">
             <div v-if="this.ucerf">
                 <b-form-radio-group>
-                    <b-form-radio label="black" name="some-radios" :value="selected" @change="updateColor('black')"><p>black</p></b-form-radio>
-                    <b-form-radio label="red" name="some-radios" :value="selected" @change="updateColor('red')"><p>red</p></b-form-radio>
-                    <b-form-radio vlabel="yellow" name="some-radios" :value="selected" @change="updateColor('yellow')"><p>yellow</p></b-form-radio>
-                    <b-form-radio label="grey" name="some-radios" :value="selected" @change="updateColor('grey')"><p>grey</p></b-form-radio>
+                    <b-form-radio label="black" name="some-radios" v-model="selected" @change="updateColor('black')"><p>black</p></b-form-radio>
+                    <b-form-radio label="red" name="some-radios" v-model="selected" @change="updateColor('red')"><p>red</p></b-form-radio>
+                    <b-form-radio vlabel="yellow" name="some-radios" v-model="selected" @change="updateColor('yellow')"><p>yellow</p></b-form-radio>
+                    <b-form-radio label="grey" name="some-radios" v-model="selected" @change="updateColor('grey')"><p>grey</p></b-form-radio>
                 </b-form-radio-group>
             </div>
 
@@ -70,6 +70,9 @@
 <script>
     import {bus} from '../main'
     import axios from "axios";
+    import { mapFields } from 'vuex-map-fields';
+
+
     axios.defaults.withCredentials = true;
     axios.defaults.xsrfHeaderName = 'X-CSRFToken';
     export default {
@@ -82,17 +85,20 @@
                 ucerfUrlYellow: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_yellow.kml",
                 boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
                 coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
-                ucerf: false,
-                boundaries: false,
-                coasts: false,
-                kml: false,
-                kmlFile: null,
-                selected: 'grey',
-                value: 50,
-                kmlLayers: [],
-
-
             }
+        },
+        computed: {
+            // ucerf: false,
+            // boundaries: false,
+            // coasts: false,
+            // kml: false,
+            // kmlFile: null,
+            // selected: 'grey',
+            // value: 50,
+            // kmlLayers: [],
+          ...mapFields(['mapTools.kmlLayers', 'mapTools.boundaries', 'mapTools.ucerf',
+              'mapTools.coasts', 'mapTools.kml', 'mapTools.kmlFile', 'mapTools.selected'])
+
         },
         methods: {
             // updateOpacity(value){
@@ -157,9 +163,9 @@
                 var uploadUrl;
                 var ext = getExtension(fileName);
                         if(ext == 'kmz'){
-                            uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kmz_upload/'
+                            uploadUrl = 'http://127.0.0.1:8000/geogateway_django_app/kmz_upload/'
                         }else {
-                            uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/'
+                            uploadUrl = 'http://127.0.0.1:8000/geogateway_django_app/kml_upload/'
                         }
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);

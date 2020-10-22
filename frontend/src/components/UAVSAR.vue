@@ -2,13 +2,14 @@
     <div class="tab-window">
         <h3>UAVSAR</h3>
         <hr />
-
-        <input
-                type="checkbox"
-                v-model="overview"
-                id="overview"
-                @change="showOverview"
-        ><label for="overview">Show Overview</label>
+        <div class="overviewButtonGroup">
+            <b-button
+                    type="checkbox"
+                    id="overview"
+                    :pressed.sync="overview"
+                    @click="showOverview"
+            >Show Overview</b-button>
+        </div>
 
 
 
@@ -30,7 +31,7 @@
         </div>
         <br />
 
-        <div v-if="layers.length !== 0 && !activeQuery">
+        <div v-if="uavsarLayers.length !== 0 && !activeQuery">
             <br/>
             <div class="layer-options">
                 <b-button @click="selDeselAll">
@@ -59,7 +60,14 @@
 
 
             <div id="queryWindow">
-                <div class="collapsed"  v-for="entry in filteredLayers" :key="entry.info['uid']">
+                <div v-if="false">
+
+                </div>
+                <div hidden>
+                    {{extendedColor}}
+                    {{extendedBorder}}
+                </div>
+                <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']">
 
                     <b-col>
                         <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
@@ -91,15 +99,21 @@
                                 <b-icon-star-fill/>
                             </div>
                         </div>
+
                         <div  v-if="!entry.extended && !entry.clicked" @click="extendEntry(entry)">
                             <b-icon-arrows-expand ></b-icon-arrows-expand>
+
                         </div>
                         <!--                shows history of entry clicks-->
-                        <div  v-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC; border-radius: 5px">
+                        <div  v-else-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC; border-radius: 5px">
                             <b-icon-eye></b-icon-eye>
                         </div>
+                        <div v-else-if="extendingActive && entry.extended">
+                            <b-spinner type="grow" variant="warning">
+                            </b-spinner>
+                        </div>
+                        <div v-else-if="entry.extended && !extendingActive" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
 
-                        <div v-if="entry.extended" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
                             <div class="extended">
                                 <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                                 <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
@@ -122,7 +136,7 @@
                                         <b-input-group prepend="End Lat/Lon" class="mb-2">
                                             <b-form-input v-model="lat2" name="lat2" placeholder=""></b-form-input>
                                             <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
-                                        </b-input-group>
+                                        </b-input-group>UavsarKmlQuer
                                     </b-input-group>
 
                                     <b-input-group prepend="LOS Length">
@@ -139,7 +153,7 @@
                                     <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
                                     <div class="mt-2">Value: {{ opVal }}% </div>
                                     <br/>
-                                    <span @click="openDataSource" style="cursor: pointer; color: #2e6da4"><b-icon-chart></b-icon-chart><b>Open Data Source</b></span>
+                                    <span @click="openDataSource" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
                                 </div>
                             </div>
 
@@ -158,43 +172,91 @@
     import {bus} from '../main'
     import axios from "axios";
     import 'leaflet-kmz';
+    import L from 'leaflet';
+    import 'leaflet-kml'
+    // import {store} from "../store/store";
+    import { mapFields } from 'vuex-map-fields';
 
+
+    // var kmlQuery = (entries) =>{
+    //     var vm = this;
+    //     var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+    //     let promises = [];
+    //     for (var i = 0; i < entries.length; i++) {
+    //         promises.push(
+    //             axios.get(baseURI, {
+    //                 params: {
+    //                     //
+    //                     "json": JSON.stringify(entries[i]),
+    //                 }
+    //             }))
+    //     }
+    //     Promise.all(promises).then((responses) =>{
+    //         for(let k = 0;k < responses.length;k++){
+    //             vm.uavsarLayers[k] = responses[k].data;
+    //         }
+    //     })
+    //
+    //
+    // }
 
     export default {
         name: "UAVSAR",
         data(){
             return {
-                overview: false,
-                flight_path: '',
-                lat_lon: '',
-                layers: [],
-                extendedColor: '',
-                extendedBorder: '',
-                layerFound: false,
-                selDesel: false,
-                LosPlot: false,
-                lat1: '',
-                lat2: '',
-                lon1: '',
-                lon2: '',
-                losLength: '',
-                azimuth: '',
-                activePlot: '',
-                csv_final: '',
-                activeEntry: null,
-                opVal: 50,
-                uid: '',
-                filteredLayers: [],
-                path: '',
-                activeRating: '',
-                sortBy: 'null',
-                activeQuery: false,
-
 
             }
         },
         components: {
 
+
+        },
+        computed: {
+            // exColor : function(){
+            //   return this.extendedColor;
+            // },
+            // exBorder : function(){
+            //   return this.extendedBorder;
+            // },
+            ...mapFields(['uavsar.overview',
+                'uavsar.flight_path',
+                'uavsar.lat_lon',
+                'uavsar.uavsarLayers',
+                // 'uavsar.extendedColor',
+                // 'uavsar.extendedBorder',
+                'uavsar.extendingActive',
+                'uavsar.layerFound',
+                'uavsar.selDesel',
+                'uavsar.LosPlot',
+                'uavsar.lat1',
+                'uavsar.lat2',
+                'uavsar.lon1',
+                'uavsar.lon2',
+                'uavsar.losLength',
+                'uavsar.azimuth',
+                'uavsar.activePlot',
+                'uavsar.csv_final',
+                'uavsar.activeEntry',
+                'uavsar.opVal',
+                'uavsar.uid',
+                'uavsar.extendedBorder',
+                'uavsar.extendedColor',
+                'uavsar.uavsarLayersFiltered',
+                'uavsar.activeQuery',
+                'uavsar.geomEntries',
+                'uavsar.path',
+                'uavsar.sortBy',
+                'uavsar.uavsarHighResLayer',
+                'uavsar.uavsarDisplayedLayers',
+
+                //Map objects
+                'map.globalMap',
+                'map.layers',
+                'map.drawControl',
+                'map.uavsarLegend',
+                'map.uavsarEntry',
+                'map.uavsarLatLon'
+            ])
         },
         mounted() {
             bus.$on('markPlace', (lat, lon) =>
@@ -203,8 +265,6 @@
                 this.kmlQueries(entries));
             bus.$on('assignEntry', (entry)=>
                 this.assignKmls(entry));
-            bus.$on('layerAlert', (found)=>
-                this.dynamicExtended(found));
             bus.$on('getCSV', (entry, latlons)=>
                 this.getCSV(entry, latlons));
             bus.$on('updatedPlot', (latlon, entry)=>
@@ -216,42 +276,48 @@
             //tool argument for identifying currently active tool
             bus.$on('uavsarDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng)=>
                 this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
-            bus.$on('uavsarQueryDone', () => {
-                    this.queryToMap();
-                }
-            );
-            bus.$on('addEntry', (entry) =>
-                this.addEntry(entry));
+            bus.$on('UavsarKmlQueryDone', (tempLayers) => {
+                this.uavsarLayers.push(...tempLayers);
+                this.uavsarLayersFiltered.push(...tempLayers);
+                this.activeQuery = false;
+                this.displayUavsarQuery();
+            });
+            bus.$on('uavsarHighRes', (entry) =>
+                this.uavsarHighRes(entry));
         },
         methods: {
-            queryToMap(){
-                this.activeQuery = false;
-                this.filteredLayers = this.layers;
 
-            },
             uavsarDrawRect(){
-                bus.$emit('uavsarDraw', 'rect');
+                new L.Draw.Rectangle(this.globalMap, this.drawControl.options.rectangle).enable();
+
             },
             uavsarPinDrop(){
-                bus.$emit('uavsarDraw', 'point');
+                var vm = this;
+                new L.Draw.Marker(this.globalMap, this.drawControl.options.marker).enable();
+                this.globalMap.on('draw:created', function (e) {
+                    vm.markerLayer = e.layer;
+                    var lat = e.layer.getLatLng().lat;
+                    var lng = e.layer.getLatLng().lng;
+                    vm.pointQuery(lat,lng);
+                });
             },
-
             filterHeading(){
                 var pathSearch = this.path;
                 function checkPath(entry){
                     return entry.info['heading'].includes(pathSearch);
                 }
-                this.filteredLayers = this.layers.filter(checkPath);
+                this.uavsarLayersFiltered = this.uavsarLayers.filter(checkPath);
             },
 
             sortEntries(){
                 if(this.sortBy === 'rating') {
-                    this.filteredLayers = this.layers.sort((a, b) =>
+                    this.uavsarLayersFiltered = this.uavsarLayers.sort((a, b) =>
                         (a.info['rating'] > b.info['rating']) ? -1 : 1);
                 }
             },
 
             uavsarQuery(){
+                this.activeQuery = true;
                 if(this.lat_lon === '') {
                     if (this.flight_path === '') {
                         alert('Please fill one of the input boxes');
@@ -263,26 +329,29 @@
                 }
 
             },
+
+            // high res plotting images + add map legend
+            displayUavsarQuery() {
+
+
+
+
+            },
             openDataSource(){
                 window.open('http://gf2.ucs.indiana.edu/quaketables/uavsar?uid='+this.activePlot, '_blank');
             },
-            dynamicExtended(found){
-                //set background color dynamically according to wms description
-                if(found){
-                    this.layerFound = true;
-                    this.extendedColor = '#CCFFCC'
-                    this.extendedBorder = '1px solid #ADD673'
-                    // add markers for plotting
-                    // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
-                    bus.$emit('uavsarPlotMarkers')
-
-
-                }else {
-                    this.layerFound = false;
-                    this.extendedColor = '#D6A7A3'
-                    this.extendedBorder = '1px solid #C26259'
-                }
-            },
+            // dynamicExtended(found){
+            //     //set background color dynamically according to wms description
+            //     if(found){
+            //         this.layerFound = true;
+            //
+            //         // add markers for plotting
+            //         // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
+            //
+            //     }else {
+            //
+            //     }
+            // },
             updateOpacity(value){
                 bus.$emit('changeLayerOpacity', (value/100));
             },
@@ -320,7 +389,7 @@
                 this.lat2 = latlon[2];
                 this.lon2 = latlon[3];
 
-                axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
+                axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
                     params: {
                         'entry':JSON.stringify(entry),
                         'lat1':this.lat1,
@@ -336,63 +405,131 @@
                 })
             },
             extendEntry(entry){
+                var vm = this;
+                this.extendingActive = true;
                 if(!entry.extended) {
-                    var layerFound = null;
+                    for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
+                        this.uavsarLayersFiltered[i].extended = false;
+                    }
                     bus.$emit('hidePlot');
                     this.activeEntry = entry;
-                    this.activePlot = entry.info['uid'];
                     entry.clicked = true;
-                    if (!entry.extended) {
-                        for (var i = 0; i < this.filteredLayers.length; i++) {
-                            this.filteredLayers[i].extended = false
-                            this.filteredLayers[i].active = false
-                            this.kmlLayerChange(this.filteredLayers[i]);
+                    entry.extended = true;
+                    var testURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_test/'
 
-                        }
-                        entry.extended = true;
+                    var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
-                        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
-
-                        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
-
-                        bus.$emit('removeLayer', 'highResUavsar');
-
-
-                        //get wms description and check for exception
-
-                        axios.get(testURI, {
-                            params: {
-                                'uid': layername,
-                            }
-                        }).then(function (response) {
-                            var datajson = response.data
-                            if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions')) {
-                                layerFound = true;
-
-                                bus.$emit('uavsarWMS', entry, entry.info.geometry.coordinates[0]);
-                            } else if (Object.prototype.hasOwnProperty.call(datajson, 'exceptions')) {
-                                layerFound = false;
-                            }
-                            bus.$emit('layerAlert', layerFound);
-
-                        })
-                    } else {
-                        entry.extended = false;
+                    if(this.uavsarHighResLayer !== null){
+                        this.globalMap.removeLayer(this.uavsarHighResLayer);
+                        this.uavsarHighResLayer = null;
                     }
+                    //get wms description and check for exception
+
+                    axios.get(testURI, {
+                        params: {
+                            'uid': layername,
+                        }
+                    }).then( (response) => {
+                        var datajson = response.data
+                        if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions')) {
+                            vm.layerFound = true;
+                            vm.extendedColor = '#CCFFCC'
+                            vm.extendedBorder = '1px solid #ADD673'
+                            vm.uavsarHighRes(entry);
+                        } else if (Object.prototype.hasOwnProperty.call(datajson, 'exceptions')) {
+                            vm.layerFound = false;
+                            vm.extendedColor = '#D6A7A3'
+                            vm.extendedBorder = '1px solid #C26259'
+                        }
+                        vm.extendingActive = false;
+                    })
+                } else {
+                    entry.extended = false;
+                    this.activeEntry = null;
                 }
             },
+            uavsarHighRes(entry) {
+                var latlon = entry.info.geometry.coordinates[0];
+                for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
+                    this.uavsarLayersFiltered[i].active = false;
+                    this.kmlLayerChange(this.uavsarLayersFiltered[i]);
+                }
+                if (this.uavsarLegend !== null) {
+                    this.uavsarLegend.remove();
+                }
+                var baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?"
+
+                var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
+
+                this.uavsarLatlon = latlon;
+                this.uavsarEntry = entry;
+
+                this.uavsarHighResLayer = L.tileLayer.wms(baseURI, {
+                    layers: layername,
+                    transparent: true,
+                    format: 'image/png',
+                    zIndex: 2
+                })
+
+                // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
+
+                this.globalMap.addLayer(this.uavsarHighResLayer);
+
+                var baseUri = 'http://js-168-89.jetstream-cloud.org/uavsarlegend1/uid';
+
+                var uidUri = entry.info['uid'] + '_unw_default.png';
+
+                var finalUri = baseUri + uidUri;
+
+                this.uavsarHighResLayer.setOpacity(.5)
+
+                this.uavsarLegend = L.control({position: 'bottomleft'});
+                this.uavsarLegend.onAdd = function () {
+                    var div = L.DomUtil.create('div', 'uavsarLegend');
+                    div.innerHTML = '<img src=' + finalUri + '>';
+                    return div;
+                };
+
+                this.uavsarLegend.addTo(this.globalMap)
+
+                this.globalMap.on('click', this.markerClick);
+
+            },
+            markerClick(e) {
+                var clickloc = e.latlng;
+
+                var latlon = this.uavsarLatlon;
+                var entry = this.uavsarEntry;
+
+                var southwest = L.latLng(latlon[0][1], latlon[0][0]);
+                var northeast = L.latLng(latlon[3][1], latlon[3][0]);
+
+                var rect = L.latLngBounds(southwest, northeast);
+
+                console.log(southwest, northeast, rect.contains(clickloc));
+
+                bus.$emit('placePlotMarkers', southwest, northeast, clickloc, latlon, entry);
+            },
             selDeselAll(){
-                for(var i = this.filteredLayers.length-1; i >= 0; i--){
-                    this.filteredLayers[i].active = this.selDesel;
-                    this.kmlLayerChange(this.filteredLayers[i]);
+                for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
+                    this.uavsarLayersFiltered[i].active = this.selDesel;
+                    this.kmlLayerChange(this.uavsarLayersFiltered[i]);
                 }
                 this.selDesel = !this.selDesel;
             },
             clearQuery(){
-                this.filteredLayers = [];
-                this.layers = [];
+                for (var i = 0; i < this.uavsarLayers.length; i++) {
+                    this.uavsarLayers[i].extended = false
+                    this.uavsarLayers[i].active = false
+                    if(this.globalMap.hasLayer(this.uavsarDisplayedLayers[i])) {
+                        this.globalMap.removeLayer(this.uavsarDisplayedLayers[i]);
+                    }
+                }
+                this.uavsarDisplayedLayers = [];
+                this.uavsarLayersFiltered = [];
+                this.uavsarLayers = [];
                 this.LosPlot = false;
-                bus.$emit('resetUavsar');
+                this.uavsarLegend.remove();
                 this.showOverview();
             },
             showOverview(){
@@ -400,16 +537,18 @@
                     bus.$emit('UAVSAR_overview');
 
                 }else {
-                    this.layers = [];
-                    this.filteredLayers = [];
+                    this.uavsarLayers = [];
+                    this.uavsarLayersFiltered = [];
                     this.LosPlot = false;
                     bus.$emit('deactivateUavsar');
 
                 }
             },
             flightPathQuery(path){
+                this.activeQuery = true;
+                var vm = this;
                 if(this.overview) {
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_flight/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -417,37 +556,47 @@
                             "queryStr": path + '',
                         }
                     }).then(function (response) {
-                        var entries = response.data;
-
+                        let entries = response.data;
+                        let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                        let promises = [];
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
-                            axios.get(baseURI, {
-                                params: {
-                                    //
-                                    "json": JSON.stringify(entries[i]),
-                                }
-                            }).then(function (response) {
-                                var entry = response.data;
-                                bus.$emit('addEntry', entry);
-                            })
+                            promises.push(
+                                axios.get(baseURI, {
+                                    params: {
+                                        //
+                                        "json": JSON.stringify(entries[i]),
+                                    }
+                                }))
                         }
+                        Promise.all(promises).then((responses) =>{
+                            if (vm.layers['uavsarWMS']) {
+                                vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
+                            }
+                            for(let k = 0;k < responses.length;k++){
+                                vm.uavsarLayers[k] = responses[k].data;
+                                let uid = vm.uavsarLayers[k].info['uid'];
+                                vm.uavsarLayersFiltered[k] = responses[k].data;
+                                const parser = new DOMParser();
+                                const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
+                                const track = new L.KML(kml);
+                                vm.uavsarDisplayedLayers[uid] = track;
+                                vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
+                            }
+                            vm.activeQuery = false;
+                            console.log(vm.uavsarDisplayedLayers.length);
 
-                    }).then(function (){
-                        bus.$emit('uavsarQueryDone');
+                        })
                     })
                 }
             },
-
-            addEntry(entry){
-                this.layers.push(entry);
-                bus.$emit('addEntryToUavsar', entry);
-            },
             pointQuery(lat, lon){
+                this.globalMap.off('draw:created');
                 this.activeQuery = true;
+                var vm = this;
                 if(this.overview) {
                     this.lat_lon = lat.toString() + ',' + lon.toString();
                     var queryStr = '(' + this.lat_lon + ')'
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -455,57 +604,72 @@
                             "queryStr": queryStr,
                         }
                     }).then(function (response) {
-                        var entries = response.data;
-
+                        let entries = response.data;
+                        let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                        let promises = [];
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
-                            axios.get(baseURI, {
-                                params: {
-                                    //
-                                    "json": JSON.stringify(entries[i]),
-                                }
-                            }).then(function (response) {
-                                var entry = response.data;
-                                bus.$emit('addEntry', entry);
-                            })
+                            promises.push(
+                                axios.get(baseURI, {
+                                    params: {
+                                        //
+                                        "json": JSON.stringify(entries[i]),
+                                    }
+                                }))
                         }
-
-                    }).then(function (){
-                        bus.$emit('uavsarQueryDone');
+                        Promise.all(promises).then((responses) =>{
+                            if (vm.layers['uavsarWMS']) {
+                                vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
+                            }
+                            for(let k = 0;k < responses.length;k++){
+                                vm.uavsarLayers[k] = responses[k].data;
+                                let uid = vm.uavsarLayers[k].info['uid'];
+                                vm.uavsarLayersFiltered[k] = responses[k].data;
+                                const parser = new DOMParser();
+                                const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
+                                const track = new L.KML(kml);
+                                vm.uavsarDisplayedLayers[uid] = track;
+                                vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
+                            }
+                            vm.activeQuery = false;
+                            console.log(vm.uavsarDisplayedLayers.length);
+                        })
                     })
                 }
             },
-            polyQuery(latlngs){
-                this.activeQuery = true;
-                var queryResponse;
-                var queryStr = '';
-                for(var i = 0;i<latlngs[0].length;i++){
-                    queryStr += '(' + latlngs[0][i].lat + ',' + latlngs[0][i].lng + '),'
-                }
-                queryStr = queryStr.replace(/,\s*$/, "");
 
-                var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
-                axios.get(baseURI, {
-                    params: {
-                        //
-                        "type":'polygon',
-                        "queryStr":queryStr
-                    }
-                }).then(function (response){
-                    queryResponse = response.data;
-                    bus.$emit('uavsarGeom', queryResponse)
-                    // bus.$emit('uavsarKMLs', this.filteredLayers)
-
-                })
-            },
+            // polyQuery(latlngs){
+            //     this.activeQuery = true;
+            //     var queryResponse;
+            //     var queryStr = '';
+            //     for(var i = 0;i<latlngs[0].length;i++){
+            //         queryStr += '(' + latlngs[0][i].lat + ',' + latlngs[0][i].lng + '),'
+            //     }
+            //     queryStr = queryStr.replace(/,\s*$/, "");
+            //
+            //     var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+            //     axios.get(baseURI, {
+            //         params: {
+            //             //
+            //             "type":'polygon',
+            //             "queryStr":queryStr
+            //         }
+            //     }).then(function (response){
+            //         queryResponse = response.data;
+            //         bus.$emit('uavsarGeom', queryResponse)
+            //         // bus.$emit('uavsarKMLs', this.uavsarLayersFiltered)
+            //
+            //     })
+            // },
             rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
                 this.activeQuery = true;
-                bus.$emit('drawListenerOff');
+                var vm = this;
+                this.globalMap.off('draw:created');
+
                 if(this.overview) {
                     console.log(centerLng, centerLat);
                     var queryStr = '';
                     queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-                    var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+                    var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
                     axios.get(baseURI, {
                         params: {
                             //
@@ -513,32 +677,44 @@
                             "queryStr": queryStr
                         }
                     }).then(function (response) {
-                        var entries = response.data;
-
+                        let entries = response.data;
+                        let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+                        let promises = [];
                         for (var i = 0; i < entries.length; i++) {
-                            var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
-                            axios.get(baseURI, {
-                                params: {
-                                    //
-                                    "json": JSON.stringify(entries[i]),
-                                }
-                            }).then(function (response) {
-                                var entry = response.data;
-                                bus.$emit('addEntry', entry);
-                            })
+                            promises.push(
+                                axios.get(baseURI, {
+                                    params: {
+                                        //
+                                        "json": JSON.stringify(entries[i]),
+                                    }
+                                }))
                         }
-
-                    }).then(function (){
-                        bus.$emit('uavsarQueryDone');
+                        Promise.all(promises).then((responses) =>{
+                            if (vm.layers['uavsarWMS']) {
+                                vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
+                            }
+                            for(let k = 0;k < responses.length;k++){
+                                vm.uavsarLayers[k] = responses[k].data;
+                                let uid = vm.uavsarLayers[k].info['uid'];
+                                vm.uavsarLayersFiltered[k] = responses[k].data;
+                                const parser = new DOMParser();
+                                const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
+                                const track = new L.KML(kml);
+                                vm.uavsarDisplayedLayers[uid] = track;
+                                vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
+                            }
+                            vm.activeQuery = false;
+                            console.log(vm.uavsarDisplayedLayers.length);
+                        })
                     })
-
                 }
             },
             kmlLayerChange(entry){
+                const uid = entry.info['uid'];
                 if(entry.active) {
-                    bus.$emit('reactivateUavsarLayer', entry.info['uid']);
+                    this.globalMap.addLayer(this.uavsarDisplayedLayers[uid]);
                 }else {
-                    bus.$emit('removeUavsarLayer', entry.info['uid'])
+                    this.globalMap.removeLayer(this.uavsarDisplayedLayers[uid]);
                 }
             },
 
@@ -624,6 +800,11 @@
         height: 600px;
         width: 100%;
         overflow-y: auto;
+    }
+    .overviewButtonGroup .active {
+        color: #fff !important;
+        background-color: #3388ff !important;
+        border-color: #3388ff !important;
     }
 </style>
 

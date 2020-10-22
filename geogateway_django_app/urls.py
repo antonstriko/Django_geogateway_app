@@ -10,12 +10,12 @@ from django.views.generic import TemplateView
 app_name = "geogateway_django_app"
 
 
+
 urlpatterns = [
-    url(r"^$",
-        views.HomeView.as_view(),
+    url(r'^$',
+        views.frontend,
         name="home",
         ),
-    url(r'^upload/$', views.MyFileView.as_view(), name='file-upload'),
     url(r"^gps_service/", GeoGatewayData.gps_service),
     url(r"^get_kml/", GeoGatewayData.get_gnss_kml),
     url(r"^wo_forecast/", GeoGatewayData.forecast),
@@ -31,8 +31,6 @@ urlpatterns = [
     url(r"^UAVSAR_csv/", GeoGatewayData.uavsarCSV),
     url(r"^UAVSAR_flight/", GeoGatewayData.uavsarFlight),
     url(r'^kmz_upload/$', GeoGatewayData.kmz_upload),
-    url(r'^seismicity/$', GeoGatewayData.seismicity),
-
 
 
 
