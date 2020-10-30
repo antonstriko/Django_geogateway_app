@@ -1,16 +1,16 @@
 <template>
     <div id="tabs">
         <b-tabs v-model="tabIndex" pills card>
-            <b-tab title="maptools" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="uavsar" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="gnss" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="seismicity" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="nowcast" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="magnitude"><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="disloc" disabled ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="saves"><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="report" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="help" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Map Tools" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="UAVSAR" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="GNSS" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Seismicity" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Nowcast" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Magnitude"><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Disloc" disabled ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Saves" disabled><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Feedback" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="Help" ><b-card-text><router-view></router-view></b-card-text></b-tab>
         </b-tabs>
     </div>
 </template>

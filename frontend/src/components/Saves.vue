@@ -13,18 +13,21 @@
 
 <script>
     import {bus} from '../main'
+    import {mapFields} from 'vuex-map-fields'
     export default {
         name: "Saves",
         data(){
             return {
-                saves: [],
 
             }
         },
+      computed: {
+          ...mapFields(['mapSaves.saves', 'map.layers'])
+      },
         methods:{
             saveState(){
                 console.log('test')
-                bus.$emit('saveMapState');
+
             },
             storeSave(layers){
                 var today = new Date();

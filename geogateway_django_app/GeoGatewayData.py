@@ -112,9 +112,14 @@ def uavsarOverview(request):
         responseData = HttpResponse(data)
         return responseData
 
+def seismicity(request):
+    if request.method == 'GET':
+        uri = request.GET.get('fullUri')
+        data = requests.get(uri)
+        responseData = HttpResponse(data)
+        return responseData
 
 def uavsarGeometry(request):
-    print('Geometry Ran /////////////////////////////////////')
     if request.method == 'GET':
         if request.GET.get('type') == 'point':
             point = request.GET.get('queryStr')
@@ -208,9 +213,7 @@ def uavsarCSV(request):
         writer.writerow(['length', losLength])
         writer.writerow("Lon, Lat, Distance (km), Displacement, Elevation Angle".split(','))
         data = data.splitlines()
-        print(data)
         data = [line.split(',') for line in data]
-        print(data)
         writer.writerows(data)
 
         return response

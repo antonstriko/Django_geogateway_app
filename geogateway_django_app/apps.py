@@ -28,6 +28,6 @@ class Settings:
 class GeogatewayDjangoAppConfig(AppConfig):
     name = 'geogateway_django_app'
     label = name
-    verbose_name = 'GeoGateway'
+    verbose_name = 'GeoGateway Develop'
     fa_icon_class = 'fa-comment'
     settings = Settings()

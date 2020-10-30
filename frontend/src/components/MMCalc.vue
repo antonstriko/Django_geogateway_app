@@ -27,22 +27,28 @@
 </template>
 
 <script>
+import { mapFields } from 'vuex-map-fields';
+
     export default {
         name: "MMCalc",
         data(){
             return {
-                mm_length: 249,
-                mm_width: 120.0,
-                mm_slip: 23,
-                mm_shear: 3,
-                SM: null,
-                MM: null,
+
             };
         },
+      computed: {
+        // mm_length: 249,
+        // mm_width: 120.0,
+        // mm_slip: 23,
+        // mm_shear: 3,
+        // SM: null,
+        // MM: null,
+        ...mapFields(['mmcalc.mm_length', 'mmcalc.mm_width', 'mmcalc.mm_slip', 'mmcalc.mm_shear', 'mmcalc.SM', 'mmcalc.MM'])
+      },
         methods: {
             runMMC(){
-                this.SM = this.mm_length * this.mm_width * this.mm_slip * this.mm_shear * 1e23;
-                this.MM = 2 / 3 * Math.log(this.SM) / Math.log(10) - 10.7;
+                this.SM = (this.mm_length * this.mm_width * this.mm_slip * this.mm_shear * 1e23).toExponential(1);
+                this.MM = (2 / 3 * Math.log(this.SM) / Math.log(10) - 10.7).toFixed(1);
             }
         }
     }

@@ -118,7 +118,6 @@
             },
             updateLayer(l, color){
                 switch (l) {
-
                     case 'ucerf':
                         if(this.ucerf) {
                             var url;
@@ -151,7 +150,6 @@
             },
             handleFileUpload(event){
                 this.kmlFile = event.target.files[0];
-
             },
 
             submitFile(){

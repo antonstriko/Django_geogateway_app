@@ -3,7 +3,9 @@
         <div class="tool-title"><h3> Global Natural Hazard Viewer</h3><hr/> </div>
         <div class="tool-content">
             <div id="panel_forecast" style="margin-top: 10px; margin-bottom:10px;">
-                <h6><i> Global Forecast Heat Map: M &gt; 6.5, 1 Year. <br> California Forecast Heat Map: M &gt; 5, 1 Year <br>(Open Hazards Group)</i></h6>
+              <div class="toolInfo">
+                <i> Global Forecast Heat Map: M &gt; 6.5, 1 Year. <br> California Forecast Heat Map: M &gt; 5, 1 Year <br>(Open Hazards Group)</i>
+              </div>
                 <hr />
                 <input
                         type="checkbox"
@@ -38,9 +40,10 @@
                 <h5>Magnitude-Frequency relations and Nowcast</h5>
                 <hr/>
                 <div id="nowcast_input">
-                    <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
+                    <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="nowcastPinDrop()">
                         <b-icon-pencil></b-icon-pencil> Place Marker</b-button>
-                    <br/>
+                  <b-button v-if="geometryActive" variant="warning" @click="drawListenerOff"><b-icon-x-circle></b-icon-x-circle> Cancel Selection</b-button>
+                  <br/>
                     <br/>
                     <b-input-group prepend="Place Name">
                         <b-form-input v-model="p_name" name="p_name"></b-form-input>
@@ -64,26 +67,26 @@
 </template>
 
 <script>
-    import {bus} from '../main'
+    import {bus} from '@/main'
+
     import axios from "axios";
+    import {mapFields} from "vuex-map-fields";
+    import L from "leaflet";
     // import toGeoJSON from "../../togeojson";
     export default {
         name: "nowcast",
         data() {
             return {
-                ucerfL: false,
-                woLayer: false,
-                caLayer: false,
-                gdacsL: false,
-                ucerfUrl: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
-                p_name: '',
-                lat: '',
-                lon: '',
-
-
+              geometryActive: false,
             }
 
         },
+      computed: {
+        ...mapFields(['nowcast.ucerfL', 'nowcast.woLayer', 'nowcast.caLayer', 'nowcast.gdacsL', 'nowcast.ucerfUrl',
+          'nowcast.p_name', 'nowcast.lat', 'nowcast.lon',
+          'map.globalMap',
+          'map.drawControl',])
+      },
         mounted() {
             bus.$on('markPlace', (lat, lng)=>
                 this.setMarker(lat, lng));
@@ -103,7 +106,7 @@
             },
             woForecastLayer() {
                 if(this.woLayer) {
-                    var woForecastUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/wo_forecast';
+                    var woForecastUrl = 'http://127.0.0.1:8000/geogateway_django_app/wo_forecast';
                     axios.get(woForecastUrl, {
                         responseType: "text",
                         params : {
@@ -119,7 +122,7 @@
             },
             caForecastLayer() {
                 if(this.caLayer) {
-                    var caForecastUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/ca_forecast';
+                    var caForecastUrl = 'http://127.0.0.1:8000/geogateway_django_app/ca_forecast';
                     axios.get(caForecastUrl, {
                         responseType: "text",
                         params : {
@@ -134,7 +137,7 @@
             },
             gdacsLayer(){
                 if(this.gdacsL) {
-                    var gdacsUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/gdacs';
+                    var gdacsUrl = 'http://127.0.0.1:8000/geogateway_django_app/gdacs';
                     axios.get(gdacsUrl, {
                         responseType: "text",
                     }).then(function (response) {
@@ -146,14 +149,23 @@
                     bus.$emit('RemoveLayer', 'gdacsL')
                 }
             },
-            drawToolbar() {
-                bus.$emit('drawToolbar');
-            },
+          nowcastPinDrop(){
+            this.geometryActive = true;
+            var vm = this;
+            this.pinDrop = new L.Draw.Marker(this.globalMap, this.drawControl.options.marker);
+            this.pinDrop.enable();
+            this.globalMap.on('draw:created', function (e) {
+              vm.markerLayer = e.layer;
+              vm.lat = e.layer.getLatLng().lat;
+              vm.lon = e.layer.getLatLng().lng;
+              vm.geometryActive = false;
+            });
+          },
             runPlot(){
                 var lat = this.lat
                 var lon = this.lon
                 if(this.formCheck()){
-                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/nowcast'
+                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/nowcast'
 
                     axios.get(baseURI, {
                         params: {
@@ -183,9 +195,6 @@
 <style scoped>
     .checkbox-group {
 
-    }
-    i {
-        color: #2e6da4;
     }
     label {
         font-weight: bold;

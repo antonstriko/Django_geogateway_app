@@ -31,6 +31,7 @@ urlpatterns = [
     url(r"^UAVSAR_csv/", GeoGatewayData.uavsarCSV),
     url(r"^UAVSAR_flight/", GeoGatewayData.uavsarFlight),
     url(r'^kmz_upload/$', GeoGatewayData.kmz_upload),
+    url(r'^seismicity/$', GeoGatewayData.seismicity),
 
 
 

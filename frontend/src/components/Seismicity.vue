@@ -4,31 +4,31 @@
 
         <h3>Recent Earthquakes from USGS</h3>
         <hr />
-        <fieldset id="group1">
-            <input
+        <b-form-radio-group>
+            <b-form-radio
                     type="radio"
-                    v-model="day"
+                    v-model="selected"
+                    value="day"
                     @change="showSelected('day')"
-                    id="day"
                     name="group1"
-            ><label for="day"> M > 1.0, Last Day</label>
+            > M > 1.0, Last Day</b-form-radio>
             <br/>
-            <input
+            <b-form-radio
                     type="radio"
-                    v-model="week"
+                    v-model="selected"
+                    value="week"
                     @change="showSelected('week')"
-                    id="week"
                     name="group1"
-            ><label for="week"> M > 2.5, Last Week</label>
+            >M > 2.5, Last Week</b-form-radio>
             <br/>
-            <input
+            <b-form-radio
                     type="radio"
-                    v-model="month"
+                    value="month"
+                    v-model="selected"
                     @change="showSelected('month')"
-                    id="month"
                     name="group1"
-            ><label for="month"> M > 4.5, Last Month</label>
-        </fieldset>
+            >M > 4.5, Last Month</b-form-radio>
+        </b-form-radio-group>
 
         <!--        is this necessary? -->
         <!--        <input-->
@@ -104,126 +104,137 @@
     import axios from "axios";
     import {bus} from '../main'
     import 'leaflet-ajax';
-    // import L from "leaflet";
+    import { mapFields } from 'vuex-map-fields';
     export default {
         name: "seismicity",
         data() {
             return {
-                day: false,
-                week: false,
-                month: false,
-                mFilter: '',
-                dFilter: '',
-                minLat: '32.0',
-                minLon: '-130.0',
-                maxLat: '35.0',
-                maxLon: '-110.0',
-                startDate: '2020-05-24',
-                startTime: '00:00:00',
-                endDate: '2020-06-23',
-                endTime: '00:00:00',
-                minMag: '3.0',
-                maxMag: '10.0',
-                iconScale: '1',
+
             }
         },
-        mounted() {
-            bus.$on('seisDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
-                this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng ));
+      computed: {
+          ...mapFields([
+        //     day: false,
+        // week: false,
+        // month: false,
+        // mFilter: '',
+        // dFilter: '',
+        // minLat: '32.0',
+        // minLon: '-130.0',
+        // maxLat: '35.0',
+        // maxLon: '-110.0',
+        // startDate: '2020-05-24',
+        // startTime: '00:00:00',
+        // endDate: '2020-06-23',
+        // endTime: '00:00:00',
+        // minMag: '3.0',
+        // maxMag: '10.0',
+        // iconScale: '1',
+              'seismicity.day',
+              'seismicity.week',
+              'seismicity.month',
+              'seismicity.mFilter',
+              'seismicity.dFilter',
+              'seismicity.minLat',
+              'seismicity.minLon',
+              'seismicity.maxLat',
+              'seismicity.maxLon',
+              'seismicity.startDate',
+              'seismicity.startTime',
+              'seismicity.endDate',
+              'seismicity.endTime',
+              'seismicity.minMag',
+              'seismicity.maxMag',
+              'seismicity.iconScale',
+              'seismicity.selected'
+          ])
+      },
+      methods: {
+        clearUsgs(){
+          bus.$emit('ClearUsgs', 'usgs_layer');
         },
-        methods: {
-            clearUsgs(){
-              bus.$emit('ClearUsgs', 'usgs_layer');
-
-            },
-            showSelected(time) {
-                var dFilter = this.dFilter;
-                var mFilter = this.mFilter;
-                var startD;
-                var endD = new Date();
-                var timeUrl;
-                switch (time) {
-                    case 'day':
-                        timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson'
-                        startD = new Date();
-                        startD.setDate(startD.getDate()-1);
-                        break;
-                    case 'week':
-                        timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson'
-                        startD = new Date();
-                        startD.setDate(startD.getDate()-7);
-                        break;
-                    case 'month':
-                        timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson'
-                        startD = new Date();
-                        //rough estimate of month ago
-                        startD.setDate(startD.getDate()-30);
-                        break;
-                }
-
-                axios.get('http://127.0.0.1:8000/geogateway_django_app/seismicity/', {
-                    params: {
-                        'fullUrl': timeUrl
-                    }
-                }).then(function(response){
-                    bus.$emit('filterCat', response.data, dFilter, mFilter, 1, startD, endD)
-                })
-            },
-            runSeismicity(){
-                var iconScale = this.iconScale;
-                var startD = new Date(this.startDate);
-                var endD = new Date(this.endDate);
-                var urlBase="https://earthquake.usgs.gov/fdsnws/event/1/query?";
-                axios.get('http://127.0.0.1:8000/geogateway_django_app/seismicity/', {
-                    params: {
-                        "urlBase": urlBase,
-                        "format": "geojson",
-                        "starttime": this.startDate + 'T' + this.startTime,
-                        "endtime": this.endDate + 'T' + this.endTime,
-                        "minmagnitude": this.minMag,
-                        "maxmagnitude": this.maxMag,
-                        "minlatitude": this.minLat,
-                        "maxlatitude": this.maxLat,
-                        "minlongitude": this.minLon,
-                        "maxlongitude": this.maxLon,
-                    }
-                }).then(function (response){
-                    bus.$emit('filterCat', response.data, '', '', iconScale, startD, endD)
-
-                })
-            },
-            drawToolbar(){
-              bus.$emit('seisDraw');
-            },
-            // eslint-disable-next-line no-unused-vars
-            setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng) {
-                bus.$emit('drawListenerOff')
-                this.maxLat = maxLat;
-                this.minLon = minLon;
-                this.minLat = minLat;
-                this.maxLon = maxLon;
+        showSelected(time) {
+          var dFilter = this.dFilter;
+          var mFilter = this.mFilter;
+          var startD;
+          var endD = new Date();
+          var timeUrl;
+          switch (time) {
+            case 'day':
+              timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_day.geojson'
+              startD = new Date();
+              startD.setDate(startD.getDate()-1);
+              break;
+            case 'week':
+              timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson'
+              startD = new Date();
+              startD.setDate(startD.getDate()-7);
+              break;
+            case 'month':
+              timeUrl = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/4.5_month.geojson'
+              startD = new Date();
+              //rough estimate of month ago
+              startD.setDate(startD.getDate()-30);
+              break;
+          }
+          axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/seismicity', {
+            params: {
+              "fullUri": timeUrl,
+            }}).then(function(response){
+            bus.$emit('filterCat', response.data, dFilter, mFilter, 1, startD, endD)
+          })
+        },
+        runSeismicity(){
+          var iconScale = this.iconScale;
+          var startD = new Date(this.startDate);
+          var endD = new Date(this.endDate);
+          var urlBase="https://earthquake.usgs.gov/fdsnws/event/1/query?";
+          var fullUri = urlBase + "format=geojson" +'&' +
+              "starttime=" + this.startDate + 'T' + this.startTime + '&' +
+              "endtime=" + this.endDate + 'T' + this.endTime + '&' +
+              "minmagnitude=" + this.minMag + '&' +
+              "minlatitude=" + this.minLat + '&' +
+              "maxlatitude=" + this.maxLat +'&' +
+              "minlongitude=" + this.minLon +'&' +
+              "maxlongitude=" + this.maxLon;
+          axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/seismicity', {
+            params: {
+              "fullUri": fullUri,
             }
+          }).then(function (response){
+            bus.$emit('filterCat', response.data, '', '', iconScale, startD, endD)
+          })
+        },
+        drawToolbar(){
+          bus.$emit('seisDraw');
+        },
+        // eslint-disable-next-line no-unused-vars
+        setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng) {
+          bus.$emit('drawListenerOff')
+          this.maxLat = maxLat;
+          this.minLon = minLon;
+          this.minLat = minLat;
+          this.maxLon = maxLon;
         }
+      }
     }
 </script>
 
 <style scoped>
-    i {
-        color: #2e6da4;
-    }
-    label {
-        font-weight: bold;
-    }
-    /*#buttonText {*/
-    /*    color: white;*/
-    /*}*/
-
-    img {
-        width: 80%;
-        background-color: white;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-        border-radius: 25px;
-        height: 50px;
-    }
-
+i {
+  color: #2e6da4;
+}
+label {
+  font-weight: bold;
+}
+/*#buttonText {*/
+/*    color: white;*/
+/*}*/
+img {
+  width: 80%;
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border-radius: 25px;
+  height: 50px;
+}
 </style>

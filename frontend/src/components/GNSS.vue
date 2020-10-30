@@ -137,43 +137,73 @@
 <script>
     // TODO add checkbox for removing gnss layer
 
-    import {bus} from '../main'
+    import {bus} from '@/main'
     import axios from 'axios'
+    import { mapFields } from 'vuex-map-fields';
 
     export default {
 
         name: "GNSS-tools",
         data() {
             return {
-                selected: [],
-                kmltype_sel: 'getvelocities',
-                gs_latitude: '38.89103282648846',
-                gs_longitude: '-120.49804687500001',
-                gs_width: '1.966552734375',
-                gs_height: '1.966552734375',
-                gs_epoch: '',
-                gs_epoch1: '',
-                gs_epoch2: '',
-                gs_refsite: 'CCCC',
-                gs_scale: '320',
-                gs_ctwin: '',
-                gs_ptwin: '',
-                gs_dwin1: '',
-                gs_dwin2: '',
-                gs_outputprefix: 'test',
-                kmlData: '',
-                gs_eon: '',
-                gs_vabs: '',
-                ranLayers: [],
-                activeLayers: [],
-                markerSize: false,
-                layersActive: false,
-                horizUrl: '',
-                vertUrl: '',
-
 
             }
         },
+      computed: {
+        // selected: [],
+        // kmltype_sel: 'getvelocities',
+        // gs_latitude: '',
+        // gs_longitude: '',
+        // gs_width: '',
+        // gs_height: '',
+        // gs_epoch: '',
+        // gs_epoch1: '',
+        // gs_epoch2: '',
+        // gs_refsite: '',
+        // gs_scale: '',
+        // gs_ctwin: '',
+        // gs_ptwin: '',
+        // gs_dwin1: '',
+        // gs_dwin2: '',
+        // gs_outputprefix: '',
+        // kmlData: '',
+        // gs_eon: '',
+        // gs_vabs: '',
+        // ranLayers: [],
+        // activeLayers: [],
+        // markerSize: false,
+        // layersActive: false,
+        // horizUrl: '',
+        // vertUrl: '',
+        ...mapFields([
+            'gnss.selected',
+            'gnss.kmltype_sel',
+            'gnss.gs_latitude',
+            'gnss.gs_longitude',
+            'gnss.gs_width',
+            'gnss.gs_height',
+            'gnss.gs_epoch',
+            'gnss.gs_epoch1',
+            'gnss.gs_epoch2',
+            'gnss.gs_refsite',
+            'gnss.gs_scale',
+            'gnss.gs_ctwin',
+            'gnss.gs_ptwin',
+            'gnss.gs_dwin1',
+            'gnss.gs_dwin2',
+            'gnss.gs_outputprefix',
+            'gnss.kmlData',
+            'gnss.gs_eon',
+            'gnss.gs_vabs',
+            'gnss.ranLayers',
+            'gnss.activeLayers',
+            'gnss.markerSize',
+            'gnss.layersActive',
+            'gnss.horizUrl',
+            'gnss.vertUrl',
+        ])
+
+      },
         mounted() {
             bus.$on('gnssDrawQuery', (maxLat, minLon, minLat, maxLon, centerLat, centerLng) =>
                 this.setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
@@ -218,7 +248,7 @@
                         }
                     }
                     // this.layerCheckbox = true;
-                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/gps_service'
+                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
                     //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
@@ -283,7 +313,7 @@
                                 url: horizontalUrl,
                                 type: 'V',
                             })
-                            const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
+                            const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
                             axios.get(kmlURI, {
                                 params: {
                                     "file": fileNameH,
