@@ -15,12 +15,10 @@ import VueRouter from 'vue-router'
 import 'leaflet/dist/leaflet.css';
 import "leaflet-kml"
 import {store} from "./store/store";
-import resize from "vue-element-resize-detector";
 
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
-Vue.use(resize);
 
 export const bus = new Vue();
 
