@@ -35,7 +35,7 @@
       </b-input-group>
       <br/>
       <b-button variant="success" @click="uavsarQuery()">Search KMLs</b-button>
-    </div> 
+    </div>
     <br />
 
     <div v-if="uavsarLayers.length !== 0 && !activeQuery">
@@ -82,31 +82,31 @@
           <b-col >
             <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;">
               <div id="dataname">{{entry.info['dataname']}}</div>
-            <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
-            <br />
-            <div id="rating">
-              <div v-if="entry.info['rating'] === '0'">
-                <b-icon-star/>
-                <b-icon-star/>
-                <b-icon-star/>
+              <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
+              <br />
+              <div id="rating">
+                <div v-if="entry.info['rating'] === '0'">
+                  <b-icon-star/>
+                  <b-icon-star/>
+                  <b-icon-star/>
 
+                </div>
+                <div v-else-if="entry.info['rating'] === '1'">
+                  <b-icon-star-fill/>
+                  <b-icon-star/>
+                  <b-icon-star/>
+                </div>
+                <div v-else-if="entry.info['rating'] === '2'">
+                  <b-icon-star-fill/>
+                  <b-icon-star-fill/>
+                  <b-icon-star/>
+                </div>
+                <div v-else-if="entry.info['rating'] === '3'">
+                  <b-icon-star-fill/>
+                  <b-icon-star-fill/>
+                  <b-icon-star-fill/>
+                </div>
               </div>
-              <div v-else-if="entry.info['rating'] === '1'">
-                <b-icon-star-fill/>
-                <b-icon-star/>
-                <b-icon-star/>
-              </div>
-              <div v-else-if="entry.info['rating'] === '2'">
-                <b-icon-star-fill/>
-                <b-icon-star-fill/>
-                <b-icon-star/>
-              </div>
-              <div v-else-if="entry.info['rating'] === '3'">
-                <b-icon-star-fill/>
-                <b-icon-star-fill/>
-                <b-icon-star-fill/>
-              </div>
-            </div>
             </div>
             <br />
             <div  v-if="!entry.extended && !entry.clicked" >
@@ -125,7 +125,7 @@
 
               <div class="extended">
                 <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
-                <b>{{layerFound ? 'Layer Found' : 'Layer Not Found'}}</b>
+                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>
               </div>
               <div v-if="layerFound">
                 <br/>
@@ -208,6 +208,10 @@ export default {
 
     }
   },
+
+  directives: {
+
+  },
   components: {
 
 
@@ -269,6 +273,7 @@ export default {
       'uavsar.sortBy',
       'uavsar.uavsarHighResLayer',
       'uavsar.uavsarDisplayedLayers',
+      'uavsar.hasAlternateColoring',
 
       //Map objects
       'map.globalMap',
@@ -375,7 +380,7 @@ export default {
     },
 
     updateOpacity(value){
-        this.uavsarHighResLayer.setOpacity((value/100));
+      this.uavsarHighResLayer.setOpacity((value/100));
     },
     chartData(csv){
       var csv2=csv.split("\n");
@@ -421,6 +426,7 @@ export default {
     },
     extendEntry(entry){
       var vm = this;
+      // var hasAlternateColoring;
       this.extendingActive = true;
       if(!entry.extended) {
         for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
@@ -450,11 +456,16 @@ export default {
             vm.layerFound = true;
             vm.extendedColor = '#CCFFCC'
             vm.extendedBorder = '1px solid #ADD673'
-            vm.uavsarHighRes(entry);
+            vm.hasAlternateColoring = true;
+            vm.uavsarHighRes(entry, vm.hasAlternateColoring);
+
           } else if (Object.prototype.hasOwnProperty.call(datajson, 'exceptions')) {
-            vm.layerFound = false;
-            vm.extendedColor = '#D6A7A3'
-            vm.extendedBorder = '1px solid #C26259'
+            vm.layerFound = true;
+            vm.extendedColor = '#CCFFCC'
+            vm.extendedBorder = '1px solid #ADD673'
+            vm.hasAlternateColoring = false;
+            vm.uavsarHighRes(entry, vm.hasAlternateColoring);
+
           }
           vm.extendingActive = false;
         })
@@ -471,7 +482,7 @@ export default {
     },
 
     //High Res KML's and CSV LOS plotting methods //////////////////////////////////
-    uavsarHighRes(entry) {
+    uavsarHighRes(entry, hasAlternateColoring) {
       var latlon = entry.info.geometry.coordinates[0];
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
         this.uavsarLayersFiltered[i].active = false;
@@ -480,9 +491,26 @@ export default {
       if (this.uavsarLegend !== null) {
         this.uavsarLegend.remove();
       }
-      var baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?"
+      var baseURI, overlayType, legendUriBase, legendExten, legendFinal;
+      if(hasAlternateColoring) {
+        baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?";
+        overlayType = 'InSAR:';
+        legendUriBase = 'http://js-168-89.jetstream-cloud.org/uavsarlegend1/uid';
+        legendExten = entry.info['uid'] + '_unw_default.png';
+        legendFinal = legendUriBase + legendExten;
+      }else {
+        baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/highres/wms?"
+        overlayType = 'highres:'
+        let uid = parseInt(entry.info['uid']);
+        if(uid <= 369) {
+          legendUriBase = 'http://js-168-89.jetstream-cloud.org/highreslegend/pi_t.png';
+        }else {
+          legendUriBase = 'http://js-168-89.jetstream-cloud.org/highreslegend/2pi_t.png';
+        }
+        legendFinal = legendUriBase;
+      }
 
-      var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
+      var layername = overlayType + 'uid' + entry.info['uid'] + '_unw'
 
       this.uavsarLatlon = latlon;
       this.uavsarEntry = entry;
@@ -497,19 +525,12 @@ export default {
       // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
 
       this.globalMap.addLayer(this.uavsarHighResLayer);
-
-      var baseUri = 'http://js-168-89.jetstream-cloud.org/uavsarlegend1/uid';
-
-      var uidUri = entry.info['uid'] + '_unw_default.png';
-
-      var finalUri = baseUri + uidUri;
-
       this.uavsarHighResLayer.setOpacity(.5)
 
       this.uavsarLegend = L.control({position: 'bottomleft'});
       this.uavsarLegend.onAdd = function () {
         var div = L.DomUtil.create('div', 'uavsarLegend');
-        div.innerHTML = '<img src=' + finalUri + '>';
+        div.innerHTML = '<img src=' + legendFinal + '>';
         return div;
       };
 
@@ -624,15 +645,13 @@ export default {
     clearQuery(){
       this.lat_lon = '';
       this.flight_path = '';
-      for (var i = 0; i < this.uavsarLayers.length; i++) {
-        let uid = this.uavsarLayers[i].info['uid'];
+      for (var i = 0; i < this.uavsarLayersFiltered.length; i++) {
+        let uid = this.uavsarLayersFiltered[i].info['uid'];
         if(this.globalMap.hasLayer(this.uavsarDisplayedLayers[uid])) {
           this.globalMap.removeLayer(this.uavsarDisplayedLayers[uid]);
         }
       }
-      if (this.plotActive) {
-        this.resetPlot();
-      }
+      this.resetPlot();
       if(this.uavsarHighResLayer !== null){
         this.globalMap.removeLayer(this.uavsarHighResLayer);
         this.uavsarHighResLayer = null;
@@ -642,52 +661,26 @@ export default {
       this.uavsarDisplayedLayers = [];
       this.uavsarLayersFiltered = [];
       this.uavsarLayers = [];
-    },
-    resetUavsar() {
-      if (this.layers['highResUavsar'] !== null) {
-        this.removeLayer('highResUavsar');
-      }
-      for (var key in this.uavsarLayers) {
-        this.uavsarLayers[key].remove();
-      }
-
-      if (this.uavsarLegend !== null) {
-        this.uavsarLegend.remove();
-      }
-    },
-    // removes all UAVSAR layers
-    deactivateUavsar() {
-      if (this.uavsarLegend !== null) {
-        this.uavsarLegend.remove();
-      }
-      if (this.layers['uavsarWMS'] !== null) {
-        this.layers['uavsarWMS'].remove();
-      }
-      if (this.layers['uavsarOverlay'] !== null) {
-        this.layers['uavsarOverlay'].remove();
-      }
-      if (this.layers['highResUavsar'] !== null) {
-        this.layers['highResUavsar'].remove();
-      }
+      this.extendedColor = null;
+      this.extendedBorder = null;
     },
     showOverview(){
       if(this.overview) {
 
-          this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
-                layers: 'InSAR:thumbnailmosaic',
-                transparent: true,
-                format: 'image/png',
-                zIndex: 2
-              }
-          );
-          this.globalMap.addLayer(this.layers['uavsarWMS'])
-          this.layers['uavsarWMS'].setOpacity(.7)
+        this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+              layers: 'InSAR:thumbnailmosaic',
+              transparent: true,
+              format: 'image/png',
+              zIndex: 2
+            }
+        );
+        this.globalMap.addLayer(this.layers['uavsarWMS'])
+        this.layers['uavsarWMS'].setOpacity(.7)
 
       }else {
         this.uavsarLayers = [];
         this.uavsarLayersFiltered = [];
         this.LosPlotAvailable = false;
-        this.deactivateUavsar();
 
       }
     },
