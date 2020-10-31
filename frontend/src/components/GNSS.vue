@@ -248,7 +248,7 @@
                         }
                     }
                     // this.layerCheckbox = true;
-                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
+                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/gps_service'
                     //request JSON dict of GPS_service details with query params from form
                     axios.get(baseURI, {
                         params: {
@@ -313,7 +313,7 @@
                                 url: horizontalUrl,
                                 type: 'V',
                             })
-                            const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
+                            const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
                             axios.get(kmlURI, {
                                 params: {
                                     "file": fileNameH,

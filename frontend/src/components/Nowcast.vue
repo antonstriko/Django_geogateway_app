@@ -106,7 +106,7 @@
             },
             woForecastLayer() {
                 if(this.woLayer) {
-                    var woForecastUrl = 'http://127.0.0.1:8000/geogateway_django_app/wo_forecast';
+                    var woForecastUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/wo_forecast';
                     axios.get(woForecastUrl, {
                         responseType: "text",
                         params : {
@@ -122,7 +122,7 @@
             },
             caForecastLayer() {
                 if(this.caLayer) {
-                    var caForecastUrl = 'http://127.0.0.1:8000/geogateway_django_app/ca_forecast';
+                    var caForecastUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/ca_forecast';
                     axios.get(caForecastUrl, {
                         responseType: "text",
                         params : {
@@ -137,7 +137,7 @@
             },
             gdacsLayer(){
                 if(this.gdacsL) {
-                    var gdacsUrl = 'http://127.0.0.1:8000/geogateway_django_app/gdacs';
+                    var gdacsUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/gdacs';
                     axios.get(gdacsUrl, {
                         responseType: "text",
                     }).then(function (response) {
@@ -165,7 +165,7 @@
                 var lat = this.lat
                 var lon = this.lon
                 if(this.formCheck()){
-                    const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/nowcast'
+                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/nowcast'
 
                     axios.get(baseURI, {
                         params: {

@@ -409,7 +409,7 @@ export default {
       this.lat2 = latlon[2];
       this.lon2 = latlon[3];
 
-      axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
+      axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
         params: {
           'entry':JSON.stringify(entry),
           'lat1':this.lat1,
@@ -436,7 +436,7 @@ export default {
         this.activeEntry = entry;
         entry.clicked = true;
         entry.extended = true;
-        var testURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_test/'
+        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
 
         var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
@@ -688,7 +688,7 @@ export default {
       this.activeQuery = true;
       var vm = this;
       if(this.overview) {
-        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_flight/'
+        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
         axios.get(baseURI, {
           params: {
             //
@@ -697,7 +697,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -736,7 +736,7 @@ export default {
       if(this.overview) {
         this.lat_lon = lat.toString() + ',' + lon.toString();
         var queryStr = '(' + this.lat_lon + ')'
-        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
         axios.get(baseURI, {
           params: {
             //
@@ -745,7 +745,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -786,7 +786,7 @@ export default {
     //     }
     //     queryStr = queryStr.replace(/,\s*$/, "");
     //
-    //     var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+    //     var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
     //     axios.get(baseURI, {
     //         params: {
     //             //
@@ -809,7 +809,7 @@ export default {
         console.log(centerLng, centerLat);
         var queryStr = '';
         queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
+        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
         axios.get(baseURI, {
           params: {
             //
@@ -818,7 +818,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
