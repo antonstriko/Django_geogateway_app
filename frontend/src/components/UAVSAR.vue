@@ -666,7 +666,6 @@ export default {
     },
     showOverview(){
       if(this.overview) {
-
         this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
               layers: 'InSAR:thumbnailmosaic',
               transparent: true,
@@ -680,6 +679,7 @@ export default {
       }else {
         this.uavsarLayers = [];
         this.uavsarLayersFiltered = [];
+        this.layers['uavsarWMS'].remove();
         this.LosPlotAvailable = false;
 
       }
