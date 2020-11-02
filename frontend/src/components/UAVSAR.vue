@@ -2,7 +2,8 @@
   <div class="tab-window">
     <h3>UAVSAR</h3>
     <hr />
-    <div class="overviewButtonGroup">
+    <div class="topbuttonGroup">
+      <div class="overviewButtonGroup">
       <b-button
           type="checkbox"
           id="overview"
@@ -11,22 +12,28 @@
       ><span v-if="!overview">Show Overview</span>
         <span v-else>Hide Overview</span>
       </b-button>
+
+
+<!--      <div >-->
+        <!--      <div class="toolInfo">-->
+        <!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
+        <!--      </div>-->
+        <!--      <br />-->
+        <b-button v-if="overview" variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
+        <b-button v-if="overview" variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
+      </div>
+<!--      </div>-->
     </div>
 
 
 
+
     <div v-if="overview">
-      <br />
-      <div class="toolInfo">
-        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>
-      </div>
-      <br />
-      <b-button variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
-      <b-button variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
+<!--      <div class="toolInfo">-->
+<!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
+<!--      </div>-->
       <b-button v-if="geometryActive" variant="warning" @click="drawListenerOff">
         <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
-
-      <br/>
       <br/>
       <b-input-group prepend="Flight name/path">
         <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
@@ -529,7 +536,7 @@ export default {
       // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
 
       this.globalMap.addLayer(this.uavsarHighResLayer);
-      this.uavsarHighResLayer.setOpacity(.5)
+      this.uavsarHighResLayer.setOpacity(.75)
 
       this.uavsarLegend = L.control({position: 'bottomleft'});
       this.uavsarLegend.onAdd = function () {
@@ -737,6 +744,8 @@ export default {
       this.globalMap.off('draw:created');
       this.activeQuery = true;
       var vm = this;
+      lat = lat.toFixed(5)
+      lon = lon.toFixed(5)
       if(this.overview) {
         this.lat_lon = lat.toString() + ',' + lon.toString();
         var queryStr = '(' + this.lat_lon + ')'
@@ -949,6 +958,7 @@ export default {
   color: #fff !important;
   background-color: #3388ff !important;
   border-color: #3388ff !important;
+
 }
 </style>
 
