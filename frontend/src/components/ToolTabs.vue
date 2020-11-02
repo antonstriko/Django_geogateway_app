@@ -53,8 +53,10 @@
                         break;
                     case 1:
                         this.$router.push('/uavsar');
-                        this.overview = true;
-                        this.uavsarOverview();
+                        if(!this.overview) {
+                          this.overview = true;
+                          this.uavsarOverview();
+                        }
                         break;
                     case 2:
                         this.$router.push('/gnss');
