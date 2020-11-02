@@ -8,7 +8,9 @@
           id="overview"
           :pressed.sync="overview"
           @click="showOverview"
-      >Show Overview</b-button>
+      ><span v-if="!overview">Show Overview</span>
+        <span v-else>Hide Overview</span>
+      </b-button>
     </div>
 
 
@@ -29,12 +31,12 @@
       <b-input-group prepend="Flight name/path">
         <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
       </b-input-group>
-      <br/>
+
       <b-input-group prepend="Latitude, Longitude">
         <b-form-input v-model="lat_lon" name="lat_lon" placeholder=""></b-form-input>
       </b-input-group>
       <br/>
-      <b-button variant="success" @click="uavsarQuery()">Search KMLs</b-button>
+      <b-button variant="success" @click="uavsarQuery()">Search</b-button>
     </div>
     <br />
 
@@ -286,6 +288,8 @@ export default {
   mounted() {
     bus.$on('markPlace', (lat, lon) =>
         this.pointQuery(lat, lon));
+    bus.$on('showOverview', () =>
+        this.showOverview());
     bus.$on('getCSV', (entry, latlons)=>
         this.getCSV(entry, latlons));
 

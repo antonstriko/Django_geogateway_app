@@ -17,6 +17,8 @@
 
 <script>
     import 'vue-router'
+    import L from 'leaflet'
+    import { mapFields } from 'vuex-map-fields';
     export default {
         name: "ToolTabs",
         components: {
@@ -40,7 +42,8 @@
         computed: {
             tabUrl: function(){
                 return this.$route.fullPath;
-            }
+            },
+          ...mapFields(['uavsar.overview', 'map.globalMap', 'map.layers'])
         },
         methods: {
             toPage(page){
@@ -50,6 +53,8 @@
                         break;
                     case 1:
                         this.$router.push('/uavsar');
+                        this.overview = true;
+                        this.uavsarOverview();
                         break;
                     case 2:
                         this.$router.push('/gnss');
@@ -77,6 +82,17 @@
                         break;
                 }
             },
+          uavsarOverview(){
+            this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+                  layers: 'InSAR:thumbnailmosaic',
+                  transparent: true,
+                  format: 'image/png',
+                  zIndex: 2
+                }
+            );
+            this.globalMap.addLayer(this.layers['uavsarWMS'])
+            this.layers['uavsarWMS'].setOpacity(.7);
+          },
             directUrl(page) {
                 switch (page) {
                     case "/maptools":
