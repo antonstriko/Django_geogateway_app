@@ -39,7 +39,6 @@ import 'leaflet-kml'
 import ToolBar from "./ToolBar";
 import TopNav from "./TopNav";
 import {bus} from '../main'
-// import {store} from "../store/store";
 import 'leaflet-draw'
 import "leaflet-draw/dist/leaflet.draw.css";
 
@@ -98,6 +97,9 @@ export default {
 
     //create layers
     this.globalMap = new L.map('map').setView([36.9915, -119.7889], 5);
+    L.control.scale({
+      position: 'bottomright',
+    }).addTo(this.globalMap);
     this.tileLayer();
 
     var legend2 = L.control({position: 'bottomleft'});
@@ -106,7 +108,11 @@ export default {
       div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="height: 30px; width: 82px">';
       return div;
     };
+
     legend2.addTo(this.globalMap);
+
+
+
 
     var drawnItems = new L.FeatureGroup();
     this.globalMap.addLayer(drawnItems);

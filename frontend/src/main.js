@@ -21,6 +21,7 @@ Vue.use(VueRouter);
 Vue.use(BootstrapVue);
 Vue.use(BootstrapVueIcons);
 Vue.use(resize);
+Vue.config.silent = true
 
 export const bus = new Vue();
 

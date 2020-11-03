@@ -4,17 +4,17 @@
     <hr />
     <div class="topbuttonGroup">
       <div class="overviewButtonGroup">
-      <b-button
-          type="checkbox"
-          id="overview"
-          :pressed.sync="overview"
-          @click="showOverview"
-      ><span v-if="!overview">Show Overview</span>
-        <span v-else>Hide Overview</span>
-      </b-button>
+        <b-button
+            type="checkbox"
+            id="overview"
+            :pressed.sync="overview"
+            @click="showOverview"
+        ><span v-if="!overview">Show Overview</span>
+          <span v-else>Hide Overview</span>
+        </b-button>
 
 
-<!--      <div >-->
+        <!--      <div >-->
         <!--      <div class="toolInfo">-->
         <!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
         <!--      </div>-->
@@ -22,18 +22,22 @@
         <b-button v-if="overview" variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
         <b-button v-if="overview" variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
       </div>
-<!--      </div>-->
+      <!--      </div>-->
     </div>
 
 
 
 
     <div v-if="overview">
-<!--      <div class="toolInfo">-->
-<!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
-<!--      </div>-->
-      <b-button v-if="geometryActive" variant="warning" @click="drawListenerOff">
-        <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
+      <!--      <div class="toolInfo">-->
+      <!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
+      <!--      </div>-->
+      <div v-if="geometryActive">
+        <br/>
+        <b-button variant="warning" @click="drawListenerOff">
+          <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
+        <br/>
+      </div>
       <br/>
       <b-input-group prepend="Flight name/path">
         <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
@@ -45,7 +49,7 @@
       <br/>
       <b-button variant="success" @click="uavsarQuery()">Search</b-button>
     </div>
-    <br />
+
 
     <div v-if="uavsarLayers.length !== 0 && !activeQuery">
       <br/>
@@ -56,19 +60,19 @@
         <b-button @click="clearQuery" variant="warning">
           Clear Query
         </b-button>
+        <b-checkbox v-model="alternateColoringChecked">Show Alternate Colorinng (if available)</b-checkbox>
         <br />
 
-        <br />
-        <b-input-group prepend="Filter by Heading">
-          <b-form-input v-model="path" name="path" placeholder="" @update="filterHeading"></b-form-input>
+        <!--        <b-input-group prepend="Filter by Heading">-->
+        <!--          <b-form-input v-model="path" name="path" placeholder="" @update="filterHeading"></b-form-input>-->
 
-        </b-input-group>
+        <!--        </b-input-group>-->
 
 
-        <b-form-select v-model="sortBy" @change="sortEntries" name="Sort By" class="mb-3">
-          <b-form-select-option :value="null">Sort By</b-form-select-option>
-          <b-select-option value="rating">Rating</b-select-option>
-        </b-form-select>
+        <!--        <b-form-select v-model="sortBy" @change="sortEntries" name="Sort By" class="mb-3">-->
+        <!--          <b-select-option :value="null">Sort By</b-select-option>-->
+        <!--          <b-select-option value="rating">Rating</b-select-option>-->
+        <!--        </b-form-select>-->
 
 
       </div>
@@ -76,15 +80,11 @@
 
 
       <div id="queryWindow">
-        <div v-if="false">
-
-        </div>
         <div hidden>
           {{extendedColor}}
           {{extendedBorder}}
         </div>
         <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']">
-
           <b-col>
             <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
           </b-col>
@@ -134,15 +134,17 @@
 
               <div class="extended">
                 <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
-                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>
+<!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
                 <br/>
-                <i style="font-size: small">Click UAVSAR tile to instantiate LOS plot</i>
-
+                <i style="font-size: small; ">Click UAVSAR tile to instantiate LOS plot</i>
                 <br />
+                <i style="font-size: small; color: #3388ff">Set Layer Opacity: <b>{{ opVal }}%</b></i>
+                <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
 
                 <div v-if="LosPlotAvailable && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
+                  <hr/>
                   <b-input-group>
                     <b-input-group prepend="Start Lat/Lon" class="mb-2">
                       <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
@@ -163,12 +165,11 @@
                     <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
                   </b-input-group>
                   <br/>
-                  <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">Update LOS Plot</b-button>
+                  <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
+                    <span v-if="plotActive">Update LOS Plot</span>
+                    <span v-else>Show LOS Plot</span>
+                  </b-button>
                   <br/>
-                  <br />
-                  <label for="opacity"><i style="font-size: small; color: #222222">Set Layer Opacity</i></label>
-                  <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
-                  <div class="mt-2">Value: {{ opVal }}% </div>
                   <br/>
                   <span @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
                 </div>
@@ -180,6 +181,7 @@
       </div>
     </div>
     <div v-else-if="activeQuery" style="overflow: hidden">
+      <br/>
       <b-spinner variant="success" label="Spinning"></b-spinner>
     </div>
   </div>
@@ -193,19 +195,21 @@ import L from 'leaflet';
 import 'leaflet-kml'
 import { mapFields } from 'vuex-map-fields';
 
+
+
 export default {
   name: "UAVSAR",
   data(){
     return {
-      startIcon: new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blueA.png',
+      endIcon: new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_redA.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         shadowSize: [41, 41]
       }),
-      endIcon: new L.Icon({
-        iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_redB.png',
+      startIcon: new L.Icon({
+        iconUrl: 'https://raw.githubusercontent.com/Concept211/Google-Maps-Markers/master/images/marker_blueB.png',
         iconSize: [25, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
@@ -258,6 +262,7 @@ export default {
       'uavsar.uavsarLayers',
       // 'uavsar.extendedColor',
       // 'uavsar.extendedBorder',
+      'uavsar.alternateColoringChecked',
       'uavsar.extendingActive',
       'uavsar.layerFound',
       'uavsar.selDesel',
@@ -321,15 +326,17 @@ export default {
         var type = e.layerType;
         if (type === 'rectangle') {
           var layer = e.layer;
-          vm.addLayer(layer);
+          vm.globalMap.addLayer(layer);
           vm.centerLat = layer.getCenter().lat;
           vm.centerLng = layer.getCenter().lng;
           vm.maxLat = layer.getLatLngs()[0][1].lat;
           vm.maxLon = layer.getLatLngs()[0][2].lng;
           vm.minLat = layer.getLatLngs()[0][3].lat;
           vm.minLon = layer.getLatLngs()[0][0].lng;
-          vm.removeLayer(layer)
+          vm.globalMap.setView([vm.centerLat,vm.centerLng], 7);
+          vm.globalMap.removeLayer(layer)
           vm.rectDraw = null;
+          vm.rectQuery(vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng);
           vm.geometryActive = false;
         }});
 
@@ -343,9 +350,11 @@ export default {
         vm.markerLayer = e.layer;
         var lat = e.layer.getLatLng().lat;
         var lng = e.layer.getLatLng().lng;
+        vm.globalMap.setView([lat,lng], 7);
         vm.pointQuery(lat,lng);
         vm.pinDrop = null;
         vm.geometryActive = false;
+
       });
     },
     drawListenerOff(){
@@ -415,10 +424,10 @@ export default {
       var azimuth = this.setAzimuth(latlon);
       this.losLength = losLength;
       this.azimuth = azimuth;
-      this.lat1 = latlon[0];
-      this.lon1 = latlon[1];
-      this.lat2 = latlon[2];
-      this.lon2 = latlon[3];
+      this.lat1 = latlon[0].toFixed(5);
+      this.lon1 = latlon[1].toFixed(5);
+      this.lat2 = latlon[2].toFixed(5);
+      this.lon2 = latlon[3].toFixed(5);
 
       axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
         params: {
@@ -437,13 +446,19 @@ export default {
     },
     extendEntry(entry){
       var vm = this;
-      // var hasAlternateColoring;
-      this.extendingActive = true;
+      for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
+        this.uavsarLayersFiltered[i].extended = false;
+      }
+      if(this.uavsarHighResLayer !== null){
+        this.globalMap.removeLayer(this.uavsarHighResLayer);
+        this.uavsarLegend.remove();
+      }
       if(!entry.extended) {
-        for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
-          this.uavsarLayersFiltered[i].extended = false;
+        this.extendingActive = true;
+        if(this.plotActive){
+          this.getCSV(entry, [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng,
+            this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]);
         }
-        this.resetPlot();
         this.activeEntry = entry;
         entry.clicked = true;
         entry.extended = true;
@@ -451,10 +466,6 @@ export default {
 
         var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
-        if(this.uavsarHighResLayer !== null){
-          this.globalMap.removeLayer(this.uavsarHighResLayer);
-          this.uavsarHighResLayer = null;
-        }
         //get wms description and check for exception
 
         axios.get(testURI, {
@@ -463,14 +474,14 @@ export default {
           }
         }).then( (response) => {
           var datajson = response.data
-          if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions')) {
+          if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions') && vm.alternateColoringChecked) {
             vm.layerFound = true;
             vm.extendedColor = '#CCFFCC'
             vm.extendedBorder = '1px solid #ADD673'
             vm.hasAlternateColoring = true;
             vm.uavsarHighRes(entry, vm.hasAlternateColoring);
 
-          } else if (Object.prototype.hasOwnProperty.call(datajson, 'exceptions')) {
+          } else {
             vm.layerFound = true;
             vm.extendedColor = '#CCFFCC'
             vm.extendedBorder = '1px solid #ADD673'
@@ -478,18 +489,9 @@ export default {
             vm.uavsarHighRes(entry, vm.hasAlternateColoring);
 
           }
-          vm.extendingActive = false;
         })
-      } else {
-        if(this.uavsarHighResLayer !== null){
-          this.globalMap.removeLayer(this.uavsarHighResLayer);
-          this.uavsarHighResLayer = null;
-          this.uavsarLegend.remove();
-        }
-        this.resetPlot();
-        entry.extended = false;
-
       }
+      vm.extendingActive = false;
     },
 
     //High Res KML's and CSV LOS plotting methods //////////////////////////////////
@@ -567,10 +569,9 @@ export default {
 
 
     updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len) {
+      this.plotActive = true;
       this.plottingMarker2.setLatLng([lat2, lon2]);
       this.plottingMarker1.setLatLng([lat1, lon1]);
-      this.plotLine.setLatLngs([[lat1, lon1],
-        [lat2, lon2]]);
       console.log(az, len);
       var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
       this.getCSV(entry, latlon);
@@ -609,10 +610,16 @@ export default {
         //for use inside event listener
         let vm = this;
 
+        vm.plottingMarker1.on('drag', function () {
+          vm.plotLine.setLatLngs([vm.plottingMarker1.getLatLng(), vm.plottingMarker2.getLatLng()]);
+        })
+        vm.plottingMarker2.on('drag', function () {
+          vm.plotLine.setLatLngs([vm.plottingMarker1.getLatLng(), vm.plottingMarker2.getLatLng()]);
+        })
+
         this.plottingMarker1.on('dragend', function () {
           vm.updatePlotLine(entry);
         })
-
         this.plottingMarker2.on('dragend', function () {
           vm.updatePlotLine(entry);
         })
