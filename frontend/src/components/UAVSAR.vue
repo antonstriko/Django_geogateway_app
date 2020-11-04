@@ -134,7 +134,7 @@
 
               <div class="extended">
                 <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
-<!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
+                <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
                 <br/>
@@ -230,22 +230,6 @@ export default {
 
   },
   computed: {
-    // exColor : function(){
-    //   return this.extendedColor;
-    // },
-    // exBorder : function(){
-    //   return this.extendedBorder;
-    // // },
-    // plottingMarker1: null,
-    // plottingMarker2: null,
-    // plotLine: null,
-    // plotLat1: null,
-    // plotLon1: null,
-    // plotLat2: null,
-    // plotLon2: null,
-    // uavsarLatlon: null,
-    // uavsarEntry: null,
-
     ...mapFields([
       'uavsar.overview',
       'uavsar.plottingMarker1',
@@ -295,6 +279,7 @@ export default {
       'map.drawControl',
       'map.uavsarLegend',
       'map.plotActive',
+      'map.headingLegend',
     ])
   },
   mounted() {
@@ -452,6 +437,7 @@ export default {
       if(this.uavsarHighResLayer !== null){
         this.globalMap.removeLayer(this.uavsarHighResLayer);
         this.uavsarLegend.remove();
+        // this.headingLegend.remove();
       }
       if(!entry.extended) {
         this.extendingActive = true;
@@ -540,14 +526,25 @@ export default {
       this.globalMap.addLayer(this.uavsarHighResLayer);
       this.uavsarHighResLayer.setOpacity(.75)
 
+
+      var headingLegendFinal;
+      var headingLegendBase = 'http://gf2.ucs.indiana.edu/direction_kml/'
+      var headingRounded = entry.info['heading'].split('.')[0];
+      var radarDir = entry.info['radardirection'];
+      var radarDirL;
+      if(radarDir === 'Left'){
+        radarDirL = 'left';
+      }else {
+        radarDirL = 'right';
+      }
+      headingLegendFinal = headingLegendBase + headingRounded + '_' + radarDirL + '.png';
       this.uavsarLegend = L.control({position: 'bottomleft'});
       this.uavsarLegend.onAdd = function () {
         var div = L.DomUtil.create('div', 'uavsarLegend');
-        div.innerHTML = '<img src=' + legendFinal + '>';
+        div.innerHTML = '<img src=' + legendFinal + '> <img style="width: 100px; height: 100px;" src=' + headingLegendFinal + ' >';
         return div;
       };
-
-      this.uavsarLegend.addTo(this.globalMap)
+      this.uavsarLegend.addTo(this.globalMap);
       this.globalMap.on('click', this.markerClick);
 
     },
@@ -966,6 +963,10 @@ export default {
   background-color: #3388ff !important;
   border-color: #3388ff !important;
 
+}
+.headingLegend {
+  width: 70px;
+  height: 70px;
 }
 </style>
 

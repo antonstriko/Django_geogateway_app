@@ -72,6 +72,7 @@ export const store = new Vuex.Store({
             drawControl: null,
             uavsarLegend: null,
             plotActive: false,
+            headingLegend: null,
             layers: {
                 'ucerfL': null,
                 'woForecastL': null,
@@ -117,6 +118,7 @@ export const store = new Vuex.Store({
             layersActive: false,
             horizUrl: '',
             vertUrl: '',
+            activeGnssQuery: false,
         },
         seismicity: {
             day: false,
