@@ -60,7 +60,7 @@
         <b-button @click="clearQuery" variant="warning">
           Clear Query
         </b-button>
-        <b-checkbox v-model="alternateColoringChecked">Show Alternate Colorinng (if available)</b-checkbox>
+        <b-checkbox v-model="alternateColoringChecked">Show Alternate Coloring (if available)</b-checkbox>
         <br />
 
         <!--        <b-input-group prepend="Filter by Heading">-->
