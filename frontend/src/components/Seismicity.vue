@@ -96,6 +96,13 @@
       <br/>
       <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="runSeismicity()">Search Catalog
       </button>
+      <br />
+      <br />
+      <div class="toolInfo" v-if="geoUri !== '' || kmlUri !== ''">
+      <a :href="kmlUri">Download USGS KML</a>
+      <br />
+      <a target="_blank" :href="geoUri">Download USGS GeoJSON</a>
+      </div>
     </div>
   </div>
 </template>
@@ -131,10 +138,12 @@ export default {
       'seismicity.minMag',
       'seismicity.maxMag',
       'seismicity.iconScale',
-      'seismicity.selected',
+      'seismicity.selected', 
+      'seismicity.kmlUri',
+      'seismicity.geoUri',
 
-        'map.globalMap',
-        'map.drawControl'
+      'map.globalMap',
+      'map.drawControl'
     ])
   },
   methods: {
@@ -185,6 +194,8 @@ export default {
           "maxlatitude=" + this.maxLat +'&' +
           "minlongitude=" + this.minLon +'&' +
           "maxlongitude=" + this.maxLon;
+      this.kmlUri = fullUri.replace('geojson', 'kml');
+      this.geoUri = fullUri;
       axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/seismicity', {
         params: {
           "fullUri": fullUri,
@@ -242,5 +253,9 @@ img {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   border-radius: 25px;
   height: 50px;
+}
+
+a {
+  color: black;
 }
 </style>

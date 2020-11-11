@@ -138,6 +138,8 @@ export const store = new Vuex.Store({
             maxMag: '10.0',
             iconScale: '1',
             selected: null,
+            kmlUri: '',
+            geoUri: '',
         },
         nowcast: {
             ucerfL: false,

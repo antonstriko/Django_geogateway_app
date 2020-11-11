@@ -215,7 +215,6 @@ export default {
 
         for(var i = 0;i<queries.length;i++){
           var splitPrefix = queries[i].name.split('_')[0];
-          console.log(splitPrefix);
           if(splitPrefix === this.gs_outputprefix){
             alert('There is already an existing query with that name, please rename and resubmit')
             return;
@@ -268,7 +267,6 @@ export default {
                   fileNameH = props.results[i];
                 }
               }
-              console.log(props)
 
               folder = props.folder;
               queries.push({
@@ -276,7 +274,7 @@ export default {
                 name: fileNameH,
                 folder: folder,
                 active: true,
-                url: verticalUrl,
+                url: horizontalUrl,
                 type: 'H',
               })
               queries.push({
@@ -284,7 +282,7 @@ export default {
                 name: fileNameV,
                 folder: folder,
                 active: true,
-                url: horizontalUrl,
+                url: verticalUrl,
                 type: 'V',
               })
               const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
@@ -297,7 +295,6 @@ export default {
                 //emit raw kml text to parent map component
               }).then(function (response) {
                 // console.log(toGeoJSON.kml(response.data));
-                console.log(response.data)
                 bus.$emit('addGnssLayer', response.data, 'gnssH', prefix);
               })
               axios.get(kmlURI, {
