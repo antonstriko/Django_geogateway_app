@@ -32,7 +32,7 @@
       <!--      <div class="toolInfo">-->
       <!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
       <!--      </div>-->
-      <div v-if="geometryActive">
+      <div v-if="geometryActive" >
         <br/>
         <b-button variant="warning" @click="drawListenerOff">
           <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
@@ -53,6 +53,7 @@
 
     <div v-if="uavsarLayers.length !== 0 && !activeQuery">
       <br/>
+      <b-container class="row justify-content-center">
       <div class="layer-options">
         <b-button @click="selDeselAll">
           Select/Deselect All
@@ -60,24 +61,16 @@
         <b-button @click="clearQuery" variant="warning">
           Clear Query
         </b-button>
-        <b-checkbox v-model="alternateColoringChecked">Show Alternate Coloring (if available)</b-checkbox>
-
-        <!--        <b-input-group prepend="Filter by Heading">-->
-        <!--          <b-form-input v-model="path" name="path" placeholder="" @update="filterHeading"></b-form-input>-->
-
-        <!--        </b-input-group>-->
-        <b-container>
-          <b-row>
+          <b-row style="margin-top: 5px">
             <div>
               <input type="date" id="start" name="trip-start" v-model="bracketDate">
             </div>
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
-            <b-button @click="clearFilters" variant="warning" size="sm">Clear</b-button>
+            <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-        </b-container>
-
-
+        <b-checkbox v-model="alternateColoringChecked">Show Alternate Coloring (if available)</b-checkbox>
       </div>
+      </b-container>
       <br/>
 
 
@@ -439,7 +432,7 @@ export default {
       this.lat2 = latlon[2].toFixed(5);
       this.lon2 = latlon[3].toFixed(5);
 
-      axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
+      axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
         params: {
           'entry':JSON.stringify(entry),
           'lat1':this.lat1,
@@ -484,7 +477,7 @@ export default {
         entry.clicked = true;
         entry.activeBackground = '#8494a3';
         entry.extended = true;
-        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
+        var testURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_test/'
 
         var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
@@ -743,7 +736,7 @@ export default {
       this.activeQuery = true;
       var vm = this;
       if(this.overview) {
-        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
+        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_flight/'
         axios.get(baseURI, {
           params: {
             //
@@ -752,7 +745,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -805,7 +798,7 @@ export default {
       if(this.overview) {
         this.lat_lon = lat.toString() + ',' + lon.toString();
         var queryStr = '(' + this.lat_lon + ')'
-        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
         axios.get(baseURI, {
           params: {
             //
@@ -814,7 +807,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -857,7 +850,7 @@ export default {
     //     }
     //     queryStr = queryStr.replace(/,\s*$/, "");
     //
-    //     var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+    //     var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
     //     axios.get(baseURI, {
     //         params: {
     //             //
@@ -880,7 +873,7 @@ export default {
         console.log(centerLng, centerLat);
         var queryStr = '';
         queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
         axios.get(baseURI, {
           params: {
             //
@@ -889,7 +882,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -1006,7 +999,7 @@ export default {
 }
 
 #queryWindow {
-  height: 600px;
+  height: 700px;
   width: 100%;
   overflow-y: auto;
 }
@@ -1032,6 +1025,12 @@ html, body {margin:0;padding:0;height:100%;}
 }
 h3, h4, h5 {
   color: #343a40;
+}
+
+.center {
+  display: block;
+  margin-left: 15%;
+  margin-right: auto;
 }
 
 </style>
