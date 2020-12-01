@@ -43,7 +43,7 @@ export function popupMaker (feature, layer) {
         '<p><b>Magnitude</b>: ' + feature.properties.mag + '</p>' +
         '<p><b>Place</b>: ' + feature.properties.place + '</p>' +
         '<p><b>Time</b>: ' + d.toLocaleString() + '</p>' +
-        '<a href=' + feature.properties.url + '>' + 'USGS Event' + '</a>'
+        '<a target="_blank" href=' + feature.properties.url + ' >' + 'USGS Event' + '</a>'
     );
 }
 //GMT offset = -10

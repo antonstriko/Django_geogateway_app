@@ -19,7 +19,7 @@ CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
 GdacsUrl = 'https://www.gdacs.org/xml/gdacsEQ.geojson'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
 uavsarOverUrl = 'http://gf8.ucs.indiana.edu/geoserver/InSAR/wms'
-uavsarJsonUrl = 'https://geo-gateway.org/uavsar_query/?querystr='
+uavsarJsonUrl = 'http://gf2.ucs.indiana.edu/quaketables/uavsar/search?geometry='
 geoServerUrl='http://gf2.ucs.indiana.edu/quaketables/uavsar/search?searchstring='
 
 

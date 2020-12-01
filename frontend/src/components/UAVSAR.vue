@@ -61,18 +61,20 @@
           Clear Query
         </b-button>
         <b-checkbox v-model="alternateColoringChecked">Show Alternate Coloring (if available)</b-checkbox>
-        <br />
 
         <!--        <b-input-group prepend="Filter by Heading">-->
         <!--          <b-form-input v-model="path" name="path" placeholder="" @update="filterHeading"></b-form-input>-->
 
         <!--        </b-input-group>-->
-
-
-        <!--        <b-form-select v-model="sortBy" @change="sortEntries" name="Sort By" class="mb-3">-->
-        <!--          <b-select-option :value="null">Sort By</b-select-option>-->
-        <!--          <b-select-option value="rating">Rating</b-select-option>-->
-        <!--        </b-form-select>-->
+        <b-container>
+          <b-row>
+            <div>
+              <input type="date" id="start" name="trip-start" v-model="bracketDate">
+            </div>
+            <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
+            <b-button @click="clearFilters" variant="warning" size="sm">Clear</b-button>
+          </b-row>
+        </b-container>
 
 
       </div>
@@ -84,14 +86,15 @@
           {{extendedColor}}
           {{extendedBorder}}
         </div>
-        <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']">
+        <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']" v-bind:style="{backgroundColor: entry.activeBackground}">
           <b-col>
             <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
           </b-col>
           <b-col >
-            <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;">
-              <div id="dataname">{{entry.info['dataname']}}</div>
-              <b-icon-clock></b-icon-clock>  <b>{{entry.info['time1']}}</b> - <b>{{entry.info['time2']}}</b>
+            <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;"
+                 >
+              <div style="font-size: 13px" id="dataname">{{entry.info['dataname']}}</div>
+              <b style="font-size: 15px">{{entry.info['time1']}}  {{entry.info['time2']}}</b>
               <br />
               <div id="rating">
                 <div v-if="entry.info['rating'] === '0'">
@@ -117,16 +120,7 @@
                 </div>
               </div>
             </div>
-            <br />
-            <div  v-if="!entry.extended && !entry.clicked" >
-              <b-icon-arrows-expand ></b-icon-arrows-expand>
-
-            </div>
-            <!--                shows history of entry clicks-->
-            <div  v-else-if="!entry.extended && entry.clicked" style="background-color: #A5B9CC; border-radius: 5px">
-              <b-icon-eye></b-icon-eye>
-            </div>
-            <div v-else-if="extendingActive && entry.extended">
+            <div v-if="extendingActive && entry.extended">
               <b-spinner type="grow" variant="warning">
               </b-spinner>
             </div>
@@ -137,7 +131,6 @@
                 <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
-                <br/>
                 <i style="font-size: small; ">Click UAVSAR tile to instantiate LOS plot</i>
                 <br />
                 <i style="font-size: small; color: #3388ff">Set Layer Opacity: <b>{{ opVal }}%</b></i>
@@ -272,7 +265,10 @@ export default {
       'uavsar.uavsarHighResLayer',
       'uavsar.uavsarDisplayedLayers',
       'uavsar.hasAlternateColoring',
-
+      'uavsar.activeBackground',
+      'uavsar.dateFilter',
+      'uavsar.bracketDate',
+      'uavsar.currentExtendedEntry',
       //Map objects
       'map.globalMap',
       'map.layers',
@@ -283,6 +279,12 @@ export default {
     ])
   },
   mounted() {
+    // window.addEventListener("keydown", function(e) {
+    //   // space and arrow keys
+    //   if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+    //     e.preventDefault();
+    //   }
+    // }, false);
     bus.$on('markPlace', (lat, lon) =>
         this.pointQuery(lat, lon));
     bus.$on('showOverview', () =>
@@ -299,6 +301,8 @@ export default {
         this.rectQuery(maxLat, minLon, minLat, maxLon, centerLat, centerLng));
     bus.$on('uavsarHighRes', (entry) =>
         this.uavsarHighRes(entry));
+    bus.$on('resetPlot', () =>
+        this.resetPlot());
   },
   methods: {
 
@@ -326,6 +330,12 @@ export default {
         }});
 
     },
+
+    clearFilters(){
+      Array.prototype.push.apply(this.uavsarLayersFiltered, this.uavsarLayers);
+
+      this.bracketDate = ''
+    },
     uavsarPinDrop(){
       this.geometryActive = true;
       var vm = this;
@@ -335,7 +345,6 @@ export default {
         vm.markerLayer = e.layer;
         var lat = e.layer.getLatLng().lat;
         var lng = e.layer.getLatLng().lng;
-        vm.globalMap.setView([lat,lng], 7);
         vm.pointQuery(lat,lng);
         vm.pinDrop = null;
         vm.geometryActive = false;
@@ -357,6 +366,22 @@ export default {
       }
       this.uavsarLayersFiltered = this.uavsarLayers.filter(checkPath);
     },
+
+    filterDate(){
+      let vm = this;
+      function checkDate(entry) {
+        let d = entry.info['time1'].replaceAll('-', '/')
+        let d2 = entry.info['time2'].replaceAll('-', '/')
+        let b1 = new Date(d)
+        let b2 = new Date(d2);
+        let b3 = new Date(vm.bracketDate)
+        return (b3 > b1 && b3 < b2);
+      }
+      if(this.bracketDate !== '') {
+        this.uavsarLayersFiltered = this.uavsarLayers.filter(checkDate);
+      }
+    },
+
 
     sortEntries(){
       if(this.sortBy === 'rating') {
@@ -414,7 +439,7 @@ export default {
       this.lat2 = latlon[2].toFixed(5);
       this.lon2 = latlon[3].toFixed(5);
 
-      axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_csv/', {
+      axios.get('http://127.0.0.1:8000/geogateway_django_app/UAVSAR_csv/', {
         params: {
           'entry':JSON.stringify(entry),
           'lat1':this.lat1,
@@ -429,8 +454,18 @@ export default {
         vm.chartData(response.data);
       })
     },
+
+    findWithAttr(array, attr, value) {
+      for(var i = 0; i < array.length; i += 1) {
+        if(array[i][attr] === value) {
+          return i;
+        }
+      }
+      return -1;
+    },
     extendEntry(entry){
       var vm = this;
+
       for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
         this.uavsarLayersFiltered[i].extended = false;
       }
@@ -447,12 +482,17 @@ export default {
         }
         this.activeEntry = entry;
         entry.clicked = true;
+        entry.activeBackground = '#8494a3';
         entry.extended = true;
-        var testURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_test/'
+        var testURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_test/'
 
         var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
 
-        //get wms description and check for exception
+        //set current extended entry for keyup keydown change
+
+        this.currentExtendedEntry = this.findWithAttr(this.uavsarLayersFiltered, 'extended', true);
+
+            //get wms description and check for exception
 
         axios.get(testURI, {
           params: {
@@ -703,7 +743,7 @@ export default {
       this.activeQuery = true;
       var vm = this;
       if(this.overview) {
-        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_flight/'
+        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_flight/'
         axios.get(baseURI, {
           params: {
             //
@@ -712,7 +752,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -738,22 +778,34 @@ export default {
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
             vm.activeQuery = false;
-            console.log(vm.uavsarDisplayedLayers.length);
 
           })
         })
       }
     },
     pointQuery(lat, lon){
+      function isNumber(n) { return !isNaN(parseFloat(n)) && !isNaN(n - 0) }
+
       this.globalMap.off('draw:created');
       this.activeQuery = true;
       var vm = this;
+
+      //checking if input comes from marker placement or manual entry (numeric string)
+      if(lat.substring && lon.substring){
+        if(isNumber(lat) && isNumber(lon)){
+          lat = parseFloat(lat)
+          lon = parseFloat(lon)
+        }
+        else {
+          alert('Please enter decimal point coordinates')
+        }
+      }
       lat = lat.toFixed(5)
       lon = lon.toFixed(5)
       if(this.overview) {
         this.lat_lon = lat.toString() + ',' + lon.toString();
         var queryStr = '(' + this.lat_lon + ')'
-        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
         axios.get(baseURI, {
           params: {
             //
@@ -762,7 +814,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -778,9 +830,12 @@ export default {
               vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
             }
             for(let k = 0;k < responses.length;k++){
-              vm.uavsarLayers[k] = responses[k].data;
+              let entry = responses[k].data;
+              entry.activeBackground = '#a8b4bf';
+              vm.uavsarLayers[k] = entry;
+              vm.uavsarLayersFiltered[k] = entry;
               let uid = vm.uavsarLayers[k].info['uid'];
-              vm.uavsarLayersFiltered[k] = responses[k].data;
+
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
               const track = new L.KML(kml);
@@ -788,7 +843,6 @@ export default {
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
             vm.activeQuery = false;
-            console.log(vm.uavsarDisplayedLayers.length);
           })
         })
       }
@@ -803,7 +857,7 @@ export default {
     //     }
     //     queryStr = queryStr.replace(/,\s*$/, "");
     //
-    //     var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+    //     var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
     //     axios.get(baseURI, {
     //         params: {
     //             //
@@ -826,7 +880,7 @@ export default {
         console.log(centerLng, centerLat);
         var queryStr = '';
         queryStr += '(' + '(' + minLat.toFixed(3) + ',' + minLon.toFixed(3) + '),' + '(' + maxLat.toFixed(3) + ',' + maxLon.toFixed(3) + '))'
-        var baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_geom/'
+        var baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_geom/'
         axios.get(baseURI, {
           params: {
             //
@@ -835,7 +889,7 @@ export default {
           }
         }).then(function (response) {
           let entries = response.data;
-          let baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/UAVSAR_KML/'
+          let baseURI = 'http://127.0.0.1:8000/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
           for (var i = 0; i < entries.length; i++) {
             promises.push(
@@ -861,7 +915,6 @@ export default {
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
             vm.activeQuery = false;
-            console.log(vm.uavsarDisplayedLayers.length);
           })
         })
       }
@@ -923,10 +976,9 @@ export default {
 .collapsed {
   width: auto;
   height: auto;
-  border: 2px solid #B3B3CC;
+  border: 2px solid #e6e6ff;
   box-sizing: border-box;
   border-radius: 8px;
-  background-color: #8494a3;
   overflow-y: auto;
   /*A5B9CC*/
 }

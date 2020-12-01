@@ -161,8 +161,9 @@ export default {
 
     bus.$on('displaySave', (layers) =>
         this.displaySave(layers));
-    bus.$on('hidePlot', ()=>
-        this.plotActive = false);
+    bus.$on('hidePlot', ()=> {
+      bus.$emit('resetPlot');
+    });
     bus.$on('clearSaveLayer', (layers) =>
         this.clearSave(layers));
     bus.$on('removeUavsarLayer', (name) =>
@@ -329,8 +330,6 @@ export default {
       const kml = parser.parseFromString(text, 'text/xml');
       this.layers[layerName] = new L.KML(kml);
       this.globalMap.addLayer(this.layers[layerName]);
-      const bounds = this.layers[layerName].getBounds();
-      this.globalMap.fitBounds(bounds);
 
     },
     addGnssLayer(file, type, prefix) {
@@ -347,8 +346,6 @@ export default {
             var kml = parser.parseFromString(kmltext, "text/xml");
             this.layers[layerName] = new L.KML(kml);
             this.globalMap.addLayer(this.layers[layerName]);
-            this.globalMap.fitBounds(this.layers[layerName].getBounds());
-
           });
 
     },
