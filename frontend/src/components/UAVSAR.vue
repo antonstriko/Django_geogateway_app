@@ -10,7 +10,7 @@
             :pressed.sync="overview"
             @click="showOverview"
         ><span v-if="!overview">Show Overview</span>
-          <span v-else>Hide Overview</span>
+          <span v-else>hide Overview</span>
         </b-button>
 
 
