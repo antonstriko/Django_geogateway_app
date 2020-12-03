@@ -10,7 +10,7 @@
             :pressed.sync="overview"
             @click="showOverview"
         ><span v-if="!overview">Show Overview</span>
-          <span v-else>hide Overview</span>
+          <span v-else>Hide Overview</span>
         </b-button>
 
 
@@ -218,8 +218,8 @@ export default {
   computed: {
     ...mapFields([
       'uavsar.overview',
-      'uavsar.plottingMarker1',
-      'uavsar.plottingMarker2',
+      'uavsar.plottingMarkerEnd',
+      'uavsar.plottingMarkerStart',
       'uavsar.plotLine',
       'uavsar.plotLat1',
       'uavsar.plotLon1',
@@ -441,7 +441,6 @@ export default {
           'lon2':this.lon2,
           'losLength':losLength,
           'azimuth':azimuth,
-
         }
       }).then(function (response){
         vm.chartData(response.data);
@@ -470,8 +469,8 @@ export default {
       if(!entry.extended) {
         this.extendingActive = true;
         if(this.plotActive){
-          this.getCSV(entry, [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng,
-            this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]);
+          this.getCSV(entry, [this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng,
+            this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng]);
         }
         this.activeEntry = entry;
         entry.clicked = true;
@@ -600,18 +599,18 @@ export default {
 
     updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len) {
       this.plotActive = true;
-      this.plottingMarker2.setLatLng([lat2, lon2]);
-      this.plottingMarker1.setLatLng([lat1, lon1]);
+      this.plottingMarkerStart.setLatLng([lat2, lon2]);
+      this.plottingMarkerEnd.setLatLng([lat1, lon1]);
       console.log(az, len);
-      var latlon = [this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng]
+      var latlon = [this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng, this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng]
       this.getCSV(entry, latlon);
     },
 
     updatePlotLine(entry) {
-      this.updatePlotLineForm(entry, this.plottingMarker1.getLatLng().lat, this.plottingMarker1.getLatLng().lng, this.plottingMarker2.getLatLng().lat, this.plottingMarker2.getLatLng().lng)
+      this.updatePlotLineForm(entry, this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng, this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng)
     },
     placePlotMarkers(southwest, northeast, clickloc, latlon, entry) {
-      if (this.plottingMarker1 == null) {
+      if (this.plottingMarkerEnd == null) {
         this.plotActive = true;
         this.plotLat1 = clickloc.lat;
         this.plotLon1 = clickloc.lng;
@@ -624,33 +623,33 @@ export default {
         this.plotLat2 = ((this.plotLat2 - this.plotLat1) / 5) + this.plotLat1
 
 
-        this.plottingMarker1 = L.marker([this.plotLat1, this.plotLon1],
+        this.plottingMarkerStart = L.marker([this.plotLat1, this.plotLon1],
             {draggable: true, icon: this.startIcon});
         // console.log(this.plottingMarker1)
-        this.plottingMarker2 = L.marker([this.plotLat2, this.plotLon2],
+        this.plottingMarkerEnd = L.marker([this.plotLat2, this.plotLon2],
             {draggable: true, icon: this.endIcon});
 
-        this.plotLine = L.polyline([this.plottingMarker1.getLatLng(), this.plottingMarker2.getLatLng()],
+        this.plotLine = L.polyline([this.plottingMarkerEnd.getLatLng(), this.plottingMarkerStart.getLatLng()],
             {color: 'red'});
 
-        this.plottingMarker1.addTo(this.globalMap)
-        this.plottingMarker2.addTo(this.globalMap)
+        this.plottingMarkerEnd.addTo(this.globalMap)
+        this.plottingMarkerStart.addTo(this.globalMap)
         this.plotLine.addTo(this.globalMap)
 
         //for use inside event listener
         let vm = this;
 
-        vm.plottingMarker1.on('drag', function () {
-          vm.plotLine.setLatLngs([vm.plottingMarker1.getLatLng(), vm.plottingMarker2.getLatLng()]);
+        vm.plottingMarkerEnd.on('drag', function () {
+          vm.plotLine.setLatLngs([vm.plottingMarkerEnd.getLatLng(), vm.plottingMarkerStart.getLatLng()]);
         })
-        vm.plottingMarker2.on('drag', function () {
-          vm.plotLine.setLatLngs([vm.plottingMarker1.getLatLng(), vm.plottingMarker2.getLatLng()]);
+        vm.plottingMarkerStart.on('drag', function () {
+          vm.plotLine.setLatLngs([vm.plottingMarkerEnd.getLatLng(), vm.plottingMarkerStart.getLatLng()]);
         })
 
-        this.plottingMarker1.on('dragend', function () {
+        this.plottingMarkerEnd.on('dragend', function () {
           vm.updatePlotLine(entry);
         })
-        this.plottingMarker2.on('dragend', function () {
+        this.plottingMarkerStart.on('dragend', function () {
           vm.updatePlotLine(entry);
         })
 
@@ -664,12 +663,12 @@ export default {
     },
 
     resetPlot() {
-      if(this.plottingMarker1 != null || this.plottingMarker2 != null) {
-        this.plottingMarker1.remove();
-        this.plottingMarker2.remove();
+      if(this.plottingMarkerEnd != null || this.plottingMarkerStart != null) {
+        this.plottingMarkerEnd.remove();
+        this.plottingMarkerStart.remove();
         this.plotLine.remove();
-        this.plottingMarker1 = null;
-        this.plottingMarker2 = null;
+        this.plottingMarkerEnd = null;
+        this.plottingMarkerStart = null;
         this.plotLine = null;
         this.plotActive = false;
       }
@@ -761,9 +760,12 @@ export default {
               vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
             }
             for(let k = 0;k < responses.length;k++){
-              vm.uavsarLayers[k] = responses[k].data;
+              let entry = responses[k].data;
+              entry.activeBackground = '#a8b4bf';
+              vm.uavsarLayers[k] = entry;
+              vm.uavsarLayersFiltered[k] = entry;
               let uid = vm.uavsarLayers[k].info['uid'];
-              vm.uavsarLayersFiltered[k] = responses[k].data;
+
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
               const track = new L.KML(kml);
@@ -898,9 +900,12 @@ export default {
               vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
             }
             for(let k = 0;k < responses.length;k++){
-              vm.uavsarLayers[k] = responses[k].data;
+              let entry = responses[k].data;
+              entry.activeBackground = '#a8b4bf';
+              vm.uavsarLayers[k] = entry;
+              vm.uavsarLayersFiltered[k] = entry;
               let uid = vm.uavsarLayers[k].info['uid'];
-              vm.uavsarLayersFiltered[k] = responses[k].data;
+
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
               const track = new L.KML(kml);
