@@ -10,15 +10,21 @@ from django.http import HttpResponse, FileResponse, JsonResponse
 from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-# TODO: add error catching
+from django.core.files.base import ContentFile
+
 
 GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
 KmlPrefix = "http://156.56.174.162:8000/static"
+wmsColorUrl = 'http://js-157-39.jetstream-cloud.org/geoserver/InSAR/wms?'
+wmsUrl = 'http://js-157-39.jetstream-cloud.org/geoserver/highres/wms?'
+losQueryUrl = 'http://js-157-58.jetstream-cloud.org:8000/los/profile?image=uid'
+
 WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
+
 GdacsUrl = 'https://www.gdacs.org/xml/gdacsEQ.geojson'
 NowcastUrl = "http://gf8.ucs.indiana.edu:8000/seismicityservice/plot?"
-uavsarOverUrl = 'http://gf8.ucs.indiana.edu/geoserver/InSAR/wms'
+
 uavsarJsonUrl = 'http://gf2.ucs.indiana.edu/quaketables/uavsar/search?geometry='
 geoServerUrl='http://gf2.ucs.indiana.edu/quaketables/uavsar/search?searchstring='
 
@@ -108,7 +114,7 @@ def runDisloc(request):
 
 def uavsarOverview(request):
     if request.method == 'GET':
-        data = requests.get(uavsarOverUrl)
+        data = requests.get(wmsUrl)
         responseData = HttpResponse(data)
         return responseData
 
@@ -146,12 +152,11 @@ def uavsarFlight(request):
 
 def uavsarTest(request):
     if request.method == 'GET':
-        testURI = 'http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?version=1.1.1&request=DescribeLayer' \
-                  '&outputFormat=application/json&exceptions=application/json&layers= '
+        testURI = 'version=1.1.1&request=DescribeLayer&outputFormat=application/json&exceptions=application/json&layers= '
 
         layername = request.GET.get('uid')
 
-        data = requests.get(testURI + layername)
+        data = requests.get(wmsColorUrl + testURI + layername)
         return HttpResponse(data)
 
 
@@ -180,7 +185,6 @@ def uavsarKML(request):
 def uavsarCSV(request):
     if request.method == 'GET':
         # http://149.165.157.193:8000/los/profile?image=uid475_unw&point=-115.8003008515625,33.56101488057798,-115.7003008515625,33.56101488057798&format=csv&resolution=undefined&method=native
-        baseURI = 'http://149.165.157.193:8000/los/profile?image='
         raw = request.GET.get('entry')
         entry = json.loads(raw)
         info = entry['info']
@@ -193,8 +197,9 @@ def uavsarCSV(request):
         losLength = request.GET.get('losLength')
         azimuth = request.GET.get('azimuth')
 
-        finalURI = baseURI + 'uid' + uid + '_unw&point=' + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2 + \
+        finalURI = losQueryUrl + uid + '_unw&point=' + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2 + \
                    '&format=csv&resolution=undefined&method=native'
+
 
         data = requests.get(finalURI)
 
@@ -216,7 +221,13 @@ def uavsarCSV(request):
         data = [line.split(',') for line in data]
         writer.writerows(data)
 
+#         data = ContentFile(data)
+
         return response
+#         fs = FileSystemStorage()
+#         filename = fs.save(uid + '.csv', data)
+#         uploaded_file_url = fs.url(filename)
+#         return HttpResponse(uploaded_file_url, content_type='text/plain')
 
 
 def kmz_upload(request):

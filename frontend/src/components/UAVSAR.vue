@@ -204,6 +204,12 @@ export default {
       pinDrop: null,
       rectDraw: null,
       geometryActive: false,
+      wmsColorUrl: 'http://js-157-39.jetstream-cloud.org/geoserver/InSAR/wms?',
+      wmsUrl: 'http://js-157-39.jetstream-cloud.org/geoserver/highres/wms?',
+      losQueryUrl: 'http://gf1.ucs.indiana.edu/insartool/profile?image=InSAR:uid',
+      altColorLegend: 'http://js-157-39.jetstream-cloud.org/uavsarlegend1/uid',
+      piLegend: 'http://js-157-39.jetstream-cloud.org/highreslegend/pi_t.png',
+      twoPiLegend: 'http://js-157-39.jetstream-cloud.org/highreslegend/2pi_t.png',
 
     }
   },
@@ -406,6 +412,11 @@ export default {
       this.uavsarHighResLayer.setOpacity((value/100));
     },
     chartData(csv){
+      // let vm = this;
+      // let csv;
+      // axios.get(csvUrl).then(function(response){
+      //   csv = response.data;
+      // }).then(function (){
       var csv2=csv.split("\n");
       var csv_final="";
       for(var i=0;i<csv2.length;i++) {
@@ -419,6 +430,7 @@ export default {
       this.csv_final = csv_final;
       this.LosPlotAvailable= true;
       bus.$emit('activatePlot', csv_final);
+      // });
     },
 
     getCSV(entry, latlon){
@@ -444,6 +456,7 @@ export default {
         }
       }).then(function (response){
         vm.chartData(response.data);
+        console.log(response.data);
       })
     },
 
@@ -522,23 +535,21 @@ export default {
       if (this.uavsarLegend !== null) {
         this.uavsarLegend.remove();
       }
-      var baseURI, overlayType, legendUriBase, legendExten, legendFinal;
+      var baseURI, overlayType, legendExten, legendFinal;
       if(hasAlternateColoring) {
-        baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/InSAR/wms?";
+        baseURI = this.wmsColorUrl;
         overlayType = 'InSAR:';
-        legendUriBase = 'http://js-168-89.jetstream-cloud.org/uavsarlegend1/uid';
         legendExten = entry.info['uid'] + '_unw_default.png';
-        legendFinal = legendUriBase + legendExten;
+        legendFinal = this.altColorLegend + legendExten;
       }else {
-        baseURI = "http://js-168-89.jetstream-cloud.org/geoserver/highres/wms?"
+        baseURI = this.wmsUrl;
         overlayType = 'highres:'
         let uid = parseInt(entry.info['uid']);
         if(uid <= 369) {
-          legendUriBase = 'http://js-168-89.jetstream-cloud.org/highreslegend/pi_t.png';
+          legendFinal = this.piLegend;
         }else {
-          legendUriBase = 'http://js-168-89.jetstream-cloud.org/highreslegend/2pi_t.png';
+          legendFinal = this.twoPiLegend;
         }
-        legendFinal = legendUriBase;
       }
 
       var layername = overlayType + 'uid' + entry.info['uid'] + '_unw'
@@ -612,21 +623,21 @@ export default {
     placePlotMarkers(southwest, northeast, clickloc, latlon, entry) {
       if (this.plottingMarkerEnd == null) {
         this.plotActive = true;
-        this.plotLat1 = clickloc.lat;
-        this.plotLon1 = clickloc.lng;
+        this.plotLat2 = clickloc.lat;
+        this.plotLon2 = clickloc.lng;
 
-        this.plotLat2 = latlon[2][1];
-        this.plotLon2 = latlon[2][0];
+        this.plotLat1 = latlon[2][1];
+        this.plotLon1 = latlon[2][0];
 
-        var factor = (this.plotLon2 - this.plotLon1) / 7;
-        this.plotLon2 = this.plotLon1 + factor;
-        this.plotLat2 = ((this.plotLat2 - this.plotLat1) / 5) + this.plotLat1
+        var factor = (this.plotLon1 - this.plotLon2) / 7;
+        this.plotLon1 = this.plotLon2 + factor;
+        this.plotLat1 = ((this.plotLat1 - this.plotLat2) / 5) + this.plotLat2
 
 
-        this.plottingMarkerStart = L.marker([this.plotLat1, this.plotLon1],
+        this.plottingMarkerStart = L.marker([this.plotLat2, this.plotLon2],
             {draggable: true, icon: this.startIcon});
         // console.log(this.plottingMarker1)
-        this.plottingMarkerEnd = L.marker([this.plotLat2, this.plotLon2],
+        this.plottingMarkerEnd = L.marker([this.plotLat1, this.plotLon1],
             {draggable: true, icon: this.endIcon});
 
         this.plotLine = L.polyline([this.plottingMarkerEnd.getLatLng(), this.plottingMarkerStart.getLatLng()],
@@ -656,9 +667,9 @@ export default {
 
         this.globalMap.off('click', this.markerClick);
 
-        // this.globalMap.fitBounds([this.plotLat1, this.plotLon1], [this.plotLat2, this.plotLon2])
+        // this.globalMap.fitBounds([this.plotLat2, this.plotLon2], [this.plotLat1, this.plotLon1])
 
-        this.getCSV(entry, [this.plotLat1, this.plotLon1, this.plotLat2, this.plotLon2]);
+        this.getCSV(entry, [this.plotLat2, this.plotLon2, this.plotLat1, this.plotLon1]);
       }
     },
 
