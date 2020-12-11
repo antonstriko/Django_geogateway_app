@@ -32,4 +32,10 @@
       border-radius: 8px;
       background-color: #bad7ff;
     }
+    .overviewButtonGroup .active {
+      color: #fff !important;
+      background-color: #3388ff !important;
+      border-color: #3388ff !important;
+
+    }
 </style>

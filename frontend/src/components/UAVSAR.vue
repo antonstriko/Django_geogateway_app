@@ -53,14 +53,16 @@
 
     <div v-if="uavsarLayers.length !== 0 && !activeQuery">
       <br/>
-      <b-container class="row justify-content-center">
+      <b-container >
       <div class="layer-options">
+        <b-row>
         <b-button @click="selDeselAll">
           Select/Deselect All
         </b-button>
         <b-button @click="clearQuery" variant="warning">
           Clear Query
         </b-button>
+        </b-row>
           <b-row style="margin-top: 5px">
             <div>
               <input type="date" id="start" name="trip-start" v-model="bracketDate">
@@ -68,17 +70,15 @@
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
             <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-        <b-checkbox v-model="alternateColoringChecked">Show Alternate Coloring (if available)</b-checkbox>
+        <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show Alternate Coloring</b-checkbox>
       </div>
+<!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
+<!--        variant="success">Download LOS Data</b-button>-->
       </b-container>
-      <br/>
 
 
       <div id="queryWindow">
-        <div hidden>
-          {{extendedColor}}
-          {{extendedBorder}}
-        </div>
+
         <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']" v-bind:style="{backgroundColor: entry.activeBackground}">
           <b-col>
             <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
@@ -120,17 +120,15 @@
             <div v-else-if="entry.extended && !extendingActive" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
 
               <div class="extended">
-                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
+<!--                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>-->
                 <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
-                <i style="font-size: small; ">Click UAVSAR tile to instantiate LOS plot</i>
-                <br />
-                <i style="font-size: small; color: #3388ff">Set Layer Opacity: <b>{{ opVal }}%</b></i>
+
+                <i style="font-size: small;">Set Layer Opacity: <b>{{ opVal }}%</b></i>
                 <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
 
                 <div v-if="LosPlotAvailable && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
-                  <hr/>
                   <b-input-group>
                     <b-input-group prepend="Start Lat/Lon" class="mb-2">
                       <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
@@ -143,21 +141,22 @@
                       <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
                     </b-input-group>
                   </b-input-group>
-
                   <b-input-group prepend="LOS Length">
                     <b-form-input v-model="losLength" name="length" placeholder=""></b-form-input>
                   </b-input-group>
                   <b-input-group prepend="Azimuth">
                     <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
                   </b-input-group>
-                  <br/>
+                  <b-row>
+                    <b-col>
                   <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
-                    <span v-if="plotActive">Update LOS Plot</span>
-                    <span v-else>Show LOS Plot</span>
+                    <span >Update LOS Plot</span>
                   </b-button>
-                  <br/>
-                  <br/>
-                  <span @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
+                    </b-col>
+                    <b-col style="margin-top: 10px;">
+                  <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
+                    </b-col>
+                  </b-row>
                 </div>
               </div>
 
@@ -460,6 +459,30 @@ export default {
       })
     },
 
+    downloadCSV(entry, latlon){
+      var losLength = this.setLosLength(latlon);
+      var azimuth = this.setAzimuth(latlon);
+      this.losLength = losLength;
+      this.azimuth = azimuth;
+      this.lat1 = latlon[0].toFixed(5);
+      this.lon1 = latlon[1].toFixed(5);
+      this.lat2 = latlon[2].toFixed(5);
+      this.lon2 = latlon[3].toFixed(5);
+
+      axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/los_download/', {
+        params: {
+          'entry':JSON.stringify(entry),
+          'lat1':this.lat1,
+          'lon1':this.lon1,
+          'lat2':this.lat2,
+          'lon2':this.lon2,
+          'losLength':losLength,
+          'azimuth':azimuth,
+        }
+      }).then(function (response){
+        window.open(response.data);
+      })
+    },
     findWithAttr(array, attr, value) {
       for(var i = 0; i < array.length; i += 1) {
         if(array[i][attr] === value) {

@@ -16,12 +16,10 @@
           <option value='getdisplacement'>Displacement</option>
           <option value='getmodel'>Model</option>
         </select>
-        <br/>
 
         <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
           <b-icon-pencil></b-icon-pencil> Draw an area on map</b-button>
         <b-button variant="warning" id="clearGnss" @click="clearGnss()"><b-icon-trash></b-icon-trash> Clear GNSS Layers</b-button>
-        <br/>
         <br/>
 
         <b-input-group prepend="Latitude">
@@ -84,50 +82,59 @@
         <b-input-group prepend="Output Prefix">
           <b-form-input v-model="gs_outputprefix" name="gs_outputprefix"></b-form-input>
         </b-input-group>
-
-        <br />
-        <div class="checkbox">
-          <label class="checkbox">
+       <b-col class="miscOptions">
+        <b-row class="checkbox" style="text-align: left">
+          <label class="checkbox" >
             <input v-model="markerSize" name="vabs" type="checkbox" id="markerSize"/>
             Minimize Marker Size
           </label>
-        </div>
-        <div class="checkbox">
+        </b-row>
+        <b-row class="checkbox" style="text-align: left">
           <label class="checkbox">
             <input v-model="gs_vabs" name="vabs" type="checkbox" id="gs_vabs" value= ""/>
             Display absolute verticals
           </label>
-        </div>
-        <div class="checkbox">
+        </b-row>
+        <b-row class="checkbox" style="text-align: left">
           <label class="checkbox">
             <input v-model="gs_eon" name="mon" type="checkbox" id="gs_eon" value=""/>
             Include error ellipses
           </label>
-        </div>
+        </b-row>
+         <b-row>
+           <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
+           </button>
+         </b-row>
+         <br />
+         <b-row>
+         <div style="float: left; text-align: left"><strong>Data source: <br/><a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
+         </b-row>
+       </b-col>
 
-        <br />
-        <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
-        </button>
-        <br />
-        <br />
+        <b-col >
 
-        <div id="gpsservice_results"></div>
-        <div><strong>Data source: <a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
+          <div class="outputLayers" v-if="ranLayers.length!==0 && !activeGnssQuery">
+            <strong>Output Layers</strong>
+            <div  v-for="layer in ranLayers" :key="layer.name">
+              <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.type}}</a> </span> <br>
+            </div>
+            </div>
+
+        </b-col>
+
+
+
       </form>
       <div v-if="activeGnssQuery" style="overflow: hidden">
         <br/>
         <b-spinner variant="success" label="Spinning"></b-spinner>
       </div>
       <br/>
-      <br/>
-      <div v-if="ranLayers.length!==0 && !activeGnssQuery" style="color: #343a40; text-align: left">
-        <div v-for="layer in ranLayers" :key="layer.name">
-          <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.name}}</a> </span> <br>
-          <hr/>
-        </div>
-      </div>
+
+
 
     </div>
+
   </div>
 
 
@@ -189,10 +196,10 @@ export default {
       var hName = 'gnssH'.concat(layer.pre);
       var vName = 'gnssV'.concat(layer.pre);
       if(active){
-        layer.type === 'H' ? bus.$emit('addExisting', hName) :
+        layer.type === 'Horizontal KML' ? bus.$emit('addExisting', hName) :
             bus.$emit('addExisting', vName);
       }else{
-        layer.type === 'H' ? bus.$emit('RemoveLayer', hName) :
+        layer.type === 'Horizontal KML' ? bus.$emit('RemoveLayer', hName) :
             bus.$emit('RemoveLayer', vName);
       }
     },
@@ -275,7 +282,7 @@ export default {
                 folder: folder,
                 active: true,
                 url: horizontalUrl,
-                type: 'H',
+                type: 'Horizontal KML',
               })
               queries.push({
                 pre: prefix,
@@ -283,7 +290,7 @@ export default {
                 folder: folder,
                 active: true,
                 url: verticalUrl,
-                type: 'V',
+                type: 'Vertical KML',
               })
               const kmlURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/get_kml'
               axios.get(kmlURI, {
@@ -354,5 +361,23 @@ export default {
 }
 strong {
   color: #343a40;
+}
+
+.miscOptions {
+  float: left;
+  width: 50%;
+}
+
+.outputLayers {
+  /*color: #343a40;*/
+  margin-left: 50%;
+  font-size: 14px;
+  border: 2px solid #3388ff;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #bad7ff;
+  text-align: center;
+  margin-right: auto;
+
 }
 </style>

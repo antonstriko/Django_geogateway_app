@@ -230,6 +230,32 @@ def uavsarCSV(request):
 #         return HttpResponse(uploaded_file_url, content_type='text/plain')
 
 
+def losDownload(request):
+    if request.method == 'GET':
+        # http://149.165.157.193:8000/los/profile?image=uid475_unw&point=-115.8003008515625,33.56101488057798,-115.7003008515625,33.56101488057798&format=csv&resolution=undefined&method=native
+        raw = request.GET.get('entry')
+        entry = json.loads(raw)
+        info = entry['info']
+        uid = info['uid']
+        image_name = info['dataname']
+        lat1 = request.GET.get('lat1')
+        lon1 = request.GET.get('lon1')
+        lat2 = request.GET.get('lat2')
+        lon2 = request.GET.get('lon2')
+        losLength = request.GET.get('losLength')
+        azimuth = request.GET.get('azimuth')
+
+        finalURI = losQueryUrl + uid + '_unw&point=' + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2 + \
+                   '&format=csv&resolution=undefined&method=native'
+
+
+        return HttpResponse(finalURI)
+
+
+
+
+
+
 def kmz_upload(request):
     if request.method == 'POST' and request.FILES['file']:
         file = request.FILES['file']

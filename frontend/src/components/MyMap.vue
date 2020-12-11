@@ -261,7 +261,9 @@ export default {
             xLabelHeight: 16,
             yLabelWidth: 16,
             xlabel: 'Distance (km)',
-            ylabel: 'GRC (cm)'
+            ylabel: 'GRC (cm)',
+            maxNumberWidth: 5,
+            sigFigs: 5,
           }
       )
     },
