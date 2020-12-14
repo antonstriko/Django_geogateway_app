@@ -33,7 +33,7 @@
                         v-model="gdacsL"
                         @change="gdacsLayer"
                         id="gdacs"
-                ><label for="gdacs">Show GDACS Data </label>
+                ><label for="gdacs">Show GDACS Data (>=5.5M)</label>
                 <br/>
                 <br/>
                 <h3>Nowcast Plots</h3>
