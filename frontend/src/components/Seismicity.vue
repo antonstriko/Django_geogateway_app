@@ -174,7 +174,7 @@ export default {
           startD.setDate(startD.getDate()-30);
           break;
       }
-      axios.get('https://geo-gateway.scigap.org/geogateway_django_app/seismicity', {
+      axios.get('/geogateway_django_app/seismicity', {
         params: {
           "fullUri": timeUrl,
         }}).then(function(response){
@@ -196,7 +196,7 @@ export default {
           "maxlongitude=" + this.maxLon;
       this.kmlUri = fullUri.replace('geojson', 'kml');
       this.geoUri = fullUri;
-      axios.get('https://geo-gateway.scigap.org/geogateway_django_app/seismicity', {
+      axios.get('/geogateway_django_app/seismicity', {
         params: {
           "fullUri": fullUri,
         }
