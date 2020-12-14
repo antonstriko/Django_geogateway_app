@@ -116,7 +116,7 @@
           <div class="outputLayers" v-if="ranLayers.length!==0 && !activeGnssQuery">
             <strong>Output Layers</strong>
             <div  v-for="layer in ranLayers" :key="layer.name">
-              <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.type}}</a> </span> <br>
+              <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> <br>
             </div>
             </div>
 
@@ -228,7 +228,7 @@ export default {
           }
         }
         // this.layerCheckbox = true;
-        const baseURI = 'https://geo-gateway.scigap.org/geogateway_django_app/gps_service'
+        const baseURI = 'http://127.0.0.1:8000/geogateway_django_app/gps_service'
         //request JSON dict of GPS_service details with query params from form
         axios.get(baseURI, {
           params: {
@@ -292,7 +292,7 @@ export default {
                 url: verticalUrl,
                 type: 'Vertical KML',
               })
-              const kmlURI = 'https://geo-gateway.scigap.org/geogateway_django_app/get_kml'
+              const kmlURI = 'http://127.0.0.1:8000/geogateway_django_app/get_kml'
               axios.get(kmlURI, {
                 params: {
                   "file": fileNameH,

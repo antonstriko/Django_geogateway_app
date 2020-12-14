@@ -7,7 +7,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 FILE_UPLOAD_PERMISSIONS = 0o644
 CSRF_COOKIE_NAME= "XSRF-TOKEN"
 
-ALLOWED_HOSTS = ['django.seagrid.org', '192.168.1.4', '127.0.0.1']
+ALLOWED_HOSTS = ['django.seagrid.org', '192.168.1.4',]
 
 
 class Settings:
