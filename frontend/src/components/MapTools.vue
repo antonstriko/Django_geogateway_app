@@ -161,9 +161,9 @@
                 var uploadUrl;
                 var ext = getExtension(fileName);
                         if(ext == 'kmz'){
-                            uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kmz_upload/'
+                            uploadUrl = 'https://geo-gateway.scigap.org/geogateway_django_app/kmz_upload/'
                         }else {
-                            uploadUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/kml_upload/'
+                            uploadUrl = 'https://geo-gateway.scigap.org/geogateway_django_app/kml_upload/'
                         }
                 let formData = new FormData();
                 formData.append('file', this.kmlFile);
