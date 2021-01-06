@@ -15,8 +15,8 @@ from django.core.files.base import ContentFile
 
 GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
 KmlPrefix = "http://156.56.174.162:8000/static"
-wmsColorUrl = 'http://js-157-39.jetstream-cloud.org/geoserver/InSAR/wms?'
-wmsUrl = 'http://js-157-39.jetstream-cloud.org/geoserver/highres/wms?'
+wmsColorUrl = 'http://js-157-107.jetstream-cloud.org/geoserver/InSAR/wms?'
+wmsUrl = 'http://js-157-107.jetstream-cloud.org/geoserver/highres/wms?'
 losQueryUrl = 'http://js-157-58.jetstream-cloud.org:8000/los/profile?image=uid'
 
 WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'

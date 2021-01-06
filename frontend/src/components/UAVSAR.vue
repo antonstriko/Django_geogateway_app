@@ -203,12 +203,12 @@ export default {
       pinDrop: null,
       rectDraw: null,
       geometryActive: false,
-      wmsColorUrl: 'http://js-157-39.jetstream-cloud.org/geoserver/InSAR/wms?',
-      wmsUrl: 'http://js-157-39.jetstream-cloud.org/geoserver/highres/wms?',
+      wmsColorUrl: 'http://js-157-107.jetstream-cloud.org/geoserver/InSAR/wms?',
+      wmsUrl: 'http://js-157-107.jetstream-cloud.org/geoserver/highres/wms?',
       losQueryUrl: 'http://gf1.ucs.indiana.edu/insartool/profile?image=InSAR:uid',
-      altColorLegend: 'http://js-157-39.jetstream-cloud.org/uavsarlegend1/uid',
-      piLegend: 'http://js-157-39.jetstream-cloud.org/highreslegend/pi_t.png',
-      twoPiLegend: 'http://js-157-39.jetstream-cloud.org/highreslegend/2pi_t.png',
+      altColorLegend: 'http://js-157-107.jetstream-cloud.org/uavsarlegend1/uid',
+      piLegend: 'http://js-157-107.jetstream-cloud.org/highreslegend/pi_t.png',
+      twoPiLegend: 'http://js-157-107.jetstream-cloud.org/highreslegend/2pi_t.png',
 
     }
   },
@@ -455,7 +455,7 @@ export default {
         }
       }).then(function (response){
         vm.chartData(response.data);
-        console.log(response.data);
+
       })
     },
 
