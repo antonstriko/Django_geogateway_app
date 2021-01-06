@@ -5199,7 +5199,7 @@ leaflet-geometryutil@^0.9.3:
 
 "leaflet-kml@https://github.com/webgisdeveloper/leaflet-kml.git":
   version "1.1.0"
-  resolved "https://github.com/webgisdeveloper/leaflet-kml.git#6d4c536c51a45649c6900b458b4c63e686a85491"
+  resolved "https://github.com/webgisdeveloper/leaflet-kml.git#529c383094429364c8b70955fce88963464e7fd8"
 
 leaflet-kmz@^1.0.6:
   version "1.0.6"
