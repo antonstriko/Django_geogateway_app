@@ -116,21 +116,6 @@ export default {
 
     var drawnItems = new L.FeatureGroup();
     this.globalMap.addLayer(drawnItems);
-    this.drawControl = new L.Control.Draw({
-      draw: {
-        polygon: false,
-        marker: false,
-        polyline: false,
-        circle: false,
-        rectangle: false,
-        circlemarker: false,
-      },
-      edit: {
-        featureGroup: drawnItems
-      }
-    });
-    this.globalMap.addControl(this.drawControl);
-    this.globalMap.addLayer(drawnItems);
 
     bus.$on('UrlAddLayer', (url, layerName) =>
         this.kmlUrl(url, layerName));
@@ -149,9 +134,6 @@ export default {
 
     bus.$on('filterCat', (text, dFilter, mFilter, iconScale, startDate, endDate) =>
         this.catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate));
-
-    bus.$on('addGeoJson', (text, layer) =>
-        this.addGeoJson(text, layer));
 
     bus.$on('gdacsGeoJSON', (text) =>
         this.addGdacsLayers(text));
