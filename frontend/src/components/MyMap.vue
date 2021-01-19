@@ -111,11 +111,20 @@ export default {
 
     legend2.addTo(this.globalMap);
 
-
-
-
     var drawnItems = new L.FeatureGroup();
     this.globalMap.addLayer(drawnItems);
+
+    this.drawControl = new L.Control.Draw({
+      draw: {
+        polygon: false,
+        marker: false,
+        polyline: false,
+        circle: false,
+        rectangle: false,
+        circlemarker: false,
+      },
+    });
+    this.globalMap.addControl(this.drawControl);
 
     bus.$on('UrlAddLayer', (url, layerName) =>
         this.kmlUrl(url, layerName));

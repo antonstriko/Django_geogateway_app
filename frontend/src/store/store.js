@@ -22,9 +22,13 @@ export const store = new Vuex.Store({
             coasts: false,
             kml: false,
             kmlFile: null,
-            selected: 'grey',
+            selectedColor: 'grey',
             value: 50,
             kmlLayers: [],
+            currLoc: false,
+            userLocationCirc: null,
+            userLocationPin: null,
+            locActive: false,
         },
         uavsar: {
             overview: false,
@@ -69,6 +73,7 @@ export const store = new Vuex.Store({
             dateFilter: false,
             bracketDate: '',
             currentExtendedEntry: null,
+            overviewLegend: null,
         },
         map: {
             uavsarEntry: null,
@@ -123,6 +128,8 @@ export const store = new Vuex.Store({
             horizUrl: '',
             vertUrl: '',
             activeGnssQuery: false,
+            geometryActive: false,
+            rectDraw: null,
         },
         seismicity: {
             day: false,

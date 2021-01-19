@@ -43,7 +43,7 @@
             tabUrl: function(){
                 return this.$route.fullPath;
             },
-          ...mapFields(['uavsar.overview', 'map.globalMap', 'map.layers'])
+          ...mapFields(['uavsar.overview', 'map.globalMap', 'map.layers', 'uavsar.overviewLegend'])
         },
         methods: {
             toPage(page){
@@ -92,6 +92,14 @@
                   zIndex: 2
                 }
             );
+            this.overviewLegend = L.control({position: 'bottomleft'});
+            this.overviewLegend.onAdd = function () {
+              var div = L.DomUtil.create('div', 'overviewLegend');
+              div.innerHTML = '<img src=' + 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/uavsarlegend.png' + '>';
+              return div;
+            };
+            this.overviewLegend.addTo(this.globalMap);
+
             this.globalMap.addLayer(this.layers['uavsarWMS'])
             this.layers['uavsarWMS'].setOpacity(.7);
           },

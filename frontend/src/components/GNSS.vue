@@ -17,10 +17,17 @@
           <option value='getmodel'>Model</option>
         </select>
 
-        <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="drawToolbar()">
+        <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="gnssDrawRect()">
           <b-icon-pencil></b-icon-pencil> Draw an area on map</b-button>
         <b-button variant="warning" id="clearGnss" @click="clearGnss()"><b-icon-trash></b-icon-trash> Clear GNSS Layers</b-button>
         <br/>
+
+        <div v-if="geometryActive" >
+          <br/>
+          <b-button variant="warning" @click="drawListenerOff">
+            <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
+          <br/>
+        </div>
 
         <b-input-group prepend="Latitude">
           <b-form-input v-model="gs_latitude"  name="gs_latitude"></b-form-input>
@@ -82,34 +89,34 @@
         <b-input-group prepend="Output Prefix">
           <b-form-input v-model="gs_outputprefix" name="gs_outputprefix"></b-form-input>
         </b-input-group>
-       <b-col class="miscOptions">
-        <b-row class="checkbox" style="text-align: left">
-          <label class="checkbox" >
-            <input v-model="markerSize" name="vabs" type="checkbox" id="markerSize"/>
-            Minimize Marker Size
-          </label>
-        </b-row>
-        <b-row class="checkbox" style="text-align: left">
-          <label class="checkbox">
-            <input v-model="gs_vabs" name="vabs" type="checkbox" id="gs_vabs" value= ""/>
-            Display absolute verticals
-          </label>
-        </b-row>
-        <b-row class="checkbox" style="text-align: left">
-          <label class="checkbox">
-            <input v-model="gs_eon" name="mon" type="checkbox" id="gs_eon" value=""/>
-            Include error ellipses
-          </label>
-        </b-row>
-         <b-row>
-           <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
-           </button>
-         </b-row>
-         <br />
-         <b-row>
-         <div style="float: left; text-align: left"><strong>Data source: <br/><a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
-         </b-row>
-       </b-col>
+        <b-col class="miscOptions">
+          <b-row class="checkbox" style="text-align: left">
+            <label class="checkbox" >
+              <input v-model="markerSize" name="vabs" type="checkbox" id="markerSize"/>
+              Minimize Marker Size
+            </label>
+          </b-row>
+          <b-row class="checkbox" style="text-align: left">
+            <label class="checkbox">
+              <input v-model="gs_vabs" name="vabs" type="checkbox" id="gs_vabs" value= ""/>
+              Display absolute verticals
+            </label>
+          </b-row>
+          <b-row class="checkbox" style="text-align: left">
+            <label class="checkbox">
+              <input v-model="gs_eon" name="mon" type="checkbox" id="gs_eon" value=""/>
+              Include error ellipses
+            </label>
+          </b-row>
+          <b-row>
+            <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
+            </button>
+          </b-row>
+          <br />
+          <b-row>
+            <div style="float: left; text-align: left"><strong>Data source: <br/><a href="https://sideshow.jpl.nasa.gov/post/series.html" target="_blank">GNSS Time Series</a></strong></div>
+          </b-row>
+        </b-col>
 
         <b-col >
 
@@ -118,7 +125,7 @@
             <div  v-for="layer in ranLayers" :key="layer.name">
               <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> <br>
             </div>
-            </div>
+          </div>
 
         </b-col>
 
@@ -141,11 +148,11 @@
 </template>
 
 <script>
-// TODO add checkbox for removing gnss layer
 
 import {bus} from '@/main'
 import axios from 'axios'
 import { mapFields } from 'vuex-map-fields';
+import L from "leaflet";
 
 export default {
 
@@ -183,6 +190,10 @@ export default {
       'gnss.horizUrl',
       'gnss.vertUrl',
       'gnss.activeGnssQuery',
+      'gnss.geometryActive',
+
+        'map.drawControl',
+        'map.globalMap',
     ])
 
   },
@@ -329,7 +340,41 @@ export default {
 
     },
     drawToolbar() {
-      bus.$emit('gnssDraw');
+      this.geometryActive = true;
+
+      new L.Draw.Rectangle(this.globalMap, this.drawControl.options.rectangle).enable();
+
+      this.drawListener('gnss');
+    },
+    gnssDrawRect(){
+      this.geometryActive = true;
+      let vm = this;
+      vm.rectDraw = new L.Draw.Rectangle(vm.globalMap, vm.drawControl.options.rectangle);
+      vm.rectDraw.enable();
+      vm.globalMap.on('draw:created', function (e) {
+        var type = e.layerType;
+        if (type === 'rectangle') {
+          var layer = e.layer;
+          vm.globalMap.addLayer(layer);
+          vm.centerLat = layer.getCenter().lat;
+          vm.centerLng = layer.getCenter().lng;
+          vm.maxLat = layer.getLatLngs()[0][1].lat;
+          vm.maxLon = layer.getLatLngs()[0][2].lng;
+          vm.minLat = layer.getLatLngs()[0][3].lat;
+          vm.minLon = layer.getLatLngs()[0][0].lng;
+          vm.globalMap.setView([vm.centerLat,vm.centerLng], 7);
+          vm.globalMap.removeLayer(layer)
+          vm.rectDraw = null;
+          bus.$emit('gnssDrawQuery', vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng)
+          vm.geometryActive = false;
+          this.rectDraw.disable();
+        }});
+
+    },
+    drawListenerOff(){
+      this.geometryActive = false;
+
+      this.rectDraw.disable();
     },
     clearGnss(){
       this.layersActive = false;
@@ -343,7 +388,6 @@ export default {
       this.ranLayers = [];
     },
     setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
-      bus.$emit('drawListenerOff');
       this.gs_latitude = centerLat;
       this.gs_longitude = centerLng;
       this.gs_height = Math.abs(maxLat - minLat);

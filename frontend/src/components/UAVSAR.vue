@@ -267,6 +267,7 @@ export default {
       'uavsar.dateFilter',
       'uavsar.bracketDate',
       'uavsar.currentExtendedEntry',
+      'uavsar.overviewLegend',
       //Map objects
       'map.globalMap',
       'map.layers',
@@ -754,6 +755,13 @@ export default {
               zIndex: 2
             }
         );
+        this.overviewLegend = L.control({position: 'bottomleft'});
+        this.overviewLegend.onAdd = function () {
+          var div = L.DomUtil.create('div', 'overviewLegend');
+          div.innerHTML = '<img src=' + 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/uavsarlegend.png' + '>';
+          return div;
+        };
+        this.overviewLegend.addTo(this.globalMap);
         this.globalMap.addLayer(this.layers['uavsarWMS'])
         this.layers['uavsarWMS'].setOpacity(.7)
 
@@ -762,6 +770,7 @@ export default {
         this.uavsarLayersFiltered = [];
         this.layers['uavsarWMS'].remove();
         this.LosPlotAvailable = false;
+        this.overviewLegend.remove();
 
       }
     },
@@ -857,6 +866,8 @@ export default {
           Promise.all(promises).then((responses) =>{
             if (vm.layers['uavsarWMS']) {
               vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
+              vm.overviewLegend.remove();
+              vm.overviewLegend = null;
             }
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
