@@ -192,8 +192,8 @@ export default {
       'gnss.activeGnssQuery',
       'gnss.geometryActive',
 
-        'map.drawControl',
-        'map.globalMap',
+      'map.drawControl',
+      'map.globalMap',
     ])
 
   },
@@ -367,7 +367,6 @@ export default {
           vm.rectDraw = null;
           bus.$emit('gnssDrawQuery', vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng)
           vm.geometryActive = false;
-          this.rectDraw.disable();
         }});
 
     },
