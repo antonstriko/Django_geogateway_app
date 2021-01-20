@@ -54,15 +54,15 @@
     <div v-if="uavsarLayers.length !== 0 && !activeQuery">
       <br/>
       <b-container >
-      <div class="layer-options">
-        <b-row>
-        <b-button @click="selDeselAll">
-          Select/Deselect All
-        </b-button>
-        <b-button @click="clearQuery" variant="warning">
-          Clear Query
-        </b-button>
-        </b-row>
+        <div class="layer-options">
+          <b-row>
+            <b-button @click="selDeselAll">
+              Select/Deselect All
+            </b-button>
+            <b-button @click="clearQuery" variant="warning">
+              Clear Query
+            </b-button>
+          </b-row>
           <b-row style="margin-top: 5px">
             <div>
               <input type="date" id="start" name="trip-start" v-model="bracketDate">
@@ -70,10 +70,10 @@
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
             <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-        <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show Alternate Coloring</b-checkbox>
-      </div>
-<!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
-<!--        variant="success">Download LOS Data</b-button>-->
+          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show Alternate Coloring</b-checkbox>
+        </div>
+        <!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
+        <!--        variant="success">Download LOS Data</b-button>-->
       </b-container>
 
 
@@ -85,7 +85,7 @@
           </b-col>
           <b-col >
             <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;"
-                 >
+            >
               <div style="font-size: 13px" id="dataname">{{entry.info['dataname']}}</div>
               <b style="font-size: 15px">{{entry.info['time1']}}  {{entry.info['time2']}}</b>
               <br />
@@ -120,7 +120,7 @@
             <div v-else-if="entry.extended && !extendingActive" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
 
               <div class="extended">
-<!--                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>-->
+                <!--                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>-->
                 <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
@@ -149,12 +149,12 @@
                   </b-input-group>
                   <b-row>
                     <b-col>
-                  <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
-                    <span >Update LOS Plot</span>
-                  </b-button>
+                      <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
+                        <span >Update LOS Plot</span>
+                      </b-button>
                     </b-col>
                     <b-col style="margin-top: 10px;">
-                  <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
+                      <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
                     </b-col>
                   </b-row>
                 </div>
@@ -268,6 +268,7 @@ export default {
       'uavsar.bracketDate',
       'uavsar.currentExtendedEntry',
       'uavsar.overviewLegend',
+      'uavsar.lowResDisplayed',
       //Map objects
       'map.globalMap',
       'map.layers',
@@ -275,6 +276,7 @@ export default {
       'map.uavsarLegend',
       'map.plotActive',
       'map.headingLegend',
+
     ])
   },
   mounted() {
@@ -494,7 +496,6 @@ export default {
     },
     extendEntry(entry){
       var vm = this;
-
       for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
         this.uavsarLayersFiltered[i].extended = false;
       }
@@ -521,7 +522,7 @@ export default {
 
         this.currentExtendedEntry = this.findWithAttr(this.uavsarLayersFiltered, 'extended', true);
 
-            //get wms description and check for exception
+        //get wms description and check for exception
 
         axios.get(testURI, {
           params: {
@@ -719,7 +720,6 @@ export default {
     selDeselAll(){
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
         this.uavsarLayersFiltered[i].active = this.selDesel;
-        this.uavsarLayers[i] = this.selDesel;
         this.kmlLayerChange(this.uavsarLayersFiltered[i]);
       }
       this.selDesel = !this.selDesel;
@@ -746,8 +746,8 @@ export default {
       this.extendedColor = null;
       this.extendedBorder = null;
     },
-    showOverview(){
-      if(this.overview) {
+    showOverview() {
+      if (this.overview) {
         this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
               layers: 'InSAR:thumbnailmosaic',
               transparent: true,
@@ -755,24 +755,31 @@ export default {
               zIndex: 2
             }
         );
-        this.overviewLegend = L.control({position: 'bottomleft'});
-        this.overviewLegend.onAdd = function () {
-          var div = L.DomUtil.create('div', 'overviewLegend');
-          div.innerHTML = '<img src=' + 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/uavsarlegend.png' + '>';
-          return div;
-        };
-        this.overviewLegend.addTo(this.globalMap);
+        if(!this.overviewLegend){this.showOverviewLegend();}
         this.globalMap.addLayer(this.layers['uavsarWMS'])
         this.layers['uavsarWMS'].setOpacity(.7)
 
-      }else {
+      } else {
         this.uavsarLayers = [];
         this.uavsarLayersFiltered = [];
         this.layers['uavsarWMS'].remove();
         this.LosPlotAvailable = false;
         this.overviewLegend.remove();
-
+        this.overviewLegend = null;
       }
+    },
+    showOverviewLegend(){
+      this.overviewLegend = L.control({position: 'bottomleft'});
+      this.overviewLegend.onAdd = function () {
+        var div = L.DomUtil.create('div', 'overviewLegend');
+        div.innerHTML = '<img src=' + 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/uavsarlegend.png' + '>';
+        return div;
+      };
+      this.overviewLegend.addTo(this.globalMap);
+    },
+    removeOverviewLegend() {
+      this.overviewLegend.remove();
+      this.overviewLegend = null;
     },
     flightPathQuery(path){
       this.activeQuery = true;
@@ -866,8 +873,7 @@ export default {
           Promise.all(promises).then((responses) =>{
             if (vm.layers['uavsarWMS']) {
               vm.globalMap.removeLayer(vm.layers['uavsarWMS']);
-              vm.overviewLegend.remove();
-              vm.overviewLegend = null;
+
             }
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
