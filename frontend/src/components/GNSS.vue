@@ -120,10 +120,11 @@
 
         <b-col >
 
-          <div class="outputLayers" v-if="ranLayers.length!==0 && !activeGnssQuery">
+          <div class="outputLayers" v-if="gnssLayers.length!==0 && !activeGnssQuery">
             <strong>Output Layers</strong>
-            <div  v-for="layer in ranLayers" :key="layer.name">
-              <input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> <br>
+            <div  v-for="layer in gnssLayers" :key="layer.name">
+              <div v-if="layer.type !== 'table.txt'" ><input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> </div>
+              <div v-else><a :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
             </div>
           </div>
 
@@ -187,13 +188,13 @@ export default {
       'gnss.activeLayers',
       'gnss.markerSize',
       'gnss.layersActive',
-      'gnss.horizUrl',
-      'gnss.vertUrl',
       'gnss.activeGnssQuery',
       'gnss.geometryActive',
+        'gnss.gnssLayers',
 
-      'map.drawControl',
-      'map.globalMap',
+        'map.drawControl',
+        'map.globalMap',
+        'map.layers',
     ])
 
   },
@@ -204,35 +205,28 @@ export default {
 
   methods: {
     showHideLayers(active, layer){
-      var hName = 'gnssH'.concat(layer.pre);
-      var vName = 'gnssV'.concat(layer.pre);
-      if(active){
-        layer.type === 'Horizontal KML' ? bus.$emit('addExisting', hName) :
-            bus.$emit('addExisting', vName);
-      }else{
-        layer.type === 'Horizontal KML' ? bus.$emit('RemoveLayer', hName) :
-            bus.$emit('RemoveLayer', vName);
-      }
-    },
+      let name = layer.pre + layer.type;
+        if(active){
+          this.globalMap.addLayer(this.layers[name])
+        }else {
+          this.globalMap.removeLayer(this.layers[name]);
+        }
+
+      },
     rungpsservice(){
       this.activeGnssQuery = true;
       var vm = this;
-      var fileNameH;
-      var fileNameV;
-      var folder;
-      var props;
+      var fileNameH, fileNameV, fileNameT, folder, props;
       var markerSize = this.markerSize;
-      var queries = this.ranLayers;
-      var verticalUrl;
-      var horizontalUrl;
+      var verticalUrl, horizontalUrl, tableUrl;
       var prefix = this.gs_outputprefix;
       if(this.kmltype_sel === ''){
         alert("Please select as least one plot!");
       }
       else {
 
-        for(var i = 0;i<queries.length;i++){
-          var splitPrefix = queries[i].name.split('_')[0];
+        for(var i = 0;i<this.gnssLayers.length;i++){
+          var splitPrefix = this.gnssLayers[i].name.split('_')[0];
           if(splitPrefix === this.gs_outputprefix){
             alert('There is already an existing query with that name, please rename and resubmit')
             return;
@@ -283,25 +277,36 @@ export default {
                 }else if(ext == 'horizontal.kml'){
                   horizontalUrl = props.urls[i];
                   fileNameH = props.results[i];
+                }else if(ext == 'table.txt'){
+                  tableUrl = props.urls[i];
+                  fileNameT = props.results[i];
                 }
               }
 
               folder = props.folder;
-              queries.push({
+              vm.gnssLayers.push({
+                pre: prefix,
+                name: fileNameT,
+                folder: folder,
+                active: true,
+                url: tableUrl,
+                type: 'table.txt',
+              })
+              vm.gnssLayers.push({
                 pre: prefix,
                 name: fileNameH,
                 folder: folder,
                 active: true,
                 url: horizontalUrl,
-                type: 'Horizontal KML',
+                type: 'h.kml',
               })
-              queries.push({
+              vm.gnssLayers.push({
                 pre: prefix,
                 name: fileNameV,
                 folder: folder,
                 active: true,
                 url: verticalUrl,
-                type: 'Vertical KML',
+                type: 'v.kml',
               })
               const kmlURI = '/geogateway_django_app/get_kml'
               axios.get(kmlURI, {
@@ -313,7 +318,9 @@ export default {
                 //emit raw kml text to parent map component
               }).then(function (response) {
                 // console.log(toGeoJSON.kml(response.data));
-                bus.$emit('addGnssLayer', response.data, 'gnssH', prefix);
+                let hName = prefix + 'h.kml';
+                vm.addGnssLayer(response.data, hName);
+
               })
               axios.get(kmlURI, {
                 params: {
@@ -326,17 +333,24 @@ export default {
                 // console.log(toGeoJSON.kml(response.data));
                 // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
                 // console.log(geojson)
-
-                bus.$emit('addGnssLayer', response.data, 'gnssV', prefix);
+                let vName = prefix + 'v.kml';
+                vm.addGnssLayer(response.data, vName);
                 console.log(markerSize)
                 vm.activeGnssQuery = false;
               })
             })
-        this.horizUrl = horizontalUrl;
-        this.vertUrl = verticalUrl;
-
         this.layersActive = true;
       }
+
+    },
+    addGnssLayer(file, type) {
+      this.kmlText(file, type);
+    },
+    kmlText(text, layerName) {
+      const parser = new DOMParser();
+      const kml = parser.parseFromString(text, 'text/xml');
+      this.layers[layerName] = new L.KML(kml);
+      this.globalMap.addLayer(this.layers[layerName]);
 
     },
     drawToolbar() {
@@ -362,7 +376,6 @@ export default {
           vm.maxLon = layer.getLatLngs()[0][2].lng;
           vm.minLat = layer.getLatLngs()[0][3].lat;
           vm.minLon = layer.getLatLngs()[0][0].lng;
-          vm.globalMap.setView([vm.centerLat,vm.centerLng], 7);
           vm.globalMap.removeLayer(layer)
           vm.rectDraw = null;
           bus.$emit('gnssDrawQuery', vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng)
@@ -377,14 +390,14 @@ export default {
     },
     clearGnss(){
       this.layersActive = false;
-      for(var i = 0; i < this.ranLayers.length; i++){
-        var layer = this.ranLayers[i];
-        var hName = 'gnssH'.concat(layer.pre);
-        var vName = 'gnssV'.concat(layer.pre);
-        bus.$emit('RemoveLayer', hName);
-        bus.$emit('RemoveLayer', vName);
+      for(var i = 0; i < this.gnssLayers.length; i++){
+        let curr = this.gnssLayers[i];
+        if(curr.type !== 'table.txt') {
+          let name = curr.pre + curr.type;
+          this.globalMap.removeLayer(this.layers[name]);
+        }
       }
-      this.ranLayers = [];
+      this.gnssLayers = [];
     },
     setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
       this.gs_latitude = centerLat;
@@ -413,14 +426,16 @@ strong {
 
 .outputLayers {
   /*color: #343a40;*/
-  margin-left: 50%;
+  margin-left: 55%;
   font-size: 14px;
+  width: 40%;
   border: 2px solid #3388ff;
   box-sizing: border-box;
   border-radius: 8px;
   background-color: #bad7ff;
   text-align: center;
   margin-right: auto;
+  position: absolute;
 
 }
 </style>

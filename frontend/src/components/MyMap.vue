@@ -327,7 +327,6 @@ export default {
     },
     addGnssLayer(file, type, prefix) {
       this.kmlText(file, type.concat(prefix));
-
     },
     removePlotGnss() {
       console.log(this.layers['gnssPlotPt'].remove());

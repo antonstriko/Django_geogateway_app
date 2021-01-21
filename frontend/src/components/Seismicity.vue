@@ -148,6 +148,8 @@ export default {
   },
   methods: {
     clearUsgs(){
+      this.geoUri = '';
+      this.kmlUri = '';
       bus.$emit('ClearUsgs', 'usgs_layer');
     },
     showSelected(time) {

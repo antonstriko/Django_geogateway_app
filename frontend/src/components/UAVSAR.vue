@@ -496,6 +496,7 @@ export default {
     },
     extendEntry(entry){
       var vm = this;
+      this.overviewLegend.remove();
       for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
         this.uavsarLayersFiltered[i].extended = false;
       }
@@ -732,6 +733,7 @@ export default {
         if(this.globalMap.hasLayer(this.uavsarDisplayedLayers[uid])) {
           this.globalMap.removeLayer(this.uavsarDisplayedLayers[uid]);
         }
+
       }
       this.resetPlot();
       if(this.uavsarHighResLayer !== null){
@@ -740,6 +742,7 @@ export default {
         this.uavsarLegend.remove();
       }
       this.showOverview();
+      this.showOverviewLegend();
       this.uavsarDisplayedLayers = [];
       this.uavsarLayersFiltered = [];
       this.uavsarLayers = [];

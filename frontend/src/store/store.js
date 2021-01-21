@@ -103,7 +103,7 @@ export const store = new Vuex.Store({
             },
         },
         gnss: {
-            selected: [],
+            gnssLayers: [],
             kmltype_sel: 'getvelocities',
             gs_latitude: '',
             gs_longitude: '',
@@ -126,8 +126,6 @@ export const store = new Vuex.Store({
             activeLayers: [],
             markerSize: false,
             layersActive: false,
-            horizUrl: '',
-            vertUrl: '',
             activeGnssQuery: false,
             geometryActive: false,
             rectDraw: null,
