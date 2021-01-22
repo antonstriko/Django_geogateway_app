@@ -142,7 +142,7 @@ export default {
       }
     },
     onLocationFound(e){
-      this.userLocationPin = L.marker([e.latitude, e.longitude]).bindPopup('Your are here :)').addTo(this.globalMap);
+      this.userLocationPin = L.marker([e.latitude, e.longitude]).bindPopup('You are here').addTo(this.globalMap);
       // this.userLocationCirc = L.circle([e.latitude, e.longitude], e.accuracy / 2, {
       //   weight: 1,
       //   color: 'blue',
