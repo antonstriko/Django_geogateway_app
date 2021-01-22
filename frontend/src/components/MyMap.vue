@@ -316,6 +316,7 @@ export default {
 
     tileLayer() {
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'ArcGIS World Topo Map'
       }).addTo(this.globalMap);
     },
     kmlText(text, layerName) {
