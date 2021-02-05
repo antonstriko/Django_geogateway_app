@@ -6,7 +6,10 @@
             <b-button v-b-toggle.sidebar-1>
                 <b-icon-wrench></b-icon-wrench>
             </b-button>
-            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+          <b-button id="login" href="http://127.0.0.1:8000/auth/login">
+            <b-icon-person></b-icon-person>Login
+          </b-button>
+<!--            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>-->
         </b-navbar>
     </div>
 
@@ -18,7 +21,12 @@
         name: "TopNav",
         components: {
             // ToolBar
-        }
+        },
+      methods: {
+          loginRoute(){
+
+          }
+      }
     }
 </script>
 
@@ -31,4 +39,5 @@
     height: 40px;
     width: 110px;
 }
+
 </style>

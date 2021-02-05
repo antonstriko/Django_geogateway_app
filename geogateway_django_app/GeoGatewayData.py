@@ -11,6 +11,9 @@ from django.shortcuts import render
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from django.core.files.base import ContentFile
+from django.apps import apps
+from airavata_django_portal_sdk import user_storage
+
 
 
 GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
@@ -100,16 +103,21 @@ def nowcast_plots(request):
         return responseData
 
 
-def runDisloc(request):
-    if request.method == 'GET':
-        file = request.GET.get('file')
-        subprocess.run(['./disloc/disloc', file])
-        subprocess.run(['cat', './disloc/disloc.output'])
-        output = open('./disloc/disloc.output', 'rb')
-        subprocess.run(['python', 'disloc/disloc2kml.py', '-i', output, '-o disloc.kml'])
-        kmlOut = open('./disloc/disloc.kml', 'rb')
-        response = FileResponse(kmlOut)
-        return response
+def dislocInput(request):
+    if request.method == 'POST':
+        print("test")
+        file = request.FILES['file']
+        inputFile = user_storage.save_input_file(request, file)
+        print(inputFile.productUri + ' uri')
+        id = 'Disloc_d9f189ed-d2c1-4e07-b709-de736f487e89'
+        return JsonResponse(
+            {
+            "app_id": id,
+            "Disloc Input File": inputFile.productUri,
+
+            }
+        )
+
 
 
 def uavsarOverview(request):
@@ -247,7 +255,6 @@ def losDownload(request):
 
         finalURI = losQueryUrl + uid + '_unw&point=' + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2 + \
                    '&format=csv&resolution=undefined&method=native'
-
 
         return HttpResponse(finalURI)
 

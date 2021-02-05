@@ -1025,15 +1025,6 @@ export default {
 <style scoped>
 
 
-.collapsed {
-  width: auto;
-  height: auto;
-  border: 2px solid #e6e6ff;
-  box-sizing: border-box;
-  border-radius: 8px;
-  overflow-y: auto;
-  /*A5B9CC*/
-}
 
 .extended {
   width: auto;
@@ -1072,9 +1063,20 @@ export default {
   width: 70px;
   height: 70px;
 }
+.collapsed {
+  width: auto;
+  height: auto;
+  border: 2px solid #e6e6ff;
+  box-sizing: border-box;
+  border-radius: 8px;
+  overflow-y: auto;
+  /*A5B9CC*/
+}
 </style>
 
 <style>
+
+
 html, body {margin:0;padding:0;height:100%;}
 .tab-window {
   background-color: #e6e6ff;
@@ -1087,9 +1089,8 @@ h3, h4, h5 {
 }
 
 .center {
-  display: block;
-  margin-left: 15%;
-  margin-right: auto;
+  width: 50%;
+  margin: 0 auto;
 }
 
 </style>
