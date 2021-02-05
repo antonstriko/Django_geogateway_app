@@ -123,14 +123,11 @@
                     case "/disloc":
                         this.tabIndex = 6;
                         break;
-                    case "/mapsaves":
+                    case "/report":
                         this.tabIndex = 7;
                         break;
-                    case "/report":
-                        this.tabIndex = 8;
-                        break;
                     case "/help":
-                        this.tabIndex = 9;
+                        this.tabIndex = 8;
                         break;
                 }
             },
