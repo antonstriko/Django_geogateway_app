@@ -397,7 +397,9 @@ export default {
         this.usgsLegend = L.control({position: 'bottomleft'});
         this.usgsLegend.onAdd = function () {
           var div = L.DomUtil.create('div', 'usgsLegend');
-          div.innerHTML = '<img src="https://raw.githubusercontent.com/cosmic-tichy/GeoGatewayStaticResources/master/icons/color_gradient.jpg">';
+          div.innerHTML = "<b>"+startDate.toISOString().slice(0,10) +"</b> -- <b>"+endDate.toISOString().slice(0,10)+"</b>";
+          div.innerHTML += "<br>"
+          div.innerHTML += '<img  width="150" height="20" src="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/icons/rsz_gradient_linear.png">';
           return div;
         };
 
