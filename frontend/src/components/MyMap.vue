@@ -44,6 +44,7 @@ import "leaflet-draw/dist/leaflet.draw.css";
 
 import {circleMaker, gdacsPopup, popupMaker} from '../assets/mapMethods'
 import Dygraph from "dygraphs";
+import 'dygraphs/dist/dygraph.css';
 import DraggableDiv from "./DraggableDiv";
 import 'leaflet-kmz';
 import { mapFields } from 'vuex-map-fields';
@@ -79,10 +80,10 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '140px',
+        height: '190px',
         width: '600px',
-        marginLeft: '90px',
-        marginBottom: '50px',
+        marginLeft: '10px',
+        marginBottom: '10px',
         borderColor: '#5cb85c'
       }
 
@@ -248,13 +249,25 @@ export default {
             drawPoints: true,
             pointSize: 2,
             strokeWidth: 0.0,
-            titleHeight: 20,
-            xLabelHeight: 16,
-            yLabelWidth: 16,
+            // titleHeight: 20,
+            // xLabelHeight: 16,
+            // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
             ylabel: 'GRC (cm)',
             maxNumberWidth: 5,
             sigFigs: 5,
+            axes: {
+              y: {
+              valueFormatter: y => y,
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              x: {
+              valueFormatter: x => x,
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: x => x.toFixed(1),
+              }
+            }
           }
       )
     },
