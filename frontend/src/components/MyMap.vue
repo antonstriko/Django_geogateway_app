@@ -81,7 +81,7 @@ export default {
       losPlot: null,
       losStyle: {
         height: '190px',
-        width: '600px',
+        width: '650px',
         marginLeft: '10px',
         marginBottom: '10px',
         borderColor: '#5cb85c'
@@ -254,16 +254,17 @@ export default {
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
             ylabel: 'GRC (cm)',
-            maxNumberWidth: 5,
-            sigFigs: 5,
+            //maxNumberWidth: 5,
+            sigFigs: 2,
+            digitsAfterDecimal:2,
             axes: {
               y: {
-              valueFormatter: y => y,
+              valueFormatter: y => y.toFixed(2),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
               },
               x: {
-              valueFormatter: x => x,
+              valueFormatter: x => x.toFixed(2),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: x => x.toFixed(1),
               }
