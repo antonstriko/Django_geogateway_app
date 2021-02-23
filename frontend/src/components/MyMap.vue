@@ -257,14 +257,15 @@ export default {
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
+            showRangeSelector: true,
             axes: {
               y: {
-              valueFormatter: y => y.toFixed(2),
+              valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
               },
               x: {
-              valueFormatter: x => x.toFixed(2),
+              valueFormatter: x => x.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: x => x.toFixed(1),
               }
