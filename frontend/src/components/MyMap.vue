@@ -101,7 +101,9 @@ export default {
     L.control.scale({
       position: 'bottomright',
     }).addTo(this.globalMap);
-    this.tileLayer();
+    // load basemap
+    //this.tileLayer();
+    this.basemapLayers();
 
     var legend2 = L.control({position: 'bottomleft'});
     legend2.onAdd = function () {
@@ -328,12 +330,44 @@ export default {
       this.globalMap.addLayer(this.uavsarLayers[name]);
     },
 
+    // load basemap layer
+    basemapLayers() { 
+      var  tileProviders = [
+        {
+          name: 'ArcGIS Topo Map',
+          visible: true,
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+          attribution:
+            'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
+          token:'',
+        },
+        {
+          name: 'ArcGIS Grap Map',
+          visible: false,
+          attribution:
+            'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          token:'',
+        }
+      ];
+
+      var basemaps = {};
+      var baseLayer;
+      for (var tile of tileProviders) {
+        console.log(tile);
+        baseLayer = L.tileLayer(tile.url,{attribution:tile.attribution});
+        basemaps[tile['name']]=baseLayer;
+        if (tile.visible == true) {baseLayer.addTo(this.globalMap);}
+      }
+      L.control.layers(basemaps).addTo(this.globalMap);
+    },
 
     tileLayer() {
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'ArcGIS World Topo Map'
       }).addTo(this.globalMap);
     },
+
     kmlText(text, layerName) {
       const parser = new DOMParser();
       const kml = parser.parseFromString(text, 'text/xml');
