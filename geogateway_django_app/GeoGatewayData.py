@@ -54,7 +54,8 @@ def gps_service(request):
             "prefix": request.GET.get("prefix"),
             "mon": request.GET.get("mon"),
             "eon": request.GET.get("eon"),
-            "vabs": request.GET.get("vabs")}
+            "vabs": request.GET.get("vabs"),
+            "analysisCenter": request.GET.get("analysisCenter")}
         data = requests.get(GpsServiceUrl, params=payload)
         responseData = HttpResponse(data)
         return responseData

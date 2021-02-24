@@ -240,7 +240,7 @@ export default {
           }
         }
         // this.layerCheckbox = true;
-        if (this.gs_analysisCenter == true) {this.gs_analysisCenter = "NGL";}
+        if (this.gs_analysisCenter == true) {this.gs_analysisCenter = "NGL";} else { this.gs_analysisCenter = "";}
         const baseURI = '/geogateway_django_app/gps_service'
         //request JSON dict of GPS_service details with query params from form
         axios.get(baseURI, {
