@@ -362,7 +362,6 @@ export default {
       var basemaps = {};
       var baseLayer;
       for (var tile of tileProviders) {
-        console.log(tile);
         baseLayer = L.tileLayer(tile.url,{attribution:tile.attribution});
         basemaps[tile['name']]=baseLayer;
         if (tile.visible == true) {baseLayer.addTo(this.globalMap);}

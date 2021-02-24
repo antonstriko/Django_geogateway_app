@@ -122,6 +122,7 @@ export const store = new Vuex.Store({
             kmlData: '',
             gs_eon: '',
             gs_vabs: '',
+            gs_analysisCenter: '',
             ranLayers: [],
             activeLayers: [],
             markerSize: false,

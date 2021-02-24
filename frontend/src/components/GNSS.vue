@@ -90,6 +90,12 @@
           <b-form-input v-model="gs_outputprefix" name="gs_outputprefix"></b-form-input>
         </b-input-group>
         <b-col class="miscOptions">
+          <b-row class="checkbox" style="text-align: left" v-if="this.kmltype_sel === 'getdisplacement'">
+            <label class="checkbox" >
+              <input v-model="gs_analysisCenter" name="analysisCenter" type="checkbox" id="gs_analysisCenter"/>
+              Use NGL data
+            </label>
+          </b-row>
           <b-row class="checkbox" style="text-align: left">
             <label class="checkbox" >
               <input v-model="markerSize" name="vabs" type="checkbox" id="markerSize"/>
@@ -184,6 +190,7 @@ export default {
       'gnss.kmlData',
       'gnss.gs_eon',
       'gnss.gs_vabs',
+      'gnss.gs_analysisCenter',
       'gnss.ranLayers',
       'gnss.activeLayers',
       'gnss.markerSize',
@@ -217,7 +224,7 @@ export default {
       this.activeGnssQuery = true;
       var vm = this;
       var fileNameH, fileNameV, fileNameT, folder, props;
-      var markerSize = this.markerSize;
+      //var markerSize = this.markerSize;
       var verticalUrl, horizontalUrl, tableUrl;
       var prefix = this.gs_outputprefix;
       if(this.kmltype_sel === ''){
@@ -233,6 +240,7 @@ export default {
           }
         }
         // this.layerCheckbox = true;
+        if (this.gs_analysisCenter == true) {this.gs_analysisCenter = "NGL";}
         const baseURI = '/geogateway_django_app/gps_service'
         //request JSON dict of GPS_service details with query params from form
         axios.get(baseURI, {
@@ -258,7 +266,8 @@ export default {
             //need default false value?
             "mon":this.markerSize,
             "eon": this.gs_eon,
-            "vabs": this.gs_vabs
+            "vabs": this.gs_vabs,
+            "analysisCenter": this.gs_analysisCenter,
             //
           }
         })
@@ -335,7 +344,7 @@ export default {
                 // console.log(geojson)
                 let vName = prefix + 'v.kml';
                 vm.addGnssLayer(response.data, vName);
-                console.log(markerSize)
+                //console.log(markerSize)
                 vm.activeGnssQuery = false;
               })
             })
