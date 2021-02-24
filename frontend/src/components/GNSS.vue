@@ -130,7 +130,7 @@
             <strong>Output Layers</strong>
             <div  v-for="layer in gnssLayers" :key="layer.name">
               <div v-if="layer.type !== 'table.txt'" ><input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> </div>
-              <div v-else><a :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
+              <div v-else><a target="_blank" :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
             </div>
           </div>
 
