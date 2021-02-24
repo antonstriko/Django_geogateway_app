@@ -342,11 +342,19 @@ export default {
           token:'',
         },
         {
-          name: 'ArcGIS Grap Map',
+          name: 'ArcGIS Light Map',
           visible: false,
           attribution:
             'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          token:'',
+        },
+        {
+          name: 'ArcGIS Dark Map',
+          visible: false,
+          attribution:
+            'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
           token:'',
         }
       ];
