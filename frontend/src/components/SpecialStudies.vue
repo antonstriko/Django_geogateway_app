@@ -24,14 +24,15 @@
             type="checkbox"
             v-model="wildfire"
             id="wildfire"
+            @change="loadwildfire"
             ><label for="wildfire"><strong>Wildfire and debris flows</strong></label>
             <br/>
             <div id="wilf_table" v-show="this.wildfire">
                 <p>Montecito debris flows observed with UAVSAR</p>
                 <table >     		
-                    <tr><td><input type="checkbox" id="wilf_0" value=0 v-model="wilf_checkbox" @change="updatewilf(0)"><label for="wilf_0" >UAVSAR enchanced image pair (Nov-2-2017, Feb-5-2018) Orange</label></td></tr>
-                    <tr><td><input type="checkbox" id="wilf_1" value=1 v-model="wilf_checkbox" @change="updatewilf(1)"><label for="wilf_1">UAVSAR enchanced image coherence (Feb-5-2018) Purple</label></td></tr>
-                    <tr><td><input type="checkbox" id="wilf_2" value=2 v-model="wilf_checkbox" @change="updatewilf(2)"><label for="wilf_2">Rapid estimation/change detection with optical images (Dec-28-2017, Jan-13-2018)</label></td></tr>
+                    <tr><td><input type="checkbox" id="wilf_0" value=0 v-model="wilf_checkbox" @change="updatewilf('0')"><label for="wilf_0" >UAVSAR enchanced image pair (Nov-2-2017, Feb-5-2018) Orange</label></td></tr>
+                    <tr><td><input type="checkbox" id="wilf_1" value=1 v-model="wilf_checkbox" @change="updatewilf('1')"><label for="wilf_1">UAVSAR enchanced image coherence (Feb-5-2018) Purple</label></td></tr>
+                    <tr><td><input type="checkbox" id="wilf_2" value=2 v-model="wilf_checkbox" @change="updatewilf('2')"><label for="wilf_2">Rapid estimation/change detection with optical images (Dec-28-2017, Jan-13-2018)</label></td></tr>
                 </table>
                 Experimental products: JPL/Caltech/GeoGateway
             </div>
@@ -41,8 +42,10 @@
 
 <script>
 import {bus} from '../main'
+import { mapFields } from 'vuex-map-fields';
 import axios from "axios";
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+
     export default {
         name: "SpecialStudies",
         data: function() {
@@ -50,23 +53,29 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
                 woolseyfire:false,
                 woof_checkbox:[],
                 wildfire:false,
-                wilfurl_0:"https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedUAVSAR.kmz",
+                wilfurls:["https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedUAVSAR.kml",
+                    "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedCorrelation.kml",
+                    "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_NIT_result.kml"
+                    ],
                 wilf_checkbox:[],
             };
         },
+          computed: {
+            ...mapFields([
+                'map.globalMap',
+            ])
+        },
         methods: {
+            loadwildfire() {
+                this.globalMap.setView([34.457,-119.61328],13);
+                return;
+            },
             updatewilf(val) {
-                switch (val) {
-                    case 0:
-                        if(0 in this.wilf_checkbox) {
-                            bus.$emit('UrlAddLayer', this.wilfurl_0, 'wilf0L');
-                        }else bus.$emit('RemoveLayer', 'wilf0L');
-                        break;
-                    case 1:
-                        break;
-                    case 2:
-                        break;
-                }
+                var vp = parseInt(val);
+                var wlayerName = 'wilf'+val+"L";
+                if(this.wilf_checkbox.includes(val)) {
+                    bus.$emit('UrlAddLayer', this.wilfurls[vp], wlayerName);
+                }else bus.$emit('RemoveLayer', wlayerName);
             },
         },
 
