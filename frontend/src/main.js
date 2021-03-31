@@ -11,9 +11,10 @@ import UAVSAR from "./components/UAVSAR";
 import report from "./components/report";
 import help from "./components/help";
 import Disloc from "./components/Disloc";
-import VueRouter from 'vue-router'
+import SpecialStudies from "./components/SpecialStudies";
+import VueRouter from 'vue-router';
 import 'leaflet/dist/leaflet.css';
-import "leaflet-kml"
+import "leaflet-kml";
 import {store} from "./store/store";
 import resize from "vue-element-resize-detector";
 
@@ -42,6 +43,7 @@ const routes = [
   { path: '/disloc', component: Disloc },
   { path: '/mapsaves', component: Saves },
   { path: '/uavsar', component: UAVSAR },
+  { path: '/specialstudies', component: SpecialStudies },
   { path: '/report', component: report },
   { path: '/help', component: help },
 
