@@ -67,8 +67,19 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
         },
         methods: {
             loadwildfire() {
-                this.globalMap.setView([34.457,-119.61328],13);
-                return;
+                if (this.wildfire) {
+                    this.globalMap.setView([34.457,-119.61328],13);
+                    this.wilf_checkbox.push("0");
+                    this.updatewilf("0");
+                }
+                else {
+                    var i = this.wilf_checkbox.length;
+                    while (i--) {
+                        var code = this.wilf_checkbox[i];
+                        this.wilf_checkbox.splice(i,1);
+                        this.updatewilf(code);
+                    }
+                }
             },
             updatewilf(val) {
                 var vp = parseInt(val);
