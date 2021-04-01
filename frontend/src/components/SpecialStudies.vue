@@ -15,8 +15,8 @@
                 <table >     		
                     <tr><td><input type="checkbox" id="woof_0" value=0 v-model="woof_checkbox" @change="updatewoof('0')"><label for="woof_0">Woolsey fire perimeter (11-18-2018)</label></td></tr>
                     <tr><td><input type="checkbox" id="woof_1" value=1 v-model="woof_checkbox" @change="updatewoof('1')"><label for="woof_1">Hill fire perimeter (11-12-2018)</label></td></tr>
-                    <tr><td><input type="checkbox" id="woof_2" value=2 v-model="woof_checkbox"><label for="woof_2">UAVSAR Correlation Image 1</label></td></tr>
-                    <tr><td><input type="checkbox" id="woof_3" value=3 v-model="woof_checkbox"><label for="woof_3">UAVSAR Correlation Image 2</label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_2" value=2 v-model="woof_checkbox" @change="updatewoof('2')"><label for="woof_2">UAVSAR Correlation Image 1</label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_3" value=3 v-model="woof_checkbox" @change="updatewoof('3')"><label for="woof_3">UAVSAR Correlation Image 2</label></td></tr>
                 </table>
                 Experimental products: JPL/Caltech/GeoGateway
             </div>
@@ -54,7 +54,9 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
                 woolseyfire:false,
                 woof_checkbox:[],
                 woofurls: ["https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-091023_WOOLSEY_11-18-2018_55900_AM.kml",
-                           "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-090993_Hill_11-12-2018_91400_PM.kml"
+                           "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-090993_Hill_11-12-2018_91400_PM.kml",
+                           "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/SanAnd_08525_18076-003_18083-003_0036d_s01_L090HH_01.cor.kml",
+                           "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/SanAnd_26526_18080-006_18083-000_0011d_s01_L090HH_01.cor.kml"
                     ],
                 wildfire:false,
                 wilfurls:["https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedUAVSAR.kml",
@@ -73,7 +75,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             
             loadwoolfire() {
                 if (this.woolseyfire) {
-                    this.globalMap.setView([34.14773,-118.84833],11);
+                    this.globalMap.setView([34.14773,-118.84833],10);
                     this.woof_checkbox.push("0");
                     this.updatewoof("0");
                     this.woof_checkbox.push("1");
