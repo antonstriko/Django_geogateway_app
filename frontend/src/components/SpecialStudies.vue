@@ -7,13 +7,14 @@
             type="checkbox"
             v-model="woolseyfire"
             id="woolseyfire"
+            @change="loadwoolfire"
             ><label for="woolseyfire"><strong>Southern California Woolsey Fire</strong></label>
             <br/>
             <div id="woof_table" v-show="this.woolseyfire">
                 <p>Southern California's Woolsey Fire on Nov. 15 observed with UAVSAR</p>
                 <table >     		
-                    <tr><td><input type="checkbox" id="woof_0" value=0 v-model="woof_checkbox"><label for="woof_0">Woolsey fire perimeter (11-18-2018)</label></td></tr>
-                    <tr><td><input type="checkbox" id="woof_1" value=1 v-model="woof_checkbox"><label for="woof_1">Hill fire perimeter (11-12-2018)</label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_0" value=0 v-model="woof_checkbox" @change="updatewoof('0')"><label for="woof_0">Woolsey fire perimeter (11-18-2018)</label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_1" value=1 v-model="woof_checkbox" @change="updatewoof('1')"><label for="woof_1">Hill fire perimeter (11-12-2018)</label></td></tr>
                     <tr><td><input type="checkbox" id="woof_2" value=2 v-model="woof_checkbox"><label for="woof_2">UAVSAR Correlation Image 1</label></td></tr>
                     <tr><td><input type="checkbox" id="woof_3" value=3 v-model="woof_checkbox"><label for="woof_3">UAVSAR Correlation Image 2</label></td></tr>
                 </table>
@@ -52,6 +53,9 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             return {
                 woolseyfire:false,
                 woof_checkbox:[],
+                woofurls: ["https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-091023_WOOLSEY_11-18-2018_55900_AM.kml",
+                           "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-090993_Hill_11-12-2018_91400_PM.kml"
+                    ],
                 wildfire:false,
                 wilfurls:["https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedUAVSAR.kml",
                     "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedCorrelation.kml",
@@ -66,9 +70,39 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken';
             ])
         },
         methods: {
+            
+            loadwoolfire() {
+                if (this.woolseyfire) {
+                    this.globalMap.setView([34.14773,-118.84833],11);
+                    this.woof_checkbox.push("0");
+                    this.updatewoof("0");
+                    this.woof_checkbox.push("1");
+                    this.updatewoof("1");
+                }
+                else {
+                    var i = this.woof_checkbox.length;
+                    while (i--) {
+                        var code = this.woof_checkbox[i];
+                        this.woof_checkbox.splice(i,1);
+                        this.updatewoof(code);
+                    }
+                }
+            },
+        
+            
+            // update woolseyfire
+            updatewoof(val) {
+                var vp = parseInt(val);
+                var wlayerName = 'wool'+val+"L";
+                if(this.woof_checkbox.includes(val)) {
+                    bus.$emit('UrlAddLayer', this.woofurls[vp], wlayerName);
+                }else bus.$emit('RemoveLayer', wlayerName);
+            },
+
+            
             loadwildfire() {
                 if (this.wildfire) {
-                    this.globalMap.setView([34.457,-119.61328],13);
+                    this.globalMap.setView([34.440,-119.61328],13);
                     this.wilf_checkbox.push("0");
                     this.updatewilf("0");
                 }
