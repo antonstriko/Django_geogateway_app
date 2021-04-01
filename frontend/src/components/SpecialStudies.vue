@@ -13,12 +13,12 @@
             <div id="woof_table" v-show="this.woolseyfire">
                 <p>Southern California's Woolsey Fire on Nov. 15 observed with UAVSAR</p>
                 <table >     		
-                    <tr><td><input type="checkbox" id="woof_0" value=0 v-model="woof_checkbox" @change="updatewoof('0')"><label for="woof_0">Woolsey fire perimeter (11-18-2018)</label></td></tr>
-                    <tr><td><input type="checkbox" id="woof_1" value=1 v-model="woof_checkbox" @change="updatewoof('1')"><label for="woof_1">Hill fire perimeter (11-12-2018)</label></td></tr>
-                    <tr><td><input type="checkbox" id="woof_2" value=2 v-model="woof_checkbox" @change="updatewoof('2')"><label for="woof_2">UAVSAR Correlation Image 1</label></td></tr>
-                    <tr><td><input type="checkbox" id="woof_3" value=3 v-model="woof_checkbox" @change="updatewoof('3')"><label for="woof_3">UAVSAR Correlation Image 2</label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_0" value=0 v-model="woof_checkbox" @change="updatewoof('0')"><label for="woof_0"><a target="_blank" href="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-091023_WOOLSEY_11-18-2018_55900_AM.kmz">Woolsey fire perimeter (11-18-2018)</a></label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_1" value=1 v-model="woof_checkbox" @change="updatewoof('1')"><label for="woof_1"><a target="_blank" href="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/CAVNC-090993_Hill_11-12-2018_91400_PM.kmz">Hill fire perimeter (11-12-2018)</a></label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_2" value=2 v-model="woof_checkbox" @change="updatewoof('2')"><label for="woof_2"><a target="_blank" href="http://gf2.ucs.indiana.edu/stage/CA_Fires/SanAnd_08525_18076-003_18083-003_0036d_s01_L090HH_01.cor.tiff">UAVSAR Correlation Image 1 (geotiff)</a></label></td></tr>
+                    <tr><td><input type="checkbox" id="woof_3" value=3 v-model="woof_checkbox" @change="updatewoof('3')"><label for="woof_3"><a target="_blank" href="http://gf2.ucs.indiana.edu/stage/CA_Fires/SanAnd_26526_18080-006_18083-000_0011d_s01_L090HH_01.cor.tiff">UAVSAR Correlation Image 2 (geotiff)</a></label></td></tr>
                 </table>
-                Experimental products: JPL/Caltech/GeoGateway
+                <small>Experimental products: JPL/Caltech/GeoGateway</small>
             </div>
             
             <input
@@ -31,11 +31,11 @@
             <div id="wilf_table" v-show="this.wildfire">
                 <p>Montecito debris flows observed with UAVSAR</p>
                 <table >     		
-                    <tr><td><input type="checkbox" id="wilf_0" value=0 v-model="wilf_checkbox" @change="updatewilf('0')"><label for="wilf_0" >UAVSAR enchanced image pair (Nov-2-2017, Feb-5-2018) Orange</label></td></tr>
-                    <tr><td><input type="checkbox" id="wilf_1" value=1 v-model="wilf_checkbox" @change="updatewilf('1')"><label for="wilf_1">UAVSAR enchanced image coherence (Feb-5-2018) Purple</label></td></tr>
-                    <tr><td><input type="checkbox" id="wilf_2" value=2 v-model="wilf_checkbox" @change="updatewilf('2')"><label for="wilf_2">Rapid estimation/change detection with optical images (Dec-28-2017, Jan-13-2018)</label></td></tr>
+                    <tr><td><input type="checkbox" id="wilf_0" value=0 v-model="wilf_checkbox" @change="updatewilf('0')"><label for="wilf_0" ><a target="_blank" href="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedUAVSAR.kmz">UAVSAR enchanced image pair (Nov-2-2017, Feb-5-2018) Orange</a></label></td></tr>
+                    <tr><td><input type="checkbox" id="wilf_1" value=1 v-model="wilf_checkbox" @change="updatewilf('1')"><label for="wilf_1"><a target="_blank" href="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_ModifiedCorrelation.kmz">UAVSAR enchanced image coherence (Feb-5-2018) Purple</a></label></td></tr>
+                    <tr><td><input type="checkbox" id="wilf_2" value=2 v-model="wilf_checkbox" @change="updatewilf('2')"><label for="wilf_2"><a target="_blank" href="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/wildfire_NIT_result.kmz">Rapid change detection with optical images (Dec-28-2017/Jan-13-2018)</a></label></td></tr>
                 </table>
-                Experimental products: JPL/Caltech/GeoGateway
+                <small>Experimental products: JPL/Caltech/GeoGateway</small>
             </div>
         </div>
     </div>
@@ -146,4 +146,9 @@ label {
   padding: 5px;
 }
 
+a:link, a:visited {
+  color: black;
+  text-decoration: underline;
+  display: inline-block;
+}
 </style>
