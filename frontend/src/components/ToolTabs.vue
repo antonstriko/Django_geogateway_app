@@ -10,6 +10,7 @@
             <b-tab title="Disloc" ><b-card-text><router-view></router-view></b-card-text></b-tab>
 <!--            <b-tab title="Saves" disabled><b-card-text><router-view></router-view></b-card-text></b-tab>-->
             <b-tab title="Studies" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab title="3D Imaging" ><b-card-text><router-view></router-view></b-card-text></b-tab>
             <b-tab title="Feedback" ><b-card-text><router-view></router-view></b-card-text></b-tab>
             <b-tab title="Help" ><b-card-text><router-view></router-view></b-card-text></b-tab>
         </b-tabs>
@@ -78,9 +79,12 @@
                         this.$router.push('/specialstudies');
                         break;
                     case 8:
-                        this.$router.push('/report');
+                        this.$router.push('/3dimaging');
                         break;
                     case 9:
+                        this.$router.push('/report');
+                        break;
+                    case 10:
                         this.$router.push('/help');
                         break;
                 }

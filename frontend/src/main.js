@@ -12,6 +12,7 @@ import report from "./components/report";
 import help from "./components/help";
 import Disloc from "./components/Disloc";
 import SpecialStudies from "./components/SpecialStudies";
+import ThreeDImaging from "./components/ThreeDImaging";
 import VueRouter from 'vue-router';
 import 'leaflet/dist/leaflet.css';
 import "leaflet-kml";
@@ -44,6 +45,7 @@ const routes = [
   { path: '/mapsaves', component: Saves },
   { path: '/uavsar', component: UAVSAR },
   { path: '/specialstudies', component: SpecialStudies },
+  { path: '/3dimaging', component: ThreeDImaging },
   { path: '/report', component: report },
   { path: '/help', component: help },
 
