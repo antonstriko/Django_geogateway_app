@@ -41,11 +41,11 @@
     </div>
     <div id="tools-show">
       <div v-show="this.ucerf">
-        <b-form-radio-group>
-          <b-form-radio label="black" name="some-radios" v-model="selectedColor" @change="updateColor('black')"><p>black</p></b-form-radio>
-          <b-form-radio label="red" name="some-radios" v-model="selectedColor" @change="updateColor('red')"><p>red</p></b-form-radio>
-          <b-form-radio vlabel="yellow" name="some-radios" v-model="selectedColor" @change="updateColor('yellow')"><p>yellow</p></b-form-radio>
-          <b-form-radio label="grey" name="some-radios" v-model="selectedColor" @change="updateColor('grey')"><p>grey</p></b-form-radio>
+        <b-form-radio-group v-model="selectedColor">
+          <b-form-radio label="black" name="some-radios" value="black" v-model="selectedColor" @change="updateColor('black')"><p>black</p></b-form-radio>
+          <b-form-radio label="red" name="some-radios" value="red" v-model="selectedColor" @change="updateColor('red')"><p>red</p></b-form-radio>
+          <b-form-radio label="yellow" name="some-radios" value="yellow" v-model="selectedColor" @change="updateColor('yellow')"><p>yellow</p></b-form-radio>
+          <b-form-radio label="grey" name="some-radios" value="grey" v-model="selectedColor" @change="updateColor('grey')"><p>grey</p></b-form-radio>
         </b-form-radio-group>
       </div>
 
@@ -92,6 +92,7 @@ export default {
       boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
       coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
       userLocationPin: null, //vuex-map-fields does not correctly reference variables inside of event listeners
+      //selectedColor: 'grey',
     }
   },
   computed: {
@@ -100,7 +101,6 @@ export default {
     // coasts: false,
     // kml: false,
     // kmlFile: null,
-    // selected: 'grey',
     // value: 50,
     // kmlLayers: [],
     ...mapFields(['mapTools.kmlLayers', 'mapTools.boundaries', 'mapTools.ucerf',
@@ -118,7 +118,7 @@ export default {
       this.globalMap.addLayer(this.userLocationPin);
       this.locActive = true;
     });
-
+    
   },
   methods: {
     // updateOpacity(value){
@@ -154,7 +154,7 @@ export default {
 
     },
     updateColor(selected){
-      this.selected = selected;
+      //this.selected = selected;
       bus.$emit('RemoveLayer', 'ucerfL');
       this.updateLayer('ucerf', selected)
     },

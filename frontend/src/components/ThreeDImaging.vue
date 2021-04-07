@@ -14,8 +14,9 @@
             <div id="ridgecrest_div" v-show="this.ridgecrest">
                 <p>High-Resolution Targeted 3D imaging Postseismic Products of the Ridgecrest M6.4 (July 4, 2019) and M7.1 (July 5, 2019) Earthquake Sequence. 
                     Collected by Andrea Donnellan and Gregory Lyzenga<a href="https://appliedsciences.nasa.gov/our-impact/news/nasa-geogateway-team-uses-drones-map-3d-2019-california-earthquakes-ruptures" target=_>&nbsp;more</a>
-                <br/>The point clouds (in LAZ format) are released with <a target=_  href="https://doi.org/10.1785/0220190274">research article</a>.
+                <br/>The point clouds (in LAZ format) are released with <a target=_  href="https://doi.org/10.1785/0220190274">research article</a>. If using these products, please cite: Donnellan, A., Lyzenga, G., Wang, J., Pierce, Ma., Goulet, C., 2019, High-resolution Targeted 3D Imaging Postseismic Products of the Ridgecrest M6.4 and M7.1 Earthquake Sequence, DOI: 10.5967/5sq2-rs60. <a target=_ href="http://hdl.handle.net/2022/23341">Full record</a>
                 </p>
+            
                      <center><strong>M 6.4 products</strong></center>
              <table class="uavsar-table">
                  <tr class="uavar-tr"><td>2019/07/09</td>
