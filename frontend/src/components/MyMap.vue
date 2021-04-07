@@ -499,7 +499,7 @@ export default {
 
 #map-window {
   position: inherit;
-  height: calc(100% - 125px);
+  height: calc(100% - 40px);
   /*z-index: 30000;*/
   width: auto;
   padding: 0;
