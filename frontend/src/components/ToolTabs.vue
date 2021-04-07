@@ -1,18 +1,18 @@
 <template>
     <div id="tabs">
-        <b-tabs v-model="tabIndex" pills card>
-            <b-tab title="Map Tools" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="UAVSAR" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="GNSS" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Seismicity" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Nowcast" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Magnitude"><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Disloc" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+        <b-tabs v-model="tabIndex" small pills card>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Maptools</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>UAVSAR</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>GNSS</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Seismicity</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Nowcast</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Magnitude</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Disloc</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
 <!--            <b-tab title="Saves" disabled><b-card-text><router-view></router-view></b-card-text></b-tab>-->
-            <b-tab title="Studies" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="3D Imaging" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Feedback" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Help" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Studies</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>3D Imaging</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Feedback</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Help</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
         </b-tabs>
     </div>
 </template>
@@ -131,11 +131,17 @@
                     case "/disloc":
                         this.tabIndex = 6;
                         break;
-                    case "/report":
+                    case "/specialstudies":
                         this.tabIndex = 7;
                         break;
-                    case "/help":
+                    case "/3dimaging":
                         this.tabIndex = 8;
+                        break;
+                    case "/report":
+                        this.tabIndex = 9;
+                        break;
+                    case "/help":
+                        this.tabIndex = 10;
                         break;
                 }
             },
@@ -149,12 +155,17 @@
         background-color: #e6e6ff;
 
     }
+ 
     .tab-text {
         width: auto;
         position: relative;
         align-content: center;
         height: 100% ;
         overflow: auto;
+    }
+ 
+    h3 {
+    font-size: 20px !important;
     }
 
     .nav-pills .nav-link.active {
