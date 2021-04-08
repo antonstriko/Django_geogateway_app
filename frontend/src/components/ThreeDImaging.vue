@@ -128,7 +128,7 @@
                       <td colspan=2><a target=_ href="http://156.56.174.162/earthquake/SV20190711.html"><strong>View Point Clouds</strong></a></td>
                       </tr>
             </table>
-              <a target=_ href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/animation/M7.1RAB4v2.gif"><strong>View Animated Gif</strong></a> <br>
+              <a target="_blank" href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/animation/M7.1RAB4v2.gif"><strong>View Animated Gif</strong></a> <br>
 
             </div>
 
