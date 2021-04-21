@@ -6,7 +6,7 @@
             <b-button size="sm" v-b-toggle.sidebar-1>
                 <b-icon-wrench></b-icon-wrench>
             </b-button>
-          <b-button size="sm" id="login" href="http://127.0.0.1:8000/auth/login">
+          <b-button size="sm" id="login" href="/auth/login">
             <b-icon-person></b-icon-person>Login
           </b-button>
 <!--            <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>-->
