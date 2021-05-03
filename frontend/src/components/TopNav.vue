@@ -2,7 +2,7 @@
 
     <div class="window" >
         <b-navbar class="navbar-custom" id="top" toggleable="lg" type="dark" variant="dark">
-                <img id="logo" src="../assets/logo.png" alt="GeoGateway Logo">
+                <img id="logo" src="../assets/logo.png" alt="GeoGateway Logo" v-on:click="move_logo">
             <b-button size="sm" v-b-toggle.sidebar-1>
                 <b-icon-wrench></b-icon-wrench>
             </b-button>
@@ -25,6 +25,12 @@
       methods: {
           loginRoute(){
 
+          },
+          move_logo: function () { 
+              var step = 50;
+              var y=document.getElementById('logo').offsetLeft;
+              y= y + step;
+              document.getElementById('logo').style.left= y + "px";
           }
       }
     }
