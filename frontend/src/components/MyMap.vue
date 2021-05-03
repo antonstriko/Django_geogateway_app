@@ -108,6 +108,7 @@ export default {
     var legend2 = L.control({position: 'bottomleft'});
     legend2.onAdd = function () {
       var div = L.DomUtil.create('div', 'info legend2');
+      div.setAttribute("style","padding-left:60px;");
       div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="height: 30px; width: 82px">';
       return div;
     };
