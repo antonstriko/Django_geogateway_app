@@ -66,6 +66,7 @@
             <div v-if="entry.exp.experimentStatus.name === 'COMPLETED'">
               <input type="checkbox" v-model="entry.active" @change="showHideLayers(entry)">Show Synthetic Interferograms
               <br />
+              <a :href="entry.result2.url">Download CSV</a>
               <a :href="entry.result.url">Download KMZ</a>
             </div>
 
