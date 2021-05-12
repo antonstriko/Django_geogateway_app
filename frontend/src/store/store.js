@@ -175,6 +175,7 @@ export const store = new Vuex.Store({
             fileInfo: null,
             Elevation: 60,
             Azimuth: 0,
+            RadarFrequency: 1.26,
             jobActive: false,
             jobCompleted: false,
             experiment: null,

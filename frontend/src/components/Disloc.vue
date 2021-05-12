@@ -5,10 +5,10 @@
     <h3>Disloc</h3>
     <hr/>
     <div id="upload-container">
-      <h5><b>Input File Upload</b>
-        <b-icon-question variant="success" v-b-modal.modal-1></b-icon-question></h5>
-      <b-modal id="modal-1" title="Input File Format">
-        <div>
+      <h5><b>Input File Upload &nbsp;&nbsp;</b>
+        <b-icon icon="question-circle-fill" v-b-modal.modal-2></b-icon></h5>
+      <b-modal id="modal-2" title="Input File Format" button-size="sm" ok-only>
+
           Use this form to upload one or more faults that are already in Disloc input file format. The following example shows formatting:
           <hr/>
           <ul>
@@ -18,7 +18,7 @@
             <li>Line 4: 0 1.21 45.0 1.0 1.0 -0.0 -0.0 0.0 3.0 3.0 (fault_type 0 for point dislocation, depth, dip (degrees), lambda, mu,u1,u2,u3, length, width).</li>
             <li>Repeat the formats for Lines 3 and 4 for each additional fault.</li>
           </ul>
-        </div>
+
       </b-modal>
       <label>
         <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
@@ -26,6 +26,19 @@
       <button @click="submitFile()">Submit</button>
       <div class="container" v-html="fileInfo">
       </div>
+      <div>
+        <strong>Parameters:</strong>
+        <b-input-group prepend="Elevation (Deg)">
+            <b-form-input v-model="Elevation" name="Elevation"></b-form-input>
+        </b-input-group>
+        <b-input-group prepend="Azimuth (Deg)">
+            <b-form-input v-model="Azimuth" name="Azimuth"></b-form-input>
+        </b-input-group>
+        <b-input-group prepend="Radar Frequency (GHz)">
+            <b-form-input v-model="RadarFrequency" name="RadarFrequency"></b-form-input>
+        </b-input-group>
+      </div>
+      <br>
       <!--      <div v-if="jobActive" class="center">-->
       <!--        <b-spinner type="grow" label="Job executing..."></b-spinner>-->
       <!--        <br />-->
@@ -105,6 +118,7 @@ export default {
       'disloc.fileInfo',
       'disloc.Elevation',
       'disloc.Azimuth',
+      'disloc.RadarFrequency',
       'disloc.jobActive',
       'disloc.jobCompleted',
       'disloc.experiment',
@@ -181,6 +195,7 @@ export default {
       this.jobActive = true;
       dislocArgs["Elevation"] = this.Elevation;
       dislocArgs["Azimuth"] = this.Azimuth;
+      dislocArgs["Radar Frequency"] = this.RadarFrequency;
       let vm = this;
       this.app_id = dislocArgs["app_id"];
 
