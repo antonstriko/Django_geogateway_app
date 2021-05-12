@@ -350,7 +350,7 @@ export default {
                   entry.result2 = result2;
                   entry.fullRetrieved = true;
                   entry.extended = !entry.extended;
-                  entry.extended ? entry.activeBackground = '#A5B9CC' : entry.activeBackground = '#A5B9CC';
+                  entry.extended ? entry.activeBackground = '#7ee04c' : entry.activeBackground = '#7ee04c';
                 });
               }
 
@@ -374,7 +374,7 @@ export default {
   box-sizing: border-box;
   border-radius: 8px;
   overflow-y: auto;
-  /*background-color: #A5B9CC;*/
+  background-color: #A5B9CC;
   /*A5B9CC*/
 }
 .clickableName {
