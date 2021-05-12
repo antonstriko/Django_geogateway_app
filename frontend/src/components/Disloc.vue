@@ -332,11 +332,18 @@ export default {
               const stdoutDataProduct = fullDetails.outputDataProducts.find(
                   (dp) => dp.productUri === kmz
               );
+              const csv = fullDetails.experiment.experimentOutputs.find(
+                  (o) => o.name === "Disloc Output"
+              ).value;
+              const csvDataProduct = fullDetails.outputDataProducts.find(
+                  (dp) => dp.productUri === csv
+              );
+              
               if (
                   stdoutDataProduct &&
                   stdoutDataProduct.downloadURL
               ) {
-                return fetch(stdoutDataProduct.downloadURL, {
+                return fetch([stdoutDataProduct.downloadURL,csvDataProduct.downloadURL], {
                   credentials: "same-origin",
                 }).then((result) => {
                   console.log(result);
