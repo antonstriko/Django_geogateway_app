@@ -342,9 +342,9 @@ export default {
                   stdoutDataProduct &&
                   stdoutDataProduct.downloadURL
               ) {
-                return [fetch(stdoutDataProduct.downloadURL, {credentials: "same-origin",}),
+                return ([fetch(stdoutDataProduct.downloadURL, {credentials: "same-origin",}),
                   fetch(csvDataProduct.downloadURL, {credentials: "same-origin",})
-                  ].then((result) => {
+                  ]).then((result) => {
                   console.log(result);
                   entry.result = result;
                   entry.fullRetrieved = true;
