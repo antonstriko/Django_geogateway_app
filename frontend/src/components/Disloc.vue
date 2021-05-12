@@ -374,7 +374,7 @@ export default {
   box-sizing: border-box;
   border-radius: 8px;
   overflow-y: auto;
-  background-color: #7ee04c;
+  background-color: #A5B9CC;
   /*A5B9CC*/
 }
 .clickableName {
