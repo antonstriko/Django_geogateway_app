@@ -325,6 +325,7 @@ export default {
           lookup: exp.experimentId,
         })
             .then((fullDetails) => {
+              console.log(fullDetails);
               const kmz = fullDetails.experiment.experimentOutputs.find(
                   (o) => o.name === "KMZ Output File"
               ).value;
