@@ -160,7 +160,7 @@ export default {
           this.loadFullExperiment(entry);
         }else{
           entry.extended = true;
-          entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = 'green';
+          entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#7ee04c';
         }
       }
 
@@ -374,7 +374,7 @@ export default {
   box-sizing: border-box;
   border-radius: 8px;
   overflow-y: auto;
-  background-color: #A5B9CC;
+  background-color: #7ee04c;
   /*A5B9CC*/
 }
 .clickableName {
