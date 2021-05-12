@@ -325,7 +325,6 @@ export default {
           lookup: exp.experimentId,
         })
             .then((fullDetails) => {
-              console.log(fullDetails);
               const kmz = fullDetails.experiment.experimentOutputs.find(
                   (o) => o.name === "KMZ Output File"
               ).value;
@@ -343,9 +342,11 @@ export default {
                   stdoutDataProduct &&
                   stdoutDataProduct.downloadURL
               ) {
-                return fetch([stdoutDataProduct.downloadURL,csvDataProduct.downloadURL], {
-                  credentials: "same-origin",
-                }).then((result) => {
+                return [fetch(stdoutDataProduct.downloadURL, {
+                  credentials: "same-origin",}),
+                  fetch(csvDataProduct.downloadURL, {
+                  credentials: "same-origin",}),
+                  ]).then((result) => {
                   console.log(result);
                   entry.result = result;
                   entry.fullRetrieved = true;
