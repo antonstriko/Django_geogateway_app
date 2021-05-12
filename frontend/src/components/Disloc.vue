@@ -312,7 +312,7 @@ export default {
 
           if(currStatus !== "COMPLETED"){
             vm.extendEntry(entry);
-          } else {entry.activeBackground = 'green'}
+          } else {entry.activeBackground = '#7ee04c'}
           vm.results.push(entry);
           // vm.loadFullExperiment(exp, index)
           //sort list
