@@ -27,7 +27,7 @@
       <div class="container" v-html="fileInfo">
       </div>
       <div>
-        <strong>Parameters:</strong>
+        <strong>Synthetic Interferograms Parameters:</strong>
         <b-input-group prepend="Elevation (Deg)">
             <b-form-input v-model="Elevation" name="Elevation"></b-form-input>
         </b-input-group>
@@ -64,7 +64,7 @@
               <b>Experiment Status:</b> {{entry.exp.experimentStatus.name}}
               <br />
             <div v-if="entry.exp.experimentStatus.name === 'COMPLETED'">
-              <input type="checkbox" v-model="entry.active" @change="showHideLayers(entry)"> Show KMZ
+              <input type="checkbox" v-model="entry.active" @change="showHideLayers(entry)">Show Synthetic Interferograms
               <br />
               <a :href="entry.result.url">Download KMZ</a>
             </div>
@@ -338,6 +338,7 @@ export default {
                 return fetch(stdoutDataProduct.downloadURL, {
                   credentials: "same-origin",
                 }).then((result) => {
+                  console.log(result);
                   entry.result = result;
                   entry.fullRetrieved = true;
                   entry.extended = !entry.extended;
