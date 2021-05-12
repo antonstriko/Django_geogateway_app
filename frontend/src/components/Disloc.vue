@@ -66,7 +66,7 @@
             <div v-if="entry.exp.experimentStatus.name === 'COMPLETED'">
               <input type="checkbox" v-model="entry.active" @change="showHideLayers(entry)">Show Synthetic Interferograms
               <br />
-              <a :href="entry.result2.url">Download CSV</a>
+              <a :href="entry.result2.url">Download CSV</a>&ensp;
               <a :href="entry.result.url">Download KMZ</a>
             </div>
 
@@ -160,7 +160,7 @@ export default {
           this.loadFullExperiment(entry);
         }else{
           entry.extended = true;
-          entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#A5B9CC';
+          entry.extended ? entry.activeBackground = 'green' : entry.activeBackground = '#A5B9CC';
         }
       }
 
@@ -346,7 +346,6 @@ export default {
                 Promise.all ([fetch(stdoutDataProduct.downloadURL, {credentials: "same-origin",}),
                   fetch(csvDataProduct.downloadURL, {credentials: "same-origin",})
                   ]).then(([result,result2]) => {
-                  console.log(result);
                   entry.result = result;
                   entry.result2 = result2;
                   entry.fullRetrieved = true;
