@@ -350,7 +350,7 @@ export default {
                   entry.result2 = result2;
                   entry.fullRetrieved = true;
                   entry.extended = !entry.extended;
-                  entry.extended ? entry.activeBackground = '#7ee04c' : entry.activeBackground = '#A5B9CC';
+                  entry.extended ? entry.activeBackground = 'green' : entry.activeBackground = '#A5B9CC';
                 });
               }
 
