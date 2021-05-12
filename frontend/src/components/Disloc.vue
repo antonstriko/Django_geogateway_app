@@ -160,7 +160,8 @@ export default {
           this.loadFullExperiment(entry);
         }else{
           entry.extended = true;
-          entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#7ee04c';
+          //entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#7ee04c';
+          entry.activeBackground = '#8494a3';
         }
       }
 
@@ -311,7 +312,7 @@ export default {
 
           if(currStatus !== "COMPLETED"){
             vm.extendEntry(entry);
-          }
+          } 
           vm.results.push(entry);
           // vm.loadFullExperiment(exp, index)
           //sort list
@@ -350,7 +351,8 @@ export default {
                   entry.result2 = result2;
                   entry.fullRetrieved = true;
                   entry.extended = !entry.extended;
-                  entry.extended ? entry.activeBackground = '#7ee04c' : entry.activeBackground = '#7ee04c';
+                  //entry.extended ? entry.activeBackground = '#7ee04c' : entry.activeBackground = '#7ee04c';
+                  entry.activeBackground = '#7ee04c';
                 });
               }
 
