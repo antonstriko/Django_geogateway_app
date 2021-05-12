@@ -23,9 +23,6 @@
       <label>
         <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
       </label>
-      <button @click="submitFile()">Submit</button>
-      <div class="container" v-html="fileInfo">
-      </div>
       <div>
         <strong>Synthetic Interferograms Parameters:</strong>
         <b-input-group prepend="Elevation (Deg)">
@@ -37,6 +34,9 @@
         <b-input-group prepend="Radar Frequency (GHz)">
             <b-form-input v-model="RadarFrequency" name="RadarFrequency"></b-form-input>
         </b-input-group>
+      </div><br>
+      <button @click="submitFile()">Submit</button>
+      <div class="container" v-html="fileInfo">
       </div>
       <br>
       <!--      <div v-if="jobActive" class="center">-->
@@ -73,7 +73,7 @@
             </div>
         </div>
         <!--&lt;!&ndash;          {{entry.exp}}&ndash;&gt;-->
-      </div>
+      </div> <br>
     </div>
   </div>
 </template>
@@ -382,4 +382,11 @@ export default {
 .clickableName {
   cursor: pointer;
 }
+
+a:link, a:visited {
+  color: black;
+  text-decoration: underline;
+  display: inline-block;
+}
+
 </style>
