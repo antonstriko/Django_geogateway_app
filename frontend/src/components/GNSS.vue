@@ -125,9 +125,9 @@
         </b-col>
 
         <b-col >
-
+          <br>
           <div class="outputLayers" v-if="gnssLayers.length!==0 && !activeGnssQuery">
-            <strong>Output Layers</strong>
+            <strong>Outputs</strong>
             <div  v-for="layer in gnssLayers" :key="layer.name">
               <div v-if="layer.type !== 'table.txt'" ><input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> </div>
               <div v-else><a target="_blank" :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
@@ -273,7 +273,14 @@ export default {
         })
             //use JSON results (filename and folder) to request raw kml text
             .then(function (response) {
-              props = response.data
+              //console.log(response.data);
+              props = response.data;
+              // not a valid object
+              if (!(typeof props === 'object')) {
+                vm.activeGnssQuery = false;
+                alert("Somthing wrong, please check input paramters!");
+                return;
+              }
               function getExtension(f) {
                 var parts = f.split('_');
                 return parts[parts.length - 1];
@@ -307,7 +314,7 @@ export default {
                 folder: folder,
                 active: true,
                 url: horizontalUrl,
-                type: 'h.kml',
+                type: 'horizontal.kml',
               })
               vm.gnssLayers.push({
                 pre: prefix,
@@ -315,7 +322,7 @@ export default {
                 folder: folder,
                 active: true,
                 url: verticalUrl,
-                type: 'v.kml',
+                type: 'vertical.kml',
               })
               const kmlURI = '/geogateway_django_app/get_kml'
               axios.get(kmlURI, {
@@ -327,7 +334,7 @@ export default {
                 //emit raw kml text to parent map component
               }).then(function (response) {
                 // console.log(toGeoJSON.kml(response.data));
-                let hName = prefix + 'h.kml';
+                let hName = prefix + 'horizontal.kml';
                 vm.addGnssLayer(response.data, hName);
 
               })
@@ -342,11 +349,14 @@ export default {
                 // console.log(toGeoJSON.kml(response.data));
                 // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
                 // console.log(geojson)
-                let vName = prefix + 'v.kml';
+                let vName = prefix + 'vertical.kml';
                 vm.addGnssLayer(response.data, vName);
                 //console.log(markerSize)
                 vm.activeGnssQuery = false;
               })
+            }).catch(function(error) {
+              console.log("somthing wrong");
+              return Promise.reject(error);
             })
         this.layersActive = true;
       }
@@ -434,17 +444,22 @@ strong {
 }
 
 .outputLayers {
-  /*color: #343a40;*/
   margin-left: 55%;
   font-size: 14px;
   width: 40%;
-  border: 2px solid #3388ff;
+  border: 2px solid #416c41;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 0px;
   background-color: #bad7ff;
-  text-align: center;
+  text-align: left;
   margin-right: auto;
+  padding: 10px;
   position: absolute;
 
+}
+a:link {
+  color: black;
+  background-color: transparent;
+  text-decoration: underline;
 }
 </style>
