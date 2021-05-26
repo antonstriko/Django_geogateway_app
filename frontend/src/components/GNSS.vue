@@ -457,7 +457,7 @@ strong {
   position: absolute;
 
 }
-a:link {
+a:link ,a:visited {
   color: black;
   background-color: transparent;
   text-decoration: underline;
