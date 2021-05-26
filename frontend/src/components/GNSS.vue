@@ -300,6 +300,7 @@ export default {
               }
 
               folder = props.folder;
+              prefix = (1 + Math.floor(vm.gnssLayers.length/3)).toString() + prefix;
               vm.gnssLayers.push({
                 pre: prefix,
                 name: fileNameT,
