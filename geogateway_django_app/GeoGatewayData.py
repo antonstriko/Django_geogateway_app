@@ -100,6 +100,8 @@ def nowcast_plots(request):
             'country': 'notset',
         }
         data = requests.get(NowcastUrl, params=payload)
+        print(data.request.url)
+        print(data.text)
         responseData = HttpResponse(data)
         return responseData
 

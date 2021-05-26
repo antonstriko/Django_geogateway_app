@@ -174,7 +174,8 @@
                             "lon": this.lon,
                         },
                     }).then(function (response){
-                        console.log(response.data)
+                        console.log(response.request);
+                        console.log(response.data);
                         bus.$emit('nowcast', response.data, lat, lon)
                     })
                     //add logic for layer removal

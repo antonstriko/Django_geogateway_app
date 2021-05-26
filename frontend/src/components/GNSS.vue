@@ -2,9 +2,9 @@
   <div id="tab-window">
     <div>
 
-      <h3 style="text-align: center">GPS Data Analysis</h3>
+      <h3 style="text-align: center">GNSS Data Analysis</h3>
       <label class="control-label requiredField">
-        Select GPS data
+        Select GNSS data
       </label>
       <form>
 
