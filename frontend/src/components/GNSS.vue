@@ -30,7 +30,7 @@
         </div>
 
         <b-input-group prepend="Center Latitude">
-          <b-form-input v-model="gs_latitude"  name="gs_latitude"></b-form-input>
+          <b-form-input v-model="gs_latitude"  name="gs_latitude" type="text" required></b-form-input>
         </b-input-group>
 
         <b-input-group prepend="Center Longitude">
@@ -38,11 +38,11 @@
         </b-input-group>
 
         <b-input-group prepend="Longitude Span">
-          <b-form-input v-model="gs_width"  name="gs_width" placeholder="1 degree"></b-form-input>
+          <b-form-input v-model="gs_width"  name="gs_width" placeholder="in degree"></b-form-input>
         </b-input-group>
 
         <b-input-group prepend="Latitude Span">
-          <b-form-input v-model="gs_height" placeholder="1 degree" name="gs_height"></b-form-input>
+          <b-form-input v-model="gs_height" placeholder="in degree" name="gs_height"></b-form-input>
         </b-input-group>
 
         <div class="input-group" id="epoch_show" v-if="this.kmltype_sel === 'getcoseismic' || this.kmltype_sel === 'getpostseismic'">
@@ -220,9 +220,27 @@ export default {
         }
 
       },
+
+    validate_model_parameters() {
+      // check parameters
+      let valid = true;
+      if (this.gs_latitude == "" || this.gs_longitude == "") {
+        valid = false;
+      }
+      if (this.gs_width == "" || this.gs_height == "") {
+        valid = false;
+      }
+      
+      return valid;
+    },
+
     rungpsservice(){
-      this.activeGnssQuery = true;
       var vm = this;
+      if (!vm.validate_model_parameters()) {
+        alert("Missing required parameters!");
+        return;
+      }
+      this.activeGnssQuery = true;
       var fileNameH, fileNameV, fileNameT, folder, props;
       //var markerSize = this.markerSize;
       var verticalUrl, horizontalUrl, tableUrl;
