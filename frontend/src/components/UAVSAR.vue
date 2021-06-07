@@ -846,7 +846,7 @@ export default {
 
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
-              const track = new L.KML(kml);
+              const track = new L.KML(kml,{'ignorePlacemark':true});
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
@@ -912,7 +912,7 @@ export default {
 
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
-              const track = new L.KML(kml);
+              const track = new L.KML(kml,{'ignorePlacemark':true});
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
@@ -987,7 +987,7 @@ export default {
 
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
-              const track = new L.KML(kml);
+              const track = new L.KML(kml,{'ignorePlacemark':true});
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
