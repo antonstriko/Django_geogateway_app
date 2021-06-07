@@ -6,7 +6,7 @@
      -->
       <div class="tool-content">
       <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_User_Guide.pdf"><strong>User Guide (pdf)</strong></a>
-      <br>Lastest user guide will be posted soon.
+      <br>(Work in Progress)
       <br><br>
       <a target="_blank" href="https://earthdata.nasa.gov/learn/articles/getting-started-with-sar"><strong>GSA 2020 Workshop</strong></a>
       <br/><a target="_blank" href="https://cdn.earthdata.nasa.gov/conduit/upload/15244/GSA__2020_GeoGateway_updated_October_14.pdf"><strong>GSA 2020 Workshop (slides)</strong></a>

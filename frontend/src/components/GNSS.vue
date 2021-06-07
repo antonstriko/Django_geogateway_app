@@ -29,19 +29,19 @@
           <br/>
         </div>
 
-        <b-input-group prepend="Latitude">
+        <b-input-group prepend="Center Latitude">
           <b-form-input v-model="gs_latitude"  name="gs_latitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Longitude">
+        <b-input-group prepend="Center Longitude">
           <b-form-input v-model="gs_longitude" placeholder="" name="gs_longitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Width">
+        <b-input-group prepend="Longitude Span">
           <b-form-input v-model="gs_width"  name="gs_width" placeholder="1 degree"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Height">
+        <b-input-group prepend="Latitude Span">
           <b-form-input v-model="gs_height" placeholder="1 degree" name="gs_height"></b-form-input>
         </b-input-group>
 
