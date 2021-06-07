@@ -4,7 +4,7 @@
 
       <h3 style="text-align: center">GNSS Data Analysis</h3>
       <label class="control-label requiredField">
-        Select GNSS data
+        Select GNSS data models
       </label>
       <form>
 
@@ -28,34 +28,41 @@
             <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
           <br/>
         </div>
-
-        <b-input-group prepend="Center Latitude">
+        <br>
+        <b-input-group>
+          <template #prepend><b-input-group-text ><strong>Center Latitude</strong></b-input-group-text></template>
           <b-form-input v-model="gs_latitude"  name="gs_latitude" type="text" required></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Center Longitude">
+        <b-input-group>
+          <template #prepend><b-input-group-text ><strong>Center Longitude</strong></b-input-group-text></template>
           <b-form-input v-model="gs_longitude" placeholder="" name="gs_longitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Longitude Span">
+        <b-input-group>
+          <template #prepend><b-input-group-text ><strong>Longitude Span</strong></b-input-group-text></template>
           <b-form-input v-model="gs_width"  name="gs_width" placeholder="in degree"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Latitude Span">
+        <b-input-group>
+          <template #prepend><b-input-group-text ><strong>Latitude Span</strong></b-input-group-text></template>
           <b-form-input v-model="gs_height" placeholder="in degree" name="gs_height"></b-form-input>
         </b-input-group>
 
         <div class="input-group" id="epoch_show" v-if="this.kmltype_sel === 'getcoseismic' || this.kmltype_sel === 'getpostseismic'">
-          <b-input-group prepend="Epoch">
+          <b-input-group>
+            <template #prepend><b-input-group-text ><strong>Epoch</strong></b-input-group-text></template>
             <b-form-input v-model="gs_epoch" placeholder="YYYY-MM-DD" name="gs_epoch"></b-form-input>
           </b-input-group>
         </div>
 
-        <b-input-group prepend="Epoch 1" v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+        <b-input-group  v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+            <template #prepend><b-input-group-text ><strong>Epoch 1</strong></b-input-group-text></template>
           <b-form-input v-model="gs_epoch1" placeholder="YYYY-MM-DD" name="gs_epoch1"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Epoch 2" v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+        <b-input-group  v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+            <template #prepend><b-input-group-text ><strong>Epoch 2</strong></b-input-group-text></template>
           <b-form-input v-model="gs_epoch2" placeholder="YYYY-MM-DD" name="gs_epoch2"></b-form-input>
         </b-input-group>
 
