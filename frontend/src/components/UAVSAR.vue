@@ -1,10 +1,10 @@
 <template>
   <div class="tab-window">
     <h3>UAVSAR</h3>
-    <hr />
     <div class="topbuttonGroup">
       <div class="overviewButtonGroup">
         <b-button
+            class="btn-sm"
             type="checkbox"
             id="overview"
             :pressed.sync="overview"
@@ -19,8 +19,8 @@
         <!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
         <!--      </div>-->
         <!--      <br />-->
-        <b-button v-if="overview" variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
-        <b-button v-if="overview" variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
+        <b-button class="btn-sm" v-if="overview" variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
+        <b-button class="btn-sm" v-if="overview" variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
       </div>
       <!--      </div>-->
     </div>
@@ -34,20 +34,19 @@
       <!--      </div>-->
       <div v-if="geometryActive" >
         <br/>
-        <b-button variant="warning" @click="drawListenerOff">
+        <b-button class="btn-sm" variant="warning" @click="drawListenerOff">
           <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
         <br/>
       </div>
       <br/>
-      <b-input-group prepend="Flight name/path">
+      <b-input-group class="input-group-sm" prepend="Flight name/path">
         <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
       </b-input-group>
 
-      <b-input-group prepend="Latitude, Longitude">
+      <b-input-group class="input-group-sm" prepend="Latitude, Longitude">
         <b-form-input v-model="lat_lon" name="lat_lon" placeholder=""></b-form-input>
-      </b-input-group>
-      <br/>
-      <b-button variant="success" @click="uavsarQuery()">Search</b-button>
+      </b-input-group><br/>
+      <b-button class="btn-sm" variant="success" @click="uavsarQuery()">Search</b-button>
     </div>
 
 
@@ -56,10 +55,10 @@
       <b-container >
         <div class="layer-options">
           <b-row>
-            <b-button @click="selDeselAll">
+            <b-button class="btn-sm" @click="selDeselAll">
               Select/Deselect All
             </b-button>
-            <b-button @click="clearQuery" variant="warning">
+            <b-button class="btn-sm" @click="clearQuery" variant="warning">
               Clear Query
             </b-button>
           </b-row>
@@ -500,7 +499,6 @@ export default {
           'azimuth':azimuth,
         }
       }).then(function (response){
-        console.log(response);
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
@@ -617,6 +615,8 @@ export default {
 
       this.globalMap.addLayer(this.uavsarHighResLayer);
       this.uavsarHighResLayer.setOpacity(.75)
+      // zoom to image center
+      //var pos_list = entry.info['geometry']['coordinates'];
 
 
       var headingLegendFinal;
