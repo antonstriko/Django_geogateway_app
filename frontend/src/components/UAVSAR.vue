@@ -86,9 +86,10 @@
           <b-col >
             <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;"
             >
-              <div style="font-size: 13px" id="dataname">{{entry.info['dataname']}}</div>
-              <b style="font-size: 15px">{{entry.info['time1']}}  {{entry.info['time2']}}</b>
+              <div><b style="font-size: 12px" id="dataname">{{entry.info['dataname']}}</b></div>
+              <b style="font-size: 12px">{{entry.info['time1'].split(' ')[0]}} ~ {{entry.info['time2'].split(' ')[0]}}</b>
               <br />
+              <!--
               <div id="rating">
                 <div v-if="entry.info['rating'] === '0'">
                   <b-icon-star/>
@@ -112,6 +113,8 @@
                   <b-icon-star-fill/>
                 </div>
               </div>
+              -->
+              
             </div>
             <div v-if="extendingActive && entry.extended">
               <b-spinner type="grow" variant="warning">
@@ -124,37 +127,45 @@
                 <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
-
-                <i style="font-size: small;">Set Layer Opacity: <b>{{ opVal }}%</b></i>
+                <b-input-group class="input-group-sm mb-2">
+                  <i style="font-size: small;">Set Layer Opacity: <b>{{ opVal }}%</b></i>
                 <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
-
+                </b-input-group>
                 <div v-if="LosPlotAvailable && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
                   <b-input-group>
-                    <b-input-group prepend="Start Lat/Lon" class="mb-2">
+                    <b-input-group prepend="Start Lat/Lon" class="input-group-sm mb-2">
                       <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
                       <b-form-input v-model="lon1" name="lon1" placeholder=""></b-form-input>
                     </b-input-group>
                   </b-input-group>
                   <b-input-group>
-                    <b-input-group prepend="End Lat/Lon" class="mb-2">
+                    <b-input-group prepend="End Lat/Lon" class="input-group-sm mb-2">
                       <b-form-input v-model="lat2" name="lat2" placeholder=""></b-form-input>
                       <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
                     </b-input-group>
                   </b-input-group>
-                  <b-input-group prepend="LOS Length">
+                  <!--
+                  <b-input-group prepend="LOS Length" class="input-group-sm">
                     <b-form-input v-model="losLength" name="length" placeholder=""></b-form-input>
                   </b-input-group>
-                  <b-input-group prepend="Azimuth">
+                  <b-input-group prepend="Azimuth" class="input-group-sm">
                     <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
-                  </b-input-group>
+                  </b-input-group> -->
+                  <i style="font-size: small;">Profile Length: <b>{{ losLength }} km</b></i>  <span class="tab" />
+                   <i style="font-size: small;">Azimuth: <b>{{ azimuth }}</b></i>
                   <b-row>
-                    <b-col>
-                      <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
-                        <span >Update LOS Plot</span>
+                    <b-col sm="auto">
+                      <b-button class="btn-sm" variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
+                        <span >Update Plot</span>
                       </b-button>
                     </b-col>
-                    <b-col style="margin-top: 10px;">
-                      <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
+                    <b-col  sm="auto">
+                      <b-button class="btn-sm" variant="success" @click="downloadCSV(activeEntry)">
+                        <span >Download Data</span>
+                      </b-button>
+                    </b-col>
+                    <b-col  sm="auto">
+                      <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4; font-size: small;"><b><u>Data Source</u></b></span>
                     </b-col>
                   </b-row>
                 </div>
@@ -462,7 +473,10 @@ export default {
       })
     },
 
-    downloadCSV(entry, latlon){
+    downloadCSV(entry){
+      
+      var latlon = [this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng, this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng];
+
       var losLength = this.setLosLength(latlon);
       var azimuth = this.setAzimuth(latlon);
       this.losLength = losLength;
@@ -471,8 +485,11 @@ export default {
       this.lon1 = latlon[1].toFixed(5);
       this.lat2 = latlon[2].toFixed(5);
       this.lon2 = latlon[3].toFixed(5);
-
-      axios.get('/geogateway_django_app/los_download/', {
+      var imagename = entry.info['dataname'];
+      var csvname = imagename + ".csv";
+      axios.get('/geogateway_django_app/los_download/', 
+        
+        {responseType: 'blob', 
         params: {
           'entry':JSON.stringify(entry),
           'lat1':this.lat1,
@@ -483,7 +500,13 @@ export default {
           'azimuth':azimuth,
         }
       }).then(function (response){
-        window.open(response.data);
+        console.log(response);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', csvname);
+        document.body.appendChild(link);
+        link.click();
       })
     },
     findWithAttr(array, attr, value) {
@@ -587,7 +610,7 @@ export default {
         layers: layername,
         transparent: true,
         format: 'image/png',
-        zIndex: 2
+        zIndex: 11
       })
 
       // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
@@ -755,12 +778,14 @@ export default {
               layers: 'InSAR:thumbnailmosaic',
               transparent: true,
               format: 'image/png',
-              zIndex: 2
+              zIndex: 10,
             }
         );
         if(!this.overviewLegend){this.showOverviewLegend();}
         this.globalMap.addLayer(this.layers['uavsarWMS'])
         this.layers['uavsarWMS'].setOpacity(.7)
+
+
 
       } else {
         this.uavsarLayers = [];
@@ -1032,6 +1057,8 @@ export default {
   box-sizing: border-box;
   font-size: 15px;
   border-radius: 8px;
+  padding-top: 2px;
+  padding-bottom: 10px;
 }
 #active-plot {
   border-radius: 8px;

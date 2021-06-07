@@ -259,8 +259,32 @@ def losDownload(request):
         finalURI = losQueryUrl + uid + '_unw&point=' + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2 + \
                    '&format=csv&resolution=undefined&method=native'
 
-        return HttpResponse(finalURI)
+        data = requests.get(finalURI)
 
+        data = str(data.content.decode())
+
+        data = data.replace('""', '')
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=' + uid + '.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([image_name])
+        writer.writerow(['Start', lat1, lon1])
+        writer.writerow(['End', lat2, lon2])
+        writer.writerow(['Azimuth', azimuth])
+        writer.writerow(['Length (km)', losLength])
+        writer.writerow("Lon, Lat, Distance (km), Displacement (cm), Elevation Angle".split(','))
+        data = data.splitlines()
+        data = [line.split(',') for line in data]
+        writer.writerows(data)
+
+        #data = ContentFile(data)
+        #fs = FileSystemStorage()
+        #filename = fs.save(uid + '.csv', data)
+        #uploaded_file_url = fs.url(filename)
+        #return HttpResponse(uploaded_file_url, content_type='text/plain')
+        return response
 
 
 
