@@ -656,9 +656,9 @@ export default {
       var southwest = L.latLng(latlon[0][1], latlon[0][0]);
       var northeast = L.latLng(latlon[3][1], latlon[3][0]);
 
-      var rect = L.latLngBounds(southwest, northeast);
+      //var rect = L.latLngBounds(southwest, northeast);
 
-      console.log(southwest, northeast, rect.contains(clickloc));
+      //console.log(southwest, northeast, rect.contains(clickloc));
 
       this.placePlotMarkers(southwest, northeast, clickloc, latlon, entry);
     },
@@ -781,7 +781,7 @@ export default {
     },
     showOverview() {
       if (this.overview) {
-        this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+        this.layers['uavsarWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
               layers: 'InSAR:thumbnailmosaic',
               transparent: true,
               format: 'image/png',
