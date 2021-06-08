@@ -90,7 +90,7 @@
                 }
             },
           uavsarOverview(){
-            this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+            this.layers['uavsarWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
                   layers: 'InSAR:thumbnailmosaic',
                   transparent: true,
                   format: 'image/png',
