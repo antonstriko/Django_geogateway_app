@@ -630,7 +630,8 @@ export default {
       this.globalMap.setView([lat_sum,lon_sum],9);
 
       var headingLegendFinal;
-      var headingLegendBase = 'http://gf2.ucs.indiana.edu/direction_kml/'
+      //var headingLegendBase = 'http://gf2.ucs.indiana.edu/direction_kml/'
+      var headingLegendBase = 'https://archive.geo-gateway.org/kmz/direction_kml/'
       var headingRounded = entry.info['heading'].split('.')[0];
       var radarDir = entry.info['radardirection'];
       var radarDirL;
