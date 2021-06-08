@@ -219,9 +219,10 @@ export default {
       wmsUrl: 'https://archive.geo-gateway.org/color/highres/wms?',
       losQueryUrl: 'http://gf1.ucs.indiana.edu/insartool/profile?image=InSAR:uid',
       altColorLegend: 'http://js-169-62.jetstream-cloud.org/uavsarlegend1/uid',
-      piLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/pi_t.png',
-      twoPiLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/2pi_t.png',
-
+      //piLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/pi_t.png',
+      //twoPiLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/2pi_t.png',
+      piLegend: 'https://archive.geo-gateway.org/kmz/highreslegend/pi_t.png',
+      twoPiLegend: 'https://archive.geo-gateway.org/kmz/highreslegend/2pi_t.png',
     }
   },
 
