@@ -174,7 +174,9 @@ def uavsarTest(request):
 def uavsarKML(request):
     if request.method == 'GET':
 
-        baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
+        #baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
+        baseURI = 'https://archive.geo-gateway.org/kmz/'
+
         raw = request.GET.get('json')
         query = json.loads(raw)
         postfix = 'uid' + query['uid'] + '/' + query['dataname'] + '.int.kml'
@@ -183,7 +185,8 @@ def uavsarKML(request):
 
         uid = query['uid']
 
-        toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+        #toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+        toRep = '<href>https://archive.geo-gateway.org/kmz/' + 'uid' + uid + '/'
 
         respData = data.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
         meta = query
