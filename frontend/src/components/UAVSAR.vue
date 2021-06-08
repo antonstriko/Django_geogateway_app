@@ -154,7 +154,7 @@
                    <i style="font-size: small;">Azimuth: <b>{{ azimuth }}</b></i>
                   <b-row>
                     <b-col sm="auto">
-                      <b-button class="btn-sm" variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
+                      <b-button class="btn-sm" variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2)">
                         <span >Update Plot</span>
                       </b-button>
                     </b-col>
@@ -616,8 +616,15 @@ export default {
       this.globalMap.addLayer(this.uavsarHighResLayer);
       this.uavsarHighResLayer.setOpacity(.75)
       // zoom to image center
-      //var pos_list = entry.info['geometry']['coordinates'];
-
+      var pos_list = entry.info['geometry']['coordinates'];
+      var lon_sum = 0,lat_sum = 0;
+      for (var j = 0; j < pos_list[0].length; j++) {
+        lon_sum += pos_list[0][j][0];
+        lat_sum += pos_list[0][j][1];
+      }
+      lon_sum = lon_sum / pos_list[0].length;
+      lat_sum = lat_sum / pos_list[0].length;
+      this.globalMap.setView([lat_sum,lon_sum],9);
 
       var headingLegendFinal;
       var headingLegendBase = 'http://gf2.ucs.indiana.edu/direction_kml/'
@@ -657,11 +664,11 @@ export default {
     },
 
 
-    updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len) {
+    updatePlotLineForm(entry, lat1, lon1, lat2, lon2) {
       this.plotActive = true;
       this.plottingMarkerStart.setLatLng([lat2, lon2]);
       this.plottingMarkerEnd.setLatLng([lat1, lon1]);
-      console.log(az, len);
+      //console.log(az, len);
       var latlon = [this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng, this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng]
       this.getCSV(entry, latlon);
     },
