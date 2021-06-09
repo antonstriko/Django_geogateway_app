@@ -88,7 +88,7 @@
               <div><b style="font-size: 12px" id="dataname">{{entry.info['dataname']}}</b></div>
               <b style="font-size: 12px">{{entry.info['time1'].split(' ')[0]}} ~ {{entry.info['time2'].split(' ')[0]}}</b>
               <br />
-              <!--
+
               <div id="rating">
                 <div v-if="entry.info['rating'] === '0'">
                   <b-icon-star/>
@@ -112,7 +112,7 @@
                   <b-icon-star-fill/>
                 </div>
               </div>
-              -->
+
               
             </div>
             <div v-if="extendingActive && entry.extended">
@@ -1067,12 +1067,12 @@ export default {
   height: auto;
   box-sizing: border-box;
   font-size: 15px;
-  border-radius: 8px;
+  border-radius: 4px;
   padding-top: 2px;
-  padding-bottom: 10px;
+  padding-bottom: 2px;
 }
 #active-plot {
-  border-radius: 8px;
+  border-radius: 4px;
 }
 #dataname {
   width:100%;
@@ -1106,7 +1106,7 @@ export default {
   height: auto;
   border: 2px solid #e6e6ff;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow-y: auto;
   /*A5B9CC*/
 }

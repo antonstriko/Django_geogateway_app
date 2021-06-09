@@ -9,7 +9,7 @@
     <DraggableDiv v-resize @resize="resizeLOS" class="col-11" v-if="plotActive" id="plot-window">
       <vue-resize ></vue-resize>
       <template slot="header">
-        <p style="color: #000000">LOS Plot</p>
+        <p style="color: #000000">Line of Sight Displacement</p>
       </template>
       <div id="losLegend">
       </div>
