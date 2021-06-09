@@ -762,6 +762,7 @@ export default {
       this.selDesel = !this.selDesel;
     },
     clearQuery(){
+ 
       this.lat_lon = '';
       this.flight_path = '';
       for (var i = 0; i < this.uavsarLayersFiltered.length; i++) {
@@ -778,7 +779,12 @@ export default {
         this.uavsarLegend.remove();
       }
       this.showOverview();
-      this.showOverviewLegend();
+      if (this.overviewLegend === null) {
+        this.showOverviewLegend();
+      } else {
+        this.removeOverviewLegend();
+        this.showOverviewLegend();
+      }
       this.uavsarDisplayedLayers = [];
       this.uavsarLayersFiltered = [];
       this.uavsarLayers = [];
