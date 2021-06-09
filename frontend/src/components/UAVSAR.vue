@@ -69,7 +69,7 @@
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
             <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show Alternate Coloring</b-checkbox>
+          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate cloring if available</b-checkbox>
         </div>
         <!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
         <!--        variant="success">Download LOS Data</b-button>-->
@@ -83,12 +83,13 @@
             <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
           </b-col>
           <b-col >
-            <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;"
-            >
+            <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;">
               <div><b style="font-size: 12px" id="dataname">{{entry.info['dataname']}}</b></div>
-              <b style="font-size: 12px">{{entry.info['time1'].split(' ')[0]}} ~ {{entry.info['time2'].split(' ')[0]}}</b>
-              <br />
-
+              <b-row class="justify-content-md-center">
+              <b-col>
+              <b style="font-size: 12px">{{entry.info['time1'].split(' ')[0]}} | {{entry.info['time2'].split(' ')[0]}}</b>
+              </b-col>
+              <b-col>
               <div id="rating">
                 <div v-if="entry.info['rating'] === '0'">
                   <b-icon-star/>
@@ -111,9 +112,10 @@
                   <b-icon-star-fill/>
                   <b-icon-star-fill/>
                 </div>
-              </div>
-
-              
+              </div>              
+              </b-col>
+              </b-row>
+ 
             </div>
             <div v-if="extendingActive && entry.extended">
               <b-spinner type="grow" variant="warning">
