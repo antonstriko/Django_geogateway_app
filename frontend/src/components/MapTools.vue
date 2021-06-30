@@ -12,6 +12,13 @@
       <br/>
       <input
           type="checkbox"
+          v-model="qfaults"
+          @change="updateLayer('qfaults')"
+          id="qfaults"
+      ><label for="boundaries">Quaternary Faults</label>
+      <br/>
+      <input
+          type="checkbox"
           v-model="kml"
           @change="updateLayer('kml')"
           id="kml"
@@ -47,6 +54,11 @@
           <b-form-radio label="yellow" name="some-radios" value="yellow" v-model="selectedColor" @change="updateColor('yellow')"><p>yellow</p></b-form-radio>
           <b-form-radio label="grey" name="some-radios" value="grey" v-model="selectedColor" @change="updateColor('grey')"><p>grey</p></b-form-radio>
         </b-form-radio-group>
+      </div>
+
+      <div id="div_qfautls" v-show="this.qfaults" >
+        Quaternary faults colored by age
+          <img src="../assets/qfaultslegend.jpg" alt="qfaults_legend" width="80%" height="80%" style="border:1px solidblack">
       </div>
 
       <div v-if="this.kml">
@@ -103,13 +115,14 @@ export default {
     // kmlFile: null,
     // value: 50,
     // kmlLayers: [],
-    ...mapFields(['mapTools.kmlLayers', 'mapTools.boundaries', 'mapTools.ucerf',
+    ...mapFields(['mapTools.kmlLayers', 'mapTools.boundaries', 'mapTools.ucerf', 'mapTools.qfaults',
       'mapTools.coasts', 'mapTools.kml', 'mapTools.kmlFile', 'mapTools.selected', 'mapTools.currLoc',
       'mapTools.userLocationCirc', 'mapTools.selectedColor',
       // 'maTools.userLocationPin',
       'mapTools.locActive',
 
-      'map.globalMap'])
+      'map.globalMap',
+      'map.layers'])
   },
   mounted() {
 
@@ -184,6 +197,17 @@ export default {
           if(this.coasts) {
             bus.$emit('UrlAddLayer', this.coastsUrl, 'coastsL');
           }else bus.$emit('RemoveLayer', 'coastsL');
+          break;
+        case 'qfaults':
+          if(this.qfaults) {
+              this.layers['qfaultsWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
+              layers: 'InSAR:Qfaults_US_Database',
+              transparent: true,
+              format: 'image/png',
+              zIndex: 10,
+            });
+            this.globalMap.addLayer(this.layers['qfaultsWMS'])
+          } else {this.layers['qfaultsWMS'].remove();}
           break;
       }
     },
