@@ -48,6 +48,7 @@
     </div>
     <div id="tools-show">
       <div v-show="this.ucerf">
+        Select faults display color
         <b-form-radio-group v-model="selectedColor">
           <b-form-radio label="black" name="some-radios" value="black" v-model="selectedColor" @change="updateColor('black')"><p>black</p></b-form-radio>
           <b-form-radio label="red" name="some-radios" value="red" v-model="selectedColor" @change="updateColor('red')"><p>red</p></b-form-radio>
@@ -56,9 +57,24 @@
         </b-form-radio-group>
       </div>
 
-      <div id="div_qfautls" v-show="this.qfaults" >
+      <div id="div_qfautls" v-show="this.qfaults" style="padding-left: 60px;" align="left">
         Quaternary faults colored by age
-          <img src="../assets/qfaultslegend.jpg" alt="qfaults_legend" width="80%" height="80%" style="border:1px solidblack">
+          <!-- <img src="../assets/qfaultslegend.jpg" alt="qfaults_legend" width="80%" height="80%" style="border:1px solidblack"> -->
+          <b-form-group>
+          <b-form-checkbox-group
+            id="qfaults_type"
+            v-model="qfaults_selected"
+            stacked
+          >
+          <b-form-checkbox value="historic"><span style="color:#ff0000;font-weight: bold;">&#9473;&#9473;</span> Historic (150 yr)</b-form-checkbox>
+          <b-form-checkbox value="latest Quaternary" ><span style="color:#ffaa00;font-weight: bold;">&#9473;&#9473;</span> Latest Quaternary (15,000 yr)</b-form-checkbox>
+          <b-form-checkbox value="late Quaternary"><span style="color:#55ff00;font-weight: bold;">&#9473;&#9473;</span> Late Quaternary (130,000 yr)</b-form-checkbox>
+          <b-form-checkbox value="middle and late Quaternary"  ><span style="color:#0070ff;font-weight: bold;">&#9473;&#9473;</span> Middle and Late Quaternary (750,000 yr)</b-form-checkbox>
+          <b-form-checkbox value="undifferentiated Quaternary" ><span style="color:#000000;font-weight: bold;">&#9473;&#9473;</span> Undifferentiated Quaternary (1.6 millions yr)</b-form-checkbox>
+          <b-form-checkbox value="unspecified" ><span style="color:#dfe000;font-weight: bold;">&#9473;&#9473;</span> Unspecified Age</b-form-checkbox>
+          <b-form-checkbox value="class B" ><span style="color:#9c9c9c;font-weight: bold;">&#9473;&#9473;</span> Class B</b-form-checkbox>
+          </b-form-checkbox-group>
+          </b-form-group>
       </div>
 
       <div v-if="this.kml">
@@ -105,6 +121,7 @@ export default {
       coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
       userLocationPin: null, //vuex-map-fields does not correctly reference variables inside of event listeners
       //selectedColor: 'grey',
+      qfaults_selected:["historic", "late Quaternary", "undifferentiated Quaternary", "unspecified", "class B", "middle and late Quaternary", "latest Quaternary"],
     }
   },
   computed: {
@@ -123,6 +140,12 @@ export default {
 
       'map.globalMap',
       'map.layers'])
+  },
+  watch: {
+  qfaults_selected() {
+    //console.log(val); // or this.selectedFruits
+    this.updateqfaults();
+   }
   },
   mounted() {
 
@@ -170,7 +193,42 @@ export default {
       //this.selected = selected;
       bus.$emit('RemoveLayer', 'ucerfL');
       this.updateLayer('ucerf', selected)
+    },    
+    updateqfaults() {
+      var filterstr = "";
+      // filter by age
+      console.log(this.qfaults_selected);
+      if (this.qfaults_selected.length == 1) {
+        filterstr = "age like '" + this.qfaults_selected[0] + "'";
+      }
+      if (this.qfaults_selected.length > 1 && this.qfaults_selected.length < 7) {
+        filterstr = "age IN " + "('" + this.qfaults_selected.join("','") + "')";
+      }
+      if (this.globalMap.hasLayer(this.layers['qfaultsWMS'])) {
+        this.layers['qfaultsWMS'].remove();
+      }
+      if (this.qfaults_selected.length == 0) {
+        return;
+      }
+      if (filterstr == "") {
+      this.layers['qfaultsWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
+        layers: 'InSAR:Qfaults_US_Database',
+        transparent: true,
+        format: 'image/png',
+        zIndex: 10,
+        //cql_filter: filterstr,
+      }); } else {
+        this.layers['qfaultsWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
+        layers: 'InSAR:Qfaults_US_Database',
+        transparent: true,
+        format: 'image/png',
+        zIndex: 10,
+        cql_filter: filterstr,
+      }); 
+      }
+      this.globalMap.addLayer(this.layers['qfaultsWMS']);
     },
+
     updateLayer(l, color){
       switch (l) {
         case 'ucerf':
@@ -200,13 +258,7 @@ export default {
           break;
         case 'qfaults':
           if(this.qfaults) {
-              this.layers['qfaultsWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
-              layers: 'InSAR:Qfaults_US_Database',
-              transparent: true,
-              format: 'image/png',
-              zIndex: 10,
-            });
-            this.globalMap.addLayer(this.layers['qfaultsWMS'])
+            this.updateqfaults();
           } else {this.layers['qfaultsWMS'].remove();}
           break;
       }
