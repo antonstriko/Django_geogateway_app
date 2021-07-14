@@ -75,6 +75,7 @@
           <b-form-checkbox value="class B" ><span style="color:#9c9c9c;font-weight: bold;">&#9473;&#9473;</span> Class B</b-form-checkbox>
           </b-form-checkbox-group>
           </b-form-group>
+          <a target="_blank" href="https://www.usgs.gov/natural-hazards/earthquake-hazards/faults">Source: USGS Faults Database</a>
       </div>
 
       <div v-if="this.kml">
