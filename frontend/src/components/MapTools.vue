@@ -58,7 +58,7 @@
       </div>
 
       <div id="div_qfautls" v-show="this.qfaults" style="padding-left: 60px;" align="left">
-        Quaternary faults colored by age
+          <br><div align="center"><a target="_blank" href="https://www.usgs.gov/natural-hazards/earthquake-hazards/faults">Source: USGS Faults Database</a></div>
           <!-- <img src="../assets/qfaultslegend.jpg" alt="qfaults_legend" width="80%" height="80%" style="border:1px solidblack"> -->
           <b-form-group>
           <b-form-checkbox-group
@@ -75,9 +75,7 @@
           <b-form-checkbox value="class B" ><span style="color:#9c9c9c;font-weight: bold;">&#9473;&#9473;</span> Class B</b-form-checkbox>
           </b-form-checkbox-group>
           </b-form-group>
-          <a target="_blank" href="https://www.usgs.gov/natural-hazards/earthquake-hazards/faults">Source: USGS Faults Database</a>
       </div>
-
       <div v-if="this.kml">
         <br />
         <h4>KML File Upload</h4>
@@ -90,9 +88,7 @@
           <div class="fileEntry" >
             <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)" > <span style="font-size: 15px; color: #222222">{{entry.name}}</span><br>
           </div>
-
         </div>
-
         <!--            <div v-if="boundaries">-->
         <!--                <label for="opacity">Example range with min and max</label>-->
         <!--                <b-form-input id="opacity" @change="updateOpacity(value)" v-model="value" type="range" min="0" max="100"></b-form-input>-->
@@ -305,5 +301,10 @@ export default {
   border-radius: 8px;
   background-color: #8494A3;
   margin-bottom: 5px;
+}
+a:link, a:visited {
+  color: black;
+  text-decoration: underline;
+  display: inline-block;
 }
 </style>
