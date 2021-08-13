@@ -6,7 +6,7 @@
      -->
       <div class="tool-content">
       <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_User_Guide.pdf"><strong>User Guide (pdf)</strong></a>
-      <br>(Work in Progress)<br>
+      <br>(Work in Progress, Corrections coming soon)<br>
       <!--
      <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_Exercises.pdf"><strong>Exercises (pdf)</strong></a>
        <br> --> <br>
