@@ -165,9 +165,9 @@ export const store = new Vuex.Store({
             lon: '',
         },
         mmcalc: {
-            mm_length: 249,
-            mm_width: 120.0,
-            mm_slip: 23,
+            mm_length: 12.5,
+            mm_width: 10,
+            mm_slip: 0.45,
             mm_shear: 3,
             SM: null,
             MM: null,
