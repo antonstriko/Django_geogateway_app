@@ -75,7 +75,7 @@
       <td><a href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/data/RC20190927C_report.pdf" target=_>Report</a></td></tr>
 
                       <tr class="uavar-tr"><td colspan=2><a target=_ href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/KMLOverview/M64_products_overview.kmz">Products overview (kmz)</a></td>
-                      <td colspan=2><a target=_ href="http://156.56.174.162/earthquake/RC20190709.html"><strong>View Point Clouds</strong></a></td>
+                      <td colspan=2><a target=_ href="https://archive.geo-gateway.org/earthquake/RC20190709.html"><strong>View Point Clouds</strong></a></td>
                     </tr>
             </table>
    
@@ -125,7 +125,7 @@
               <td><a href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/data/SV20190927C_report.pdf" target=_>Report</a></td></tr>
 
                       <tr class="uavar-tr"><td colspan=2><a target=_ href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/KMLOverview/M71_products_overview.kmz">Products overview (kmz)</a></td>
-                      <td colspan=2><a target=_ href="http://156.56.174.162/earthquake/SV20190711.html"><strong>View Point Clouds</strong></a></td>
+                      <td colspan=2><a target=_ href="https://archive.geo-gateway.org/earthquake/SV20190711.html"><strong>View Point Clouds</strong></a></td>
                       </tr>
             </table>
               <a target="_blank" href="http://gf2.ucs.indiana.edu/stage/Ridgecrest_2019/animation/M7.1RAB4v2.gif"><strong>View Animated Gif</strong></a> <br>
