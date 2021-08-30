@@ -16,8 +16,8 @@ from airavata_django_portal_sdk import user_storage
 
 
 
-GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
-KmlPrefix = "http://156.56.174.162:8000/static"
+GpsServiceUrl = "https://archive.geo-gateway.org/gpsservice/kml?"
+KmlPrefix = "https://archive.geo-gateway.org/static"
 wmsColorUrl = 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?'
 wmsUrl = 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?'
 losQueryUrl = 'http://js-170-143.jetstream-cloud.org:8000/los/profile?image=uid'
