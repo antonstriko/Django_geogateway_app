@@ -6,7 +6,7 @@
       <label class="control-label requiredField">
         Select GNSS data models
       </label>
-      <form>
+  
 
         <!-- <label for="sel1">Select list:</label> -->
         <select class="form-control" v-model="kmltype_sel" id="kmltype_sel" >
@@ -145,7 +145,7 @@
 
 
 
-      </form>
+ 
       <div v-if="activeGnssQuery" style="overflow: hidden">
         <br/>
         <b-spinner variant="success" label="Spinning"></b-spinner>
