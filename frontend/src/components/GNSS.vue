@@ -137,7 +137,7 @@
             <strong>Output</strong>
             <div  v-for="layer in gnssLayers" :key="layer.name">
               <div v-if="layer.type !== 'table.txt'" ><input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> </div>
-              <div v-else><a target="_blank" :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
+              <div v-else><a target="_blank" :href="layer.url">{{layer.name}}</a></div>
             </div>
           </div>
 
@@ -242,8 +242,9 @@ export default {
         for(var i = 0;i<this.gnssLayers.length;i++){
           var splitPrefix = this.gnssLayers[i].name.split('_')[0];
           if(splitPrefix === this.gs_outputprefix){
-            alert('There is already an existing query with that name, please rename and resubmit')
-            return;
+            continue;
+            //alert('There is already an existing query with that name, please rename and resubmit');
+            //return;
           }
         }
         // this.layerCheckbox = true;
@@ -280,7 +281,8 @@ export default {
         })
             //use JSON results (filename and folder) to request raw kml text
             .then(function (response) {
-              props = response.data
+              props = response.data;
+              console.log(props);
               if (!(typeof props === 'object')) {
                 vm.activeGnssQuery = false;
                 alert("Somthing wrong, please check input paramters!");
