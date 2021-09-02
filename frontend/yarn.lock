@@ -5218,9 +5218,9 @@ leaflet-geometryutil@^0.9.3:
   dependencies:
     leaflet ">=0.7.0"
 
-"leaflet-kml@https://github.com/webgisdeveloper/leaflet-kml.git":
+"leaflet-kml@git+https://github.com/webgisdeveloper/leaflet-kml.git":
   version "1.1.0"
-  resolved "https://github.com/webgisdeveloper/leaflet-kml.git#529c383094429364c8b70955fce88963464e7fd8"
+  resolved "git+https://github.com/webgisdeveloper/leaflet-kml.git#57940a19ceaedb172b8015715046c0fd50fc428e"
 
 leaflet-kmz@^1.0.6:
   version "1.0.6"

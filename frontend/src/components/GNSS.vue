@@ -29,39 +29,39 @@
           <br/>
         </div>
         <br>
-        <b-input-group>
+        <b-input-group prepend="Center Latitude">
           <template #prepend><b-input-group-text ><strong>Center Latitude</strong></b-input-group-text></template>
-          <b-form-input v-model="gs_latitude"  name="gs_latitude" type="text" required></b-form-input>
+          <b-form-input v-model="gs_latitude"  name="gs_latitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group>
+        <b-input-group prepend="Center Longitude">
           <template #prepend><b-input-group-text ><strong>Center Longitude</strong></b-input-group-text></template>
           <b-form-input v-model="gs_longitude" placeholder="" name="gs_longitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group>
+        <b-input-group prepend="Longitude Span">
           <template #prepend><b-input-group-text ><strong>Longitude Span</strong></b-input-group-text></template>
-          <b-form-input v-model="gs_width"  name="gs_width" placeholder="in degree"></b-form-input>
+          <b-form-input v-model="gs_width"  name="gs_width" placeholder="1 degree"></b-form-input>
         </b-input-group>
 
-        <b-input-group>
+        <b-input-group prepend="Latitude Span">
           <template #prepend><b-input-group-text ><strong>Latitude Span</strong></b-input-group-text></template>
-          <b-form-input v-model="gs_height" placeholder="in degree" name="gs_height"></b-form-input>
+          <b-form-input v-model="gs_height" placeholder="1 degree" name="gs_height"></b-form-input>
         </b-input-group>
 
         <div class="input-group" id="epoch_show" v-if="this.kmltype_sel === 'getcoseismic' || this.kmltype_sel === 'getpostseismic'">
-          <b-input-group>
+          <b-input-group prepend="Epoch">
             <template #prepend><b-input-group-text ><strong>Epoch</strong></b-input-group-text></template>
             <b-form-input v-model="gs_epoch" placeholder="YYYY-MM-DD" name="gs_epoch"></b-form-input>
           </b-input-group>
         </div>
 
-        <b-input-group  v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+        <b-input-group prepend="Epoch 1" v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
             <template #prepend><b-input-group-text ><strong>Epoch 1</strong></b-input-group-text></template>
           <b-form-input v-model="gs_epoch1" placeholder="YYYY-MM-DD" name="gs_epoch1"></b-form-input>
         </b-input-group>
 
-        <b-input-group  v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+        <b-input-group prepend="Epoch 2" v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
             <template #prepend><b-input-group-text ><strong>Epoch 2</strong></b-input-group-text></template>
           <b-form-input v-model="gs_epoch2" placeholder="YYYY-MM-DD" name="gs_epoch2"></b-form-input>
         </b-input-group>
@@ -132,9 +132,9 @@
         </b-col>
 
         <b-col >
-          <br>
+
           <div class="outputLayers" v-if="gnssLayers.length!==0 && !activeGnssQuery">
-            <strong>Outputs</strong>
+            <strong>Output</strong>
             <div  v-for="layer in gnssLayers" :key="layer.name">
               <div v-if="layer.type !== 'table.txt'" ><input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> </div>
               <div v-else><a target="_blank" :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
@@ -227,27 +227,9 @@ export default {
         }
 
       },
-
-    validate_model_parameters() {
-      // check parameters
-      let valid = true;
-      if (this.gs_latitude == "" || this.gs_longitude == "") {
-        valid = false;
-      }
-      if (this.gs_width == "" || this.gs_height == "") {
-        valid = false;
-      }
-      
-      return valid;
-    },
-
     rungpsservice(){
-      var vm = this;
-      if (!vm.validate_model_parameters()) {
-        alert("Missing required parameters!");
-        return;
-      }
       this.activeGnssQuery = true;
+      var vm = this;
       var fileNameH, fileNameV, fileNameT, folder, props;
       //var markerSize = this.markerSize;
       var verticalUrl, horizontalUrl, tableUrl;
@@ -298,9 +280,7 @@ export default {
         })
             //use JSON results (filename and folder) to request raw kml text
             .then(function (response) {
-              //console.log(response.data);
-              props = response.data;
-              // not a valid object
+              props = response.data
               if (!(typeof props === 'object')) {
                 vm.activeGnssQuery = false;
                 alert("Somthing wrong, please check input paramters!");
@@ -380,9 +360,6 @@ export default {
                 //console.log(markerSize)
                 vm.activeGnssQuery = false;
               })
-            }).catch(function(error) {
-              console.log("somthing wrong");
-              return Promise.reject(error);
             })
         this.layersActive = true;
       }
@@ -470,6 +447,7 @@ strong {
 }
 
 .outputLayers {
+  /*color: #343a40;*/
   margin-left: 55%;
   font-size: 14px;
   width: 40%;
@@ -479,11 +457,11 @@ strong {
   background-color: #bad7ff;
   text-align: left;
   margin-right: auto;
-  padding: 10px;
+  padding:5px;
   position: absolute;
-
 }
-a:link ,a:visited {
+
+a:link {
   color: black;
   background-color: transparent;
   text-decoration: underline;
