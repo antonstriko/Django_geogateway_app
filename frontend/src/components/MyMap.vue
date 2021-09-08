@@ -249,6 +249,8 @@ export default {
       this.losPlot = new Dygraph(
           document.getElementById("dygraph-LOS"),
           csv_final, {
+            labels:['distance','grc','dem'],
+            series:{'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false}},
             drawPoints: true,
             pointSize: 2,
             strokeWidth: 0.0,
@@ -257,12 +259,19 @@ export default {
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
             ylabel: 'GRC (cm)',
+            y2label: 'DEM (m) (line)',
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
+            //legend: 'always',
             showRangeSelector: true,
             axes: {
               y: {
+              valueFormatter: y => y.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              y2: {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),

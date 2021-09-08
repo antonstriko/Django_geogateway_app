@@ -439,11 +439,11 @@ export default {
       for(var i=0;i<csv2.length;i++) {
         var csv3=csv2[i].split(",");
         //                console.log(csv2[i],csv3)
-        if(csv3[2] && csv3[3]) {
-          csv_final+=csv3[2]+","+csv3[3]+"\n";
+        if(csv3[2] && csv3[3] && csv3[5]) {
+          csv_final+=csv3[2]+","+csv3[3]+ ","+csv3[5] + "\n";
         }
-        //                console.log(csv_final);
       }
+      console.log(csv_final);
       this.csv_final = csv_final;
       this.LosPlotAvailable= true;
       bus.$emit('activatePlot', csv_final);
