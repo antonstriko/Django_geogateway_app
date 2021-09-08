@@ -250,8 +250,8 @@ export default {
           document.getElementById("dygraph-LOS"),
           csv_final, {
             labels:['distance','grc','dem'],
-            series:{'grc':{axis:'y',drawPoints: true,pointSize: 2,strokeWidth: 0.0,},
-              'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false},
+            series:{'grc':{axis:'y',drawPoints: true,pointSize: 2,strokeWidth: 0.0,showInRangeSelector: true},
+              'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false,showInRangeSelector: false},
               },
             // drawPoints: true,
             // pointSize: 2,
