@@ -80,10 +80,10 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '190px',
-        width: '650px',
-        marginLeft: '10px',
-        marginBottom: '10px',
+        height: '225px',
+        width: '675px',
+        marginLeft: '5px',
+        marginBottom: '5px',
         borderColor: '#5cb85c'
       }
 
@@ -555,7 +555,7 @@ export default {
   z-index: 1500;
   background-color: #ccffcc;
   /*opacity: .5;*/
-  height: 250px;
+  height: 300px;
   resize: both;
   overflow: auto;
   width: 725px;
