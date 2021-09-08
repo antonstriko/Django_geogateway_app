@@ -24,7 +24,7 @@
     <!--        </div>-->
 
     <div id="map">
-    </div>
+   </div>
 
 
 
@@ -80,7 +80,7 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '190px',
+        height: '250px',
         width: '650px',
         marginLeft: '10px',
         marginBottom: '10px',
@@ -256,7 +256,7 @@ export default {
             // xLabelHeight: 16,
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
-            ylabel: 'GRC (cm)',
+            ylabel: 'Ground Range Change (cm)',
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
@@ -544,7 +544,7 @@ export default {
   z-index: 1500;
   background-color: #ccffcc;
   /*opacity: .5;*/
-  height: 250px;
+  height: 350px;
   resize: both;
   overflow: auto;
   width: 725px;
