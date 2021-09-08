@@ -463,7 +463,9 @@ export default {
 
       axios.get('/geogateway_django_app/UAVSAR_csv/', {
         params: {
-          'entry':JSON.stringify(entry),
+          //'entry':JSON.stringify(entry),
+          'uid':entry['info']['uid'],
+          'dataname':entry['info']['dataname'],
           'lat1':this.lat1,
           'lon1':this.lon1,
           'lat2':this.lat2,

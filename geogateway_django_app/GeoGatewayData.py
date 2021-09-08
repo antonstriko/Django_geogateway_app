@@ -199,11 +199,13 @@ def uavsarKML(request):
 def uavsarCSV(request):
     if request.method == 'GET':
         # http://149.165.157.193:8000/los/profile?image=uid475_unw&point=-115.8003008515625,33.56101488057798,-115.7003008515625,33.56101488057798&format=csv&resolution=undefined&method=native
-        raw = request.GET.get('entry')
-        entry = json.loads(raw)
-        info = entry['info']
-        uid = info['uid']
-        image_name = info['dataname']
+        # raw = request.GET.get('entry')
+        # entry = json.loads(raw)
+        # info = entry['info']
+        # uid = info['uid']
+        uid = request.GET.get('uid')
+        image_name = request.GET.get('dataname')
+        # image_name = info['dataname']
         lat1 = request.GET.get('lat1')
         lon1 = request.GET.get('lon1')
         lat2 = request.GET.get('lat2')
