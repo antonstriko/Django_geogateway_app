@@ -280,7 +280,7 @@ def losDownload(request):
         writer.writerow(['End', lat2, lon2])
         writer.writerow(['Azimuth', azimuth])
         writer.writerow(['Length (km)', losLength])
-        writer.writerow("Lon, Lat, Distance (km), Displacement (cm), Elevation Angle".split(','))
+        writer.writerow("Lon, Lat, Distance (km), Displacement (cm), Elevation Angle, DEM (m)".split(','))
         data = data.splitlines()
         data = [line.split(',') for line in data]
         writer.writerows(data)
