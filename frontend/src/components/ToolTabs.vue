@@ -32,6 +32,7 @@
         },
         mounted() {
             //this.toPage(this.tabIndex);
+            this.directUrl(this.tabUrl);
         },
         watch: {
             tabIndex: function(val){
