@@ -31,7 +31,7 @@
             }
         },
         mounted() {
-            this.toPage(this.tabIndex);
+            //this.toPage(this.tabIndex);
         },
         watch: {
             tabIndex: function(val){
