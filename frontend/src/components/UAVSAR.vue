@@ -69,7 +69,7 @@
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
             <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate cloring if available</b-checkbox>
+          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate coloring if available</b-checkbox>
         </div>
         <!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
         <!--        variant="success">Download LOS Data</b-button>-->
