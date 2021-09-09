@@ -32,7 +32,10 @@
         },
         mounted() {
             //this.toPage(this.tabIndex);
-            this.directUrl(this.tabUrl);
+ 
+            if (this.tabUrl == '/') {  
+                this.tabIndex = 0; this.toPage(this.tabIndex);} 
+            else {this.directUrl(this.tabUrl)}
         },
         watch: {
             tabIndex: function(val){
@@ -90,6 +93,7 @@
                         break;
                 }
             },
+
           uavsarOverview(){
             this.layers['uavsarWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
                   layers: 'InSAR:thumbnailmosaic',
