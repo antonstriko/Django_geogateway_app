@@ -81,9 +81,9 @@ export default {
       losPlot: null,
       losStyle: {
         height: '250px',
-        width: '650px',
-        marginLeft: '10px',
-        marginBottom: '10px',
+        width: '675px',
+        marginLeft: '5px',
+        marginBottom: '5px',
         borderColor: '#5cb85c'
       }
 
@@ -249,20 +249,31 @@ export default {
       this.losPlot = new Dygraph(
           document.getElementById("dygraph-LOS"),
           csv_final, {
-            drawPoints: true,
-            pointSize: 2,
-            strokeWidth: 0.0,
+            labels:['distance','grc','dem'],
+            series:{'grc':{axis:'y',drawPoints: true,pointSize: 2,strokeWidth: 0.0,showInRangeSelector: true},
+              'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false,showInRangeSelector: false},
+              },
+            // drawPoints: true,
+            // pointSize: 2,
+            // strokeWidth: 0.0,
             // titleHeight: 20,
             // xLabelHeight: 16,
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
             ylabel: 'Ground Range Change (cm)',
+            y2label: 'Ground Elevation (m) (line)',
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
+            //legend: 'always',
             showRangeSelector: true,
             axes: {
               y: {
+              valueFormatter: y => y.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              y2: {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
