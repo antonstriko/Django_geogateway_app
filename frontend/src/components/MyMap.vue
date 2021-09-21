@@ -80,7 +80,7 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '225px',
+        height: '250px',
         width: '675px',
         marginLeft: '5px',
         marginBottom: '5px',
@@ -260,8 +260,8 @@ export default {
             // xLabelHeight: 16,
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
-            ylabel: 'GRC (cm)',
-            y2label: 'DEM (m) (line)',
+            ylabel: 'Ground Range Change (cm)',
+            y2label: 'Ground Elevation (m) (line)',
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
@@ -555,7 +555,7 @@ export default {
   z-index: 1500;
   background-color: #ccffcc;
   /*opacity: .5;*/
-  height: 300px;
+  height: 350px;
   resize: both;
   overflow: auto;
   width: 725px;

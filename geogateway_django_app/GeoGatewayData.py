@@ -20,8 +20,8 @@ GpsServiceUrl = "https://archive.geo-gateway.org/gpsservice/kml?"
 KmlPrefix = "https://archive.geo-gateway.org/static"
 wmsColorUrl = 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?'
 wmsUrl = 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?'
-#losQueryUrl = 'http://js-170-143.jetstream-cloud.org:8000/los/profile?image=uid'
-losQueryUrl = 'http://156.56.174.162:8000/los/profile?dem=True&debug=True&image=uid'
+losQueryUrl = 'http://js-170-143.jetstream-cloud.org:8000/los/profile?dem=True&image=uid'
+#losQueryUrl = 'http://156.56.174.162:8000/los/profile?dem=True&debug=True&image=uid'
 
 WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
