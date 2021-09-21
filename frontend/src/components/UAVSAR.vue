@@ -71,8 +71,6 @@
           </b-row>
           <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate coloring if available</b-checkbox>
         </div>
-        <!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
-        <!--        variant="success">Download LOS Data</b-button>-->
       </b-container>
 
 
@@ -925,6 +923,7 @@ export default {
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
               entry.activeBackground = '#a8b4bf';
+              entry.active = true;
               vm.uavsarLayers[k] = entry;
               vm.uavsarLayersFiltered[k] = entry;
               let uid = vm.uavsarLayers[k].info['uid'];
