@@ -14,15 +14,18 @@
        <strong>Recent Publications</strong>
        <div align="left">
        <b-list-group>
-           <b-list-group-item>
-       <a target="_blank" href="https://doi.org/10.1007/s12145-020-00561-7">Donnellan, A., Parker, J., Heflin, M. et al. Improving access to geodetic imaging crustal deformation data using GeoGateway. Earth Science Informatics (2021).</a> 
+           <!-- <b-list-group-item>
+       <a target="_blank" href="https://doi.org/10.1007/s12145-020-00561-7">Donnellan, A., Parker, J., Heflin, M. et al. Improving access to geodetic imaging crustal deformation data using GeoGateway. Earth Science Informatics, (2021).</a> 
            </b-list-group-item>
            <b-list-group-item > 
-               <a target="_blank" href="https://doi.org/10.1029/2019EA000644">Heflin, M., Donnellan, A., Parker, J. et al. Automated Estimation and Tools to Extract Positions, Velocities, Breaks, and Seasonal Terms From Daily GNSS Measurements: Illuminating Nonlinear Salton Trough Deformation. Earth and Space Science, (2020)</a>
+               <a target="_blank" href="https://doi.org/10.1029/2019EA000644">Heflin, M., Donnellan, A., Parker, J. et al. Automated Estimation and Tools to Extract Positions, Velocities, Breaks, and Seasonal Terms From Daily GNSS Measurements: Illuminating Nonlinear Salton Trough Deformation. Earth and Space Science, (2020).</a>
            </b-list-group-item>          
            <b-list-group-item > 
                <a target="_blank" href="https://doi.org/10.1002/essoar.10506047.1">Parker, J., Bilham, R., Donnellan, A. et al. Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas Fault triggered by the 2010 El Mayor Cucapah Earthquake revealed by UAVSAR. Earth and Space Science, (2021).</a>
-           </b-list-group-item>          
+           </b-list-group-item>           -->
+           <b-list-group-item v-for="item in papers" :key="item.year">
+               <a target="_blank" :href= "item.doiurl">{{ item.title }}</a>
+            </b-list-group-item>
        </b-list-group>
        </div>
        <br/>
@@ -38,7 +41,16 @@
 
 <script>
     export default {
-        name: "help"
+        name: "help",
+        data() {
+            return {
+                papers: [
+                    {title:'Donnellan, A., Parker, J., Heflin, M. et al. Improving access to geodetic imaging crustal deformation data using GeoGateway. Earth Science Informatics, (2021).',doiurl:'https://doi.org/10.1007/s12145-020-00561-7',year:2021},
+                    {title:'Heflin, M., Donnellan, A., Parker, J. et al. Automated Estimation and Tools to Extract Positions, Velocities, Breaks, and Seasonal Terms From Daily GNSS Measurements: Illuminating Nonlinear Salton Trough Deformation. Earth and Space Science, (2020).',doiurl:'https://doi.org/10.1029/2019EA000644',year:2020},
+                    {title:'Parker, J., Bilham, R., Donnellan, A. et al. Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas Fault triggered by the 2010 El Mayor Cucapah Earthquake revealed by UAVSAR. Earth and Space Science, (2021).',doiurl:'https://doi.org/10.1002/essoar.10506047.1',year:2021},
+                ],
+            }
+        },
     }
 </script>
 
