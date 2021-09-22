@@ -11,7 +11,7 @@
        <br/>
        <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_Exercises.pdf"><strong>Exercises (pdf)</strong></a>
        <br/><br/>
-       <strong>Reference Papers</strong>
+       <strong>Recent Publications</strong>
        <div align="left">
        <b-list-group>
            <b-list-group-item>
@@ -19,6 +19,9 @@
            </b-list-group-item>
            <b-list-group-item > 
                <a target="_blank" href="https://doi.org/10.1029/2019EA000644">Heflin, M., Donnellan, A., Parker, J. et al. Automated Estimation and Tools to Extract Positions, Velocities, Breaks, and Seasonal Terms From Daily GNSS Measurements: Illuminating Nonlinear Salton Trough Deformation. Earth and Space Science, (2020)</a>
+           </b-list-group-item>          
+           <b-list-group-item > 
+               <a target="_blank" href="https://doi.org/10.1002/essoar.10506047.1">Parker, J., Bilham, R., Donnellan, A. et al. Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas Fault triggered by the 2010 El Mayor Cucapah Earthquake revealed by UAVSAR. Earth and Space Science, (2021).</a>
            </b-list-group-item>          
        </b-list-group>
        </div>
