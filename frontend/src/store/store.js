@@ -37,7 +37,7 @@ export const store = new Vuex.Store({
             lat_lon: '',
             uavsarLayers: [],
             layerFound: false,
-            selDesel: false,
+            selDesel: true,
             LosPlotAvailable: false,
             extendedColor: '',
             extendedBorder: '',

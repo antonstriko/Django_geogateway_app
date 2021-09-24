@@ -191,7 +191,7 @@ def uavsarKML(request):
 
         respData = data.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
         meta = query
-        responseObj = {'kml': respData, 'info': meta, 'active': True, 'extended': False}
+        responseObj = {'kml': respData, 'info': meta, 'displayed': True, 'active': True, 'extended': False}
 
         response = JsonResponse(responseObj, safe=False)
         return response
