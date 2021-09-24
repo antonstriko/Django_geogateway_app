@@ -521,6 +521,7 @@ export default {
       return -1;
     },
     extendEntry(entry){
+      console.log(entry.displayed);
       var vm = this;
       this.overviewLegend.remove();
       for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
@@ -575,6 +576,7 @@ export default {
         });
       }
       vm.extendingActive = false;
+      console.log(entry.displayed);      
     },
 
     //High Res KML's and CSV LOS plotting methods //////////////////////////////////
@@ -926,8 +928,10 @@ export default {
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
               entry.activeBackground = '#a8b4bf';
-              vm.uavsarLayers[k] = entry;
-              vm.uavsarLayersFiltered[k] = entry;
+//              vm.uavsarLayers[k] = entry;
+              vm.$set(vm.uavsarLayers,k,entry);
+//              vm.uavsarLayersFiltered[k] = entry;
+              vm.$set(vm.uavsarLayersFiltered,k,entry);
               let uid = vm.uavsarLayers[k].info['uid'];
 
               const parser = new DOMParser();
