@@ -4,11 +4,13 @@
   <div class="tab-window">
     <h3>Disloc</h3>
     <hr/>
+
     <div id="upload-container">
-      <h5><b>Input File Upload</b>
-        <b-icon-question variant="success" v-b-modal.modal-1></b-icon-question></h5>
-      <b-modal id="modal-1" title="Input File Format">
-        <div>
+      <!--
+      <h5><b>Input File Upload &nbsp;&nbsp;</b>
+        <b-icon icon="question-circle-fill" v-b-modal.modal-2></b-icon></h5>
+      <b-modal id="modal-2" title="Input File Format" button-size="sm" ok-only>
+
           Use this form to upload one or more faults that are already in Disloc input file format. The following example shows formatting:
           <hr/>
           <ul>
@@ -18,18 +20,35 @@
             <li>Line 4: 0 1.21 45.0 1.0 1.0 -0.0 -0.0 0.0 3.0 3.0 (fault_type 0 for point dislocation, depth, dip (degrees), lambda, mu,u1,u2,u3, length, width).</li>
             <li>Repeat the formats for Lines 3 and 4 for each additional fault.</li>
           </ul>
-        </div>
+
       </b-modal>
       <label>
         <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
       </label>
+      <div>
+        <strong>Synthetic Interferograms Parameters:</strong>
+        <b-input-group prepend="Elevation (Deg)">
+            <b-form-input v-model="Elevation" name="Elevation"></b-form-input>
+        </b-input-group>
+        <b-input-group prepend="Azimuth (Deg)">
+            <b-form-input v-model="Azimuth" name="Azimuth"></b-form-input>
+        </b-input-group>
+        <b-input-group prepend="Radar Frequency (GHz)">
+            <b-form-input v-model="RadarFrequency" name="RadarFrequency"></b-form-input>
+        </b-input-group>
+      </div><br>
       <button @click="submitFile()">Submit</button>
       <div class="container" v-html="fileInfo">
       </div>
-      <!--      <div v-if="jobActive" class="center">-->
-      <!--        <b-spinner type="grow" label="Job executing..."></b-spinner>-->
-      <!--        <br />-->
-      <!--      </div>-->
+      <br>
+      -->
+      <!--
+          <div v-if="jobActive" class="center">
+              <b-spinner type="grow" label="Job executing..."></b-spinner>
+             <br />
+         </div>
+      -->
+
       <b-button @click="loadExperiments()">
         <div v-if="results.length !== 0">
           Refresh Experiments
@@ -51,15 +70,16 @@
               <b>Experiment Status:</b> {{entry.exp.experimentStatus.name}}
               <br />
             <div v-if="entry.exp.experimentStatus.name === 'COMPLETED'">
-              <input type="checkbox" v-model="entry.active" @change="showHideLayers(entry)"> Show KMZ
+              <input type="checkbox" v-model="entry.active" @change="showHideLayers(entry)">Show Synthetic Interferograms
               <br />
+              <a :href="entry.result2.url">Download CSV</a>&ensp;
               <a :href="entry.result.url">Download KMZ</a>
             </div>
 
             </div>
         </div>
         <!--&lt;!&ndash;          {{entry.exp}}&ndash;&gt;-->
-      </div>
+      </div> <br>
     </div>
   </div>
 </template>
@@ -105,6 +125,7 @@ export default {
       'disloc.fileInfo',
       'disloc.Elevation',
       'disloc.Azimuth',
+      'disloc.RadarFrequency',
       'disloc.jobActive',
       'disloc.jobCompleted',
       'disloc.experiment',
@@ -145,7 +166,8 @@ export default {
           this.loadFullExperiment(entry);
         }else{
           entry.extended = true;
-          entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#A5B9CC';
+          //entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#7ee04c';
+          entry.activeBackground = '#8494a3';
         }
       }
 
@@ -181,6 +203,7 @@ export default {
       this.jobActive = true;
       dislocArgs["Elevation"] = this.Elevation;
       dislocArgs["Azimuth"] = this.Azimuth;
+      dislocArgs["Radar Frequency"] = this.RadarFrequency;
       let vm = this;
       this.app_id = dislocArgs["app_id"];
 
@@ -295,7 +318,7 @@ export default {
 
           if(currStatus !== "COMPLETED"){
             vm.extendEntry(entry);
-          }
+          } else {entry.activeBackground = '#7ee04c'}
           vm.results.push(entry);
           // vm.loadFullExperiment(exp, index)
           //sort list
@@ -316,17 +339,26 @@ export default {
               const stdoutDataProduct = fullDetails.outputDataProducts.find(
                   (dp) => dp.productUri === kmz
               );
+              const csv = fullDetails.experiment.experimentOutputs.find(
+                  (o) => o.name === "Disloc Output"
+              ).value;
+              const csvDataProduct = fullDetails.outputDataProducts.find(
+                  (dp) => dp.productUri === csv
+              );
+              
               if (
                   stdoutDataProduct &&
                   stdoutDataProduct.downloadURL
               ) {
-                return fetch(stdoutDataProduct.downloadURL, {
-                  credentials: "same-origin",
-                }).then((result) => {
+                Promise.all ([fetch(stdoutDataProduct.downloadURL, {credentials: "same-origin",}),
+                  fetch(csvDataProduct.downloadURL, {credentials: "same-origin",})
+                  ]).then(([result,result2]) => {
                   entry.result = result;
+                  entry.result2 = result2;
                   entry.fullRetrieved = true;
                   entry.extended = !entry.extended;
-                  entry.extended ? entry.activeBackground = '#8494a3' : entry.activeBackground = '#A5B9CC';
+                  //entry.extended ? entry.activeBackground = '#7ee04c' : entry.activeBackground = '#7ee04c';
+                  entry.activeBackground = '#7ee04c';
                 });
               }
 
@@ -356,4 +388,11 @@ export default {
 .clickableName {
   cursor: pointer;
 }
+
+a:link, a:visited {
+  color: black;
+  text-decoration: underline;
+  display: inline-block;
+}
+
 </style>

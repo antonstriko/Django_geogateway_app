@@ -39,6 +39,7 @@
       <!--        ><label for="showhide"> Show/Hide Selected Earthquakes</label>-->
       <!--        <br/>-->
       <br/>
+      <!--
       <h5>Filter By Magnitude</h5>
       <select class="form-control" v-model="mFilter" id="mFilters" >
         <option value="0" selected>No Filter</option>
@@ -51,7 +52,7 @@
         <option value="0">No Filter</option>
         <option value='30'>Depth &#8804; 30km </option>
       </select>
-      <hr/>
+      <hr/> -->
       <h4>Search Earthquake Catalog</h4>
       <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="seisDrawRect()">
         <b-icon-pencil></b-icon-pencil> Draw an area on map</b-button>

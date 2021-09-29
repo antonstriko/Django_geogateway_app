@@ -16,11 +16,12 @@ from airavata_django_portal_sdk import user_storage
 
 
 
-GpsServiceUrl = "http://156.56.174.162:8000/gpsservice/kml?"
-KmlPrefix = "http://156.56.174.162:8000/static"
+GpsServiceUrl = "https://archive.geo-gateway.org/gpsservice/kml?"
+KmlPrefix = "https://archive.geo-gateway.org/static"
 wmsColorUrl = 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?'
 wmsUrl = 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?'
-losQueryUrl = 'http://js-170-143.jetstream-cloud.org:8000/los/profile?image=uid'
+losQueryUrl = 'http://js-170-143.jetstream-cloud.org:8000/los/profile?dem=True&image=uid'
+#losQueryUrl = 'http://156.56.174.162:8000/los/profile?dem=True&debug=True&image=uid'
 
 WoForecastUrl = 'http://www.openhazards.com/Tools/kml/wo-forecast.kmz'
 CaForecastUrl = 'http://www.openhazards.com/Tools/kml/ca-forecast.kmz'
@@ -100,6 +101,8 @@ def nowcast_plots(request):
             'country': 'notset',
         }
         data = requests.get(NowcastUrl, params=payload)
+        print(data.request.url)
+        print(data.text)
         responseData = HttpResponse(data)
         return responseData
 
@@ -172,7 +175,9 @@ def uavsarTest(request):
 def uavsarKML(request):
     if request.method == 'GET':
 
-        baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
+        #baseURI = 'http://gf2.ucs.indiana.edu/kmz/'
+        baseURI = 'https://archive.geo-gateway.org/kmz/'
+
         raw = request.GET.get('json')
         query = json.loads(raw)
         postfix = 'uid' + query['uid'] + '/' + query['dataname'] + '.int.kml'
@@ -181,11 +186,12 @@ def uavsarKML(request):
 
         uid = query['uid']
 
-        toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+        #toRep = '<href>http://gf2.ucs.indiana.edu/kmz/' + 'uid' + uid + '/'
+        toRep = '<href>https://archive.geo-gateway.org/kmz/' + 'uid' + uid + '/'
 
         respData = data.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
         meta = query
-        responseObj = {'kml': respData, 'info': meta, 'active': True, 'extended': False}
+        responseObj = {'kml': respData, 'info': meta, 'displayed': True, 'active': True, 'extended': False}
 
         response = JsonResponse(responseObj, safe=False)
         return response
@@ -194,11 +200,13 @@ def uavsarKML(request):
 def uavsarCSV(request):
     if request.method == 'GET':
         # http://149.165.157.193:8000/los/profile?image=uid475_unw&point=-115.8003008515625,33.56101488057798,-115.7003008515625,33.56101488057798&format=csv&resolution=undefined&method=native
-        raw = request.GET.get('entry')
-        entry = json.loads(raw)
-        info = entry['info']
-        uid = info['uid']
-        image_name = info['dataname']
+        # raw = request.GET.get('entry')
+        # entry = json.loads(raw)
+        # info = entry['info']
+        # uid = info['uid']
+        uid = request.GET.get('uid')
+        image_name = request.GET.get('dataname')
+        # image_name = info['dataname']
         lat1 = request.GET.get('lat1')
         lon1 = request.GET.get('lon1')
         lat2 = request.GET.get('lat2')
@@ -257,8 +265,32 @@ def losDownload(request):
         finalURI = losQueryUrl + uid + '_unw&point=' + lon1 + ',' + lat1 + ',' + lon2 + ',' + lat2 + \
                    '&format=csv&resolution=undefined&method=native'
 
-        return HttpResponse(finalURI)
+        data = requests.get(finalURI)
 
+        data = str(data.content.decode())
+
+        data = data.replace('""', '')
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename=' + uid + '.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow([image_name])
+        writer.writerow(['Start', lat1, lon1])
+        writer.writerow(['End', lat2, lon2])
+        writer.writerow(['Azimuth', azimuth])
+        writer.writerow(['Length (km)', losLength])
+        writer.writerow("Lon, Lat, Distance (km), Displacement (cm), Elevation Angle, DEM (m)".split(','))
+        data = data.splitlines()
+        data = [line.split(',') for line in data]
+        writer.writerows(data)
+
+        #data = ContentFile(data)
+        #fs = FileSystemStorage()
+        #filename = fs.save(uid + '.csv', data)
+        #uploaded_file_url = fs.url(filename)
+        #return HttpResponse(uploaded_file_url, content_type='text/plain')
+        return response
 
 
 

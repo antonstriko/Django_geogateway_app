@@ -36,6 +36,7 @@
                 ><label for="gdacs">Show GDACS Data (>=5.5M)</label>
                 <br/>
                 <br/>
+                <!-- disbale nowcast plot
                 <h3>Nowcast Plots</h3>
                 <h5>Magnitude-Frequency relations and Nowcast</h5>
                 <hr/>
@@ -60,6 +61,7 @@
                 <br />
                 <b-button variant="success" id="run_plot"  @click="runPlot()">
                     Run</b-button>
+                -->
             </div>
         </div>
     </div>
@@ -174,7 +176,8 @@
                             "lon": this.lon,
                         },
                     }).then(function (response){
-                        console.log(response.data)
+                        console.log(response.request);
+                        console.log(response.data);
                         bus.$emit('nowcast', response.data, lat, lon)
                     })
                     //add logic for layer removal

@@ -1,10 +1,10 @@
 <template>
   <div class="tab-window">
     <h3>UAVSAR</h3>
-    <hr />
     <div class="topbuttonGroup">
       <div class="overviewButtonGroup">
         <b-button
+            class="btn-sm"
             type="checkbox"
             id="overview"
             :pressed.sync="overview"
@@ -19,8 +19,8 @@
         <!--        <i>Fill one of the following fields or use map drawing tools to search catalog:</i>-->
         <!--      </div>-->
         <!--      <br />-->
-        <b-button v-if="overview" variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
-        <b-button v-if="overview" variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
+        <b-button class="btn-sm" v-if="overview" variant="dark" @click="uavsarDrawRect()"><b-icon-pencil></b-icon-pencil> Draw Area</b-button>
+        <b-button class="btn-sm" v-if="overview" variant="dark" @click="uavsarPinDrop()"><b-icon-hand-index></b-icon-hand-index> Drop Pin </b-button>
       </div>
       <!--      </div>-->
     </div>
@@ -34,20 +34,19 @@
       <!--      </div>-->
       <div v-if="geometryActive" >
         <br/>
-        <b-button variant="warning" @click="drawListenerOff">
+        <b-button class="btn-sm" variant="warning" @click="drawListenerOff">
           <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
         <br/>
       </div>
       <br/>
-      <b-input-group prepend="Flight name/path">
+      <b-input-group class="input-group-sm" prepend="Flight name/path">
         <b-form-input v-model="flight_path" name="flight_path" placeholder=""></b-form-input>
       </b-input-group>
 
-      <b-input-group prepend="Latitude, Longitude">
+      <b-input-group class="input-group-sm" prepend="Latitude, Longitude">
         <b-form-input v-model="lat_lon" name="lat_lon" placeholder=""></b-form-input>
-      </b-input-group>
-      <br/>
-      <b-button variant="success" @click="uavsarQuery()">Search</b-button>
+      </b-input-group><br/>
+      <b-button class="btn-sm" variant="success" @click="uavsarQuery()">Search</b-button>
     </div>
 
 
@@ -56,10 +55,10 @@
       <b-container >
         <div class="layer-options">
           <b-row>
-            <b-button @click="selDeselAll">
-              Select/Deselect All
+            <b-button class="btn-sm" @click="selDeselAll">
+              Display/Hide All
             </b-button>
-            <b-button @click="clearQuery" variant="warning">
+            <b-button class="btn-sm" @click="clearQuery" variant="warning">
               Clear Query
             </b-button>
           </b-row>
@@ -70,10 +69,8 @@
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
             <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show Alternate Coloring</b-checkbox>
+          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate coloring if available</b-checkbox>
         </div>
-        <!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
-        <!--        variant="success">Download LOS Data</b-button>-->
       </b-container>
 
 
@@ -81,14 +78,16 @@
 
         <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']" v-bind:style="{backgroundColor: entry.activeBackground}">
           <b-col>
-            <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
+           <input type="checkbox" v-model="entry.displayed" @change="kmlLayerChange(entry)"> Display/Hide <br> 
           </b-col>
           <b-col >
-            <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;"
-            >
-              <div style="font-size: 13px" id="dataname">{{entry.info['dataname']}}</div>
-              <b style="font-size: 15px">{{entry.info['time1']}}  {{entry.info['time2']}}</b>
-              <br />
+            <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;">
+              <div><b style="font-size: 12px" id="dataname">{{entry.info['dataname']}}</b></div>
+              <b-row class="justify-content-md-center">
+              <b-col>
+              <b style="font-size: 12px">{{entry.info['time1'].split(' ')[0]}} | {{entry.info['time2'].split(' ')[0]}}</b>
+              </b-col>
+              <b-col>
               <div id="rating">
                 <div v-if="entry.info['rating'] === '0'">
                   <b-icon-star/>
@@ -111,7 +110,10 @@
                   <b-icon-star-fill/>
                   <b-icon-star-fill/>
                 </div>
-              </div>
+              </div>              
+              </b-col>
+              </b-row>
+ 
             </div>
             <div v-if="extendingActive && entry.extended">
               <b-spinner type="grow" variant="warning">
@@ -120,41 +122,49 @@
             <div v-else-if="entry.extended && !extendingActive" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
 
               <div class="extended">
-                <!--                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>-->
+                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                 <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
-
-                <i style="font-size: small;">Set Layer Opacity: <b>{{ opVal }}%</b></i>
+                <b-input-group class="input-group-sm mb-2">
+                  <i style="font-size: small;">Set Layer Opacity: <b>{{ opVal }}%</b></i>
                 <b-form-input id="opacity" @change="updateOpacity(opVal)" v-model="opVal" type="range" min="0" max="100"></b-form-input>
-
+                </b-input-group>
                 <div v-if="LosPlotAvailable && layerFound" class="extended" id="active-plot" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
                   <b-input-group>
-                    <b-input-group prepend="Start Lat/Lon" class="mb-2">
+                    <b-input-group prepend="Start Lat/Lon" class="input-group-sm mb-2">
                       <b-form-input v-model="lat1" name="lat1" placeholder=""></b-form-input>
                       <b-form-input v-model="lon1" name="lon1" placeholder=""></b-form-input>
                     </b-input-group>
                   </b-input-group>
                   <b-input-group>
-                    <b-input-group prepend="End Lat/Lon" class="mb-2">
+                    <b-input-group prepend="End Lat/Lon" class="input-group-sm mb-2">
                       <b-form-input v-model="lat2" name="lat2" placeholder=""></b-form-input>
                       <b-form-input v-model="lon2" name="lon2" placeholder=""></b-form-input>
                     </b-input-group>
                   </b-input-group>
-                  <b-input-group prepend="LOS Length">
+                  <!--
+                  <b-input-group prepend="LOS Length" class="input-group-sm">
                     <b-form-input v-model="losLength" name="length" placeholder=""></b-form-input>
                   </b-input-group>
-                  <b-input-group prepend="Azimuth">
+                  <b-input-group prepend="Azimuth" class="input-group-sm">
                     <b-form-input v-model="azimuth" name="azimuth" placeholder=""></b-form-input>
-                  </b-input-group>
+                  </b-input-group> -->
+                  <i style="font-size: small;">Profile Length: <b>{{ losLength }} km</b></i>  <span class="tab" />
+                   <i style="font-size: small;">Azimuth: <b>{{ azimuth }}</b></i>
                   <b-row>
-                    <b-col>
-                      <b-button variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2, azimuth, losLength)">
-                        <span >Update LOS Plot</span>
+                    <b-col sm="auto">
+                      <b-button class="btn-sm" variant="success" @click="updatePlotLineForm(activeEntry, lat1, lon1, lat2, lon2)">
+                        <span >Update Plot</span>
                       </b-button>
                     </b-col>
-                    <b-col style="margin-top: 10px;">
-                      <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4"><b>Open Data Source</b></span>
+                    <b-col  sm="auto">
+                      <b-button class="btn-sm" variant="success" @click="downloadCSV(activeEntry)">
+                        <span >Download Data</span>
+                      </b-button>
+                    </b-col>
+                    <b-col  sm="auto">
+                      <span  @click="openDataSource(entry.info['uid'])" style="cursor: pointer; color: #2e6da4; font-size: small;"><b><u>Data Source</u></b></span>
                     </b-col>
                   </b-row>
                 </div>
@@ -203,13 +213,16 @@ export default {
       pinDrop: null,
       rectDraw: null,
       geometryActive: false,
-      wmsColorUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?',
-      wmsUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?',
+      //wmsColorUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?',
+      //wmsUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?',
+      wmsColorUrl: 'https://archive.geo-gateway.org/color/InSAR/wms?',
+      wmsUrl: 'https://archive.geo-gateway.org/color/highres/wms?',
       losQueryUrl: 'http://gf1.ucs.indiana.edu/insartool/profile?image=InSAR:uid',
       altColorLegend: 'http://js-169-62.jetstream-cloud.org/uavsarlegend1/uid',
-      piLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/pi_t.png',
-      twoPiLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/2pi_t.png',
-
+      //piLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/pi_t.png',
+      //twoPiLegend: 'http://js-169-62.jetstream-cloud.org/highreslegend/2pi_t.png',
+      piLegend: 'https://archive.geo-gateway.org/kmz/highreslegend/pi_t.png',
+      twoPiLegend: 'https://archive.geo-gateway.org/kmz/highreslegend/2pi_t.png',
     }
   },
 
@@ -424,11 +437,11 @@ export default {
       for(var i=0;i<csv2.length;i++) {
         var csv3=csv2[i].split(",");
         //                console.log(csv2[i],csv3)
-        if(csv3[2] && csv3[3]) {
-          csv_final+=csv3[2]+","+csv3[3]+"\n";
+        if(csv3[2] && csv3[3] && csv3[5]) {
+          csv_final+=csv3[2]+","+csv3[3]+ ","+csv3[5] + "\n";
         }
-        //                console.log(csv_final);
       }
+//      console.log(csv_final);
       this.csv_final = csv_final;
       this.LosPlotAvailable= true;
       bus.$emit('activatePlot', csv_final);
@@ -448,7 +461,9 @@ export default {
 
       axios.get('/geogateway_django_app/UAVSAR_csv/', {
         params: {
-          'entry':JSON.stringify(entry),
+          //'entry':JSON.stringify(entry),
+          'uid':entry['info']['uid'],
+          'dataname':entry['info']['dataname'],
           'lat1':this.lat1,
           'lon1':this.lon1,
           'lat2':this.lat2,
@@ -462,7 +477,10 @@ export default {
       })
     },
 
-    downloadCSV(entry, latlon){
+    downloadCSV(entry){
+      
+      var latlon = [this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng, this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng];
+
       var losLength = this.setLosLength(latlon);
       var azimuth = this.setAzimuth(latlon);
       this.losLength = losLength;
@@ -471,8 +489,11 @@ export default {
       this.lon1 = latlon[1].toFixed(5);
       this.lat2 = latlon[2].toFixed(5);
       this.lon2 = latlon[3].toFixed(5);
-
-      axios.get('/geogateway_django_app/los_download/', {
+      var imagename = entry.info['dataname'];
+      var csvname = imagename + ".csv";
+      axios.get('/geogateway_django_app/los_download/', 
+        
+        {responseType: 'blob', 
         params: {
           'entry':JSON.stringify(entry),
           'lat1':this.lat1,
@@ -483,7 +504,12 @@ export default {
           'azimuth':azimuth,
         }
       }).then(function (response){
-        window.open(response.data);
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', csvname);
+        document.body.appendChild(link);
+        link.click();
       })
     },
     findWithAttr(array, attr, value) {
@@ -515,9 +541,9 @@ export default {
         entry.clicked = true;
         entry.activeBackground = '#8494a3';
         entry.extended = true;
-        var testURI = '/geogateway_django_app/UAVSAR_test/'
+        var testURI = '/geogateway_django_app/UAVSAR_test/';
 
-        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
+        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw';
 
         //set current extended entry for keyup keydown change
 
@@ -546,7 +572,7 @@ export default {
             vm.uavsarHighRes(entry, vm.hasAlternateColoring);
 
           }
-        })
+        });
       }
       vm.extendingActive = false;
     },
@@ -555,7 +581,7 @@ export default {
     uavsarHighRes(entry, hasAlternateColoring) {
       var latlon = entry.info.geometry.coordinates[0];
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
-        this.uavsarLayersFiltered[i].active = false;
+        this.uavsarLayersFiltered[i].displayed = false;
         this.kmlLayerChange(this.uavsarLayersFiltered[i]);
       }
       if (this.uavsarLegend !== null) {
@@ -587,17 +613,27 @@ export default {
         layers: layername,
         transparent: true,
         format: 'image/png',
-        zIndex: 2
+        zIndex: 11
       })
 
       // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
 
       this.globalMap.addLayer(this.uavsarHighResLayer);
       this.uavsarHighResLayer.setOpacity(.75)
-
+      // zoom to image center
+      var pos_list = entry.info['geometry']['coordinates'];
+      var lon_sum = 0,lat_sum = 0;
+      for (var j = 0; j < pos_list[0].length; j++) {
+        lon_sum += pos_list[0][j][0];
+        lat_sum += pos_list[0][j][1];
+      }
+      lon_sum = lon_sum / pos_list[0].length;
+      lat_sum = lat_sum / pos_list[0].length;
+      this.globalMap.setView([lat_sum,lon_sum],9);
 
       var headingLegendFinal;
-      var headingLegendBase = 'http://gf2.ucs.indiana.edu/direction_kml/'
+      //var headingLegendBase = 'http://gf2.ucs.indiana.edu/direction_kml/'
+      var headingLegendBase = 'https://archive.geo-gateway.org/kmz/direction_kml/'
       var headingRounded = entry.info['heading'].split('.')[0];
       var radarDir = entry.info['radardirection'];
       var radarDirL;
@@ -626,19 +662,19 @@ export default {
       var southwest = L.latLng(latlon[0][1], latlon[0][0]);
       var northeast = L.latLng(latlon[3][1], latlon[3][0]);
 
-      var rect = L.latLngBounds(southwest, northeast);
+      //var rect = L.latLngBounds(southwest, northeast);
 
-      console.log(southwest, northeast, rect.contains(clickloc));
+      //console.log(southwest, northeast, rect.contains(clickloc));
 
       this.placePlotMarkers(southwest, northeast, clickloc, latlon, entry);
     },
 
 
-    updatePlotLineForm(entry, lat1, lon1, lat2, lon2, az, len) {
+    updatePlotLineForm(entry, lat1, lon1, lat2, lon2) {
       this.plotActive = true;
       this.plottingMarkerStart.setLatLng([lat2, lon2]);
       this.plottingMarkerEnd.setLatLng([lat1, lon1]);
-      console.log(az, len);
+      //console.log(az, len);
       var latlon = [this.plottingMarkerEnd.getLatLng().lat, this.plottingMarkerEnd.getLatLng().lng, this.plottingMarkerStart.getLatLng().lat, this.plottingMarkerStart.getLatLng().lng]
       this.getCSV(entry, latlon);
     },
@@ -720,12 +756,13 @@ export default {
     /////// Global UAVSAR query methods
     selDeselAll(){
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
-        this.uavsarLayersFiltered[i].active = this.selDesel;
+        this.uavsarLayersFiltered[i].displayed = this.selDesel;
         this.kmlLayerChange(this.uavsarLayersFiltered[i]);
       }
       this.selDesel = !this.selDesel;
     },
     clearQuery(){
+ 
       this.lat_lon = '';
       this.flight_path = '';
       for (var i = 0; i < this.uavsarLayersFiltered.length; i++) {
@@ -742,7 +779,12 @@ export default {
         this.uavsarLegend.remove();
       }
       this.showOverview();
-      this.showOverviewLegend();
+      if (this.overviewLegend === null) {
+        this.showOverviewLegend();
+      } else {
+        this.removeOverviewLegend();
+        this.showOverviewLegend();
+      }
       this.uavsarDisplayedLayers = [];
       this.uavsarLayersFiltered = [];
       this.uavsarLayers = [];
@@ -751,16 +793,18 @@ export default {
     },
     showOverview() {
       if (this.overview) {
-        this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+        this.layers['uavsarWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
               layers: 'InSAR:thumbnailmosaic',
               transparent: true,
               format: 'image/png',
-              zIndex: 2
+              zIndex: 10,
             }
         );
         if(!this.overviewLegend){this.showOverviewLegend();}
         this.globalMap.addLayer(this.layers['uavsarWMS'])
         this.layers['uavsarWMS'].setOpacity(.7)
+
+
 
       } else {
         this.uavsarLayers = [];
@@ -821,7 +865,7 @@ export default {
 
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
-              const track = new L.KML(kml);
+              const track = new L.KML(kml,{'ignorePlacemark':true});
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
@@ -861,6 +905,7 @@ export default {
             "queryStr": queryStr,
           }
         }).then(function (response) {
+//          console.log(response.headers);
           let entries = response.data;
           let baseURI = '/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
@@ -881,13 +926,16 @@ export default {
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
               entry.activeBackground = '#a8b4bf';
-              vm.uavsarLayers[k] = entry;
-              vm.uavsarLayersFiltered[k] = entry;
+              //Use the $set function to make these arrays reactive. See https://vuejs.org/v2/guide/reactivity.html#For-Arrays	      
+//              vm.uavsarLayers[k] = entry;
+              vm.$set(vm.uavsarLayers,k,entry);
+//              vm.uavsarLayersFiltered[k] = entry;
+              vm.$set(vm.uavsarLayersFiltered,k,entry);
               let uid = vm.uavsarLayers[k].info['uid'];
 
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
-              const track = new L.KML(kml);
+              const track = new L.KML(kml,{'ignorePlacemark':true});
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
@@ -962,7 +1010,7 @@ export default {
 
               const parser = new DOMParser();
               const kml = parser.parseFromString(vm.uavsarLayers[k].kml, 'text/xml');
-              const track = new L.KML(kml);
+              const track = new L.KML(kml,{'ignorePlacemark':true});
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
@@ -973,7 +1021,7 @@ export default {
     },
     kmlLayerChange(entry){
       const uid = entry.info['uid'];
-      if(entry.active) {
+      if(entry.displayed) {
         this.globalMap.addLayer(this.uavsarDisplayedLayers[uid]);
       }else {
         this.globalMap.removeLayer(this.uavsarDisplayedLayers[uid]);
@@ -1031,10 +1079,12 @@ export default {
   height: auto;
   box-sizing: border-box;
   font-size: 15px;
-  border-radius: 8px;
+  border-radius: 4px;
+  padding-top: 2px;
+  padding-bottom: 2px;
 }
 #active-plot {
-  border-radius: 8px;
+  border-radius: 4px;
 }
 #dataname {
   width:100%;
@@ -1068,7 +1118,7 @@ export default {
   height: auto;
   border: 2px solid #e6e6ff;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow-y: auto;
   /*A5B9CC*/
 }

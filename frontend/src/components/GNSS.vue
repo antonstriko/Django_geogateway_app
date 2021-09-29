@@ -2,11 +2,11 @@
   <div id="tab-window">
     <div>
 
-      <h3 style="text-align: center">GPS Data Analysis</h3>
+      <h3 style="text-align: center">GNSS Data Analysis</h3>
       <label class="control-label requiredField">
-        Select GPS data
+        Select GNSS data models
       </label>
-      <form>
+  
 
         <!-- <label for="sel1">Select list:</label> -->
         <select class="form-control" v-model="kmltype_sel" id="kmltype_sel" >
@@ -28,34 +28,41 @@
             <b-icon-x-circle></b-icon-x-circle>Cancel Selection</b-button>
           <br/>
         </div>
-
-        <b-input-group prepend="Latitude">
+        <br>
+        <b-input-group prepend="Center Latitude">
+          <template #prepend><b-input-group-text ><strong>Center Latitude</strong></b-input-group-text></template>
           <b-form-input v-model="gs_latitude"  name="gs_latitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Longitude">
+        <b-input-group prepend="Center Longitude">
+          <template #prepend><b-input-group-text ><strong>Center Longitude</strong></b-input-group-text></template>
           <b-form-input v-model="gs_longitude" placeholder="" name="gs_longitude"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Width">
+        <b-input-group prepend="Longitude Span">
+          <template #prepend><b-input-group-text ><strong>Longitude Span</strong></b-input-group-text></template>
           <b-form-input v-model="gs_width"  name="gs_width" placeholder="1 degree"></b-form-input>
         </b-input-group>
 
-        <b-input-group prepend="Height">
+        <b-input-group prepend="Latitude Span">
+          <template #prepend><b-input-group-text ><strong>Latitude Span</strong></b-input-group-text></template>
           <b-form-input v-model="gs_height" placeholder="1 degree" name="gs_height"></b-form-input>
         </b-input-group>
 
         <div class="input-group" id="epoch_show" v-if="this.kmltype_sel === 'getcoseismic' || this.kmltype_sel === 'getpostseismic'">
           <b-input-group prepend="Epoch">
+            <template #prepend><b-input-group-text ><strong>Epoch</strong></b-input-group-text></template>
             <b-form-input v-model="gs_epoch" placeholder="YYYY-MM-DD" name="gs_epoch"></b-form-input>
           </b-input-group>
         </div>
 
         <b-input-group prepend="Epoch 1" v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+            <template #prepend><b-input-group-text ><strong>Epoch 1</strong></b-input-group-text></template>
           <b-form-input v-model="gs_epoch1" placeholder="YYYY-MM-DD" name="gs_epoch1"></b-form-input>
         </b-input-group>
 
         <b-input-group prepend="Epoch 2" v-if="this.kmltype_sel === 'getdisplacement' || this.kmltype_sel === 'getmodel'">
+            <template #prepend><b-input-group-text ><strong>Epoch 2</strong></b-input-group-text></template>
           <b-form-input v-model="gs_epoch2" placeholder="YYYY-MM-DD" name="gs_epoch2"></b-form-input>
         </b-input-group>
 
@@ -127,10 +134,10 @@
         <b-col >
 
           <div class="outputLayers" v-if="gnssLayers.length!==0 && !activeGnssQuery">
-            <strong>Output Layers</strong>
+            <strong>Output</strong>
             <div  v-for="layer in gnssLayers" :key="layer.name">
               <div v-if="layer.type !== 'table.txt'" ><input type="checkbox" :value="layer.active" v-model="layer.active" @change="showHideLayers(layer.active, layer)"> <span class="checkbox-label"> <a :href="layer.url">{{layer.pre}} {{layer.type}}</a> </span> </div>
-              <div v-else><a target="_blank" :href="layer.url">{{layer.pre}}  {{layer.type}}</a></div>
+              <div v-else><a target="_blank" :href="layer.url">{{layer.name}}</a></div>
             </div>
           </div>
 
@@ -138,7 +145,7 @@
 
 
 
-      </form>
+ 
       <div v-if="activeGnssQuery" style="overflow: hidden">
         <br/>
         <b-spinner variant="success" label="Spinning"></b-spinner>
@@ -235,8 +242,9 @@ export default {
         for(var i = 0;i<this.gnssLayers.length;i++){
           var splitPrefix = this.gnssLayers[i].name.split('_')[0];
           if(splitPrefix === this.gs_outputprefix){
-            alert('There is already an existing query with that name, please rename and resubmit')
-            return;
+            continue;
+            //alert('There is already an existing query with that name, please rename and resubmit');
+            //return;
           }
         }
         // this.layerCheckbox = true;
@@ -273,7 +281,13 @@ export default {
         })
             //use JSON results (filename and folder) to request raw kml text
             .then(function (response) {
-              props = response.data
+              props = response.data;
+              console.log(props);
+              if (!(typeof props === 'object')) {
+                vm.activeGnssQuery = false;
+                alert("Somthing wrong, please check input paramters!");
+                return;
+              }
               function getExtension(f) {
                 var parts = f.split('_');
                 return parts[parts.length - 1];
@@ -293,6 +307,7 @@ export default {
               }
 
               folder = props.folder;
+              prefix = (1 + Math.floor(vm.gnssLayers.length/3)).toString() + prefix;
               vm.gnssLayers.push({
                 pre: prefix,
                 name: fileNameT,
@@ -307,7 +322,7 @@ export default {
                 folder: folder,
                 active: true,
                 url: horizontalUrl,
-                type: 'h.kml',
+                type: 'horizontal.kml',
               })
               vm.gnssLayers.push({
                 pre: prefix,
@@ -315,7 +330,7 @@ export default {
                 folder: folder,
                 active: true,
                 url: verticalUrl,
-                type: 'v.kml',
+                type: 'vertical.kml',
               })
               const kmlURI = '/geogateway_django_app/get_kml'
               axios.get(kmlURI, {
@@ -327,7 +342,7 @@ export default {
                 //emit raw kml text to parent map component
               }).then(function (response) {
                 // console.log(toGeoJSON.kml(response.data));
-                let hName = prefix + 'h.kml';
+                let hName = prefix + 'horizontal.kml';
                 vm.addGnssLayer(response.data, hName);
 
               })
@@ -342,7 +357,7 @@ export default {
                 // console.log(toGeoJSON.kml(response.data));
                 // var geojson = toGeoJSON.kml((new DOMParser()).parseFromString(response.data, 'text/xml'))
                 // console.log(geojson)
-                let vName = prefix + 'v.kml';
+                let vName = prefix + 'vertical.kml';
                 vm.addGnssLayer(response.data, vName);
                 //console.log(markerSize)
                 vm.activeGnssQuery = false;
@@ -438,13 +453,19 @@ strong {
   margin-left: 55%;
   font-size: 14px;
   width: 40%;
-  border: 2px solid #3388ff;
+  border: 2px solid #416c41;
   box-sizing: border-box;
-  border-radius: 8px;
+  border-radius: 0px;
   background-color: #bad7ff;
-  text-align: center;
+  text-align: left;
   margin-right: auto;
+  padding:5px;
   position: absolute;
+}
 
+a:link {
+  color: black;
+  background-color: transparent;
+  text-decoration: underline;
 }
 </style>

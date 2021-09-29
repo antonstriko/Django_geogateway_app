@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "bootstrap-vue": "^2.15.0",
     "core-js": "^3.6.5",
     "django-airavata-api": "^1.0.0-beta.3",
@@ -19,7 +19,7 @@
     "leaflet-draw": "^1.0.4",
     "leaflet-easybutton": "^2.4.0",
     "leaflet-geometryutil": "^0.9.3",
-    "leaflet-kml": "https://github.com/webgisdeveloper/leaflet-kml.git",
+    "leaflet-kml": "git+https://github.com/webgisdeveloper/leaflet-kml.git",
     "leaflet-kmz": "^1.0.6",
     "leaflet.awesome-markers": "^2.0.5",
     "qs": "^6.9.4",
