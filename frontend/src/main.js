@@ -37,17 +37,17 @@ import VueResource from 'vue-resource';
 
 const routes = [
   {name: 'maptools', path: '/maptools', component: MapTools },
-  { path: '/gnss', component: GNSS },
-  { path: '/momentmagnitude', component: MMCalc },
-  { path: '/nowcast', component: Nowcast },
-  { path: '/seismicity', component: Seismicity },
-  { path: '/disloc', component: Disloc },
-  { path: '/mapsaves', component: Saves },
-  { path: '/uavsar', component: UAVSAR },
-  { path: '/specialstudies', component: SpecialStudies },
-  { path: '/3dimaging', component: ThreeDImaging },
-  { path: '/report', component: report },
-  { path: '/help', component: help },
+  {name: 'gnss', path: '/gnss', component: GNSS },
+  {name: 'momentmagnitude', path: '/momentmagnitude', component: MMCalc },
+  {name: 'nowcast', path: '/nowcast', component: Nowcast },
+  {name: 'seismicity', path: '/seismicity', component: Seismicity },
+  {name: 'disloc', path: '/disloc', component: Disloc },
+  {name: 'mapsaves', path: '/mapsaves', component: Saves },
+  {name: 'uavsar', path: '/uavsar', component: UAVSAR },
+  {name: 'specialstudies', path: '/specialstudies', component: SpecialStudies },
+  {name: '3dimaging', path: '/3dimaging', component: ThreeDImaging },
+  {name: 'report', path: '/report', component: report },
+  {name: 'help', path: '/help', component: help },
 
 ]
 
