@@ -3,16 +3,18 @@
         <h3>Moment Magnitude Calculator</h3>
         <hr />
         <b-input-group prepend="Length" append="km">
-            <b-form-input v-model="mm_length" placeholder="249"></b-form-input>
+            <b-form-input v-model="mm_length" placeholder="12.5"></b-form-input>
         </b-input-group>
         <b-input-group prepend="Width" append="km">
-            <b-form-input v-model="mm_width" placeholder="120.0"></b-form-input>
+            <b-form-input v-model="mm_width" placeholder="10"></b-form-input>
         </b-input-group>
         <b-input-group prepend="Slip" append="m">
-            <b-form-input v-model="mm_slip" placeholder="23"></b-form-input>
+            <b-form-input v-model="mm_slip" placeholder="0.45"></b-form-input>
         </b-input-group>
-        <b-input-group prepend="Shear Modulus" append="10^11 dyne/cm^2">
+        <b-input-group prepend="Shear Modulus">
             <b-form-input v-model="mm_shear" placeholder="3"></b-form-input>
+            <b-input-group-append><span class="input-group-text">10<sup>11</sup> dyne/cm<sup>2</sup></span>
+            </b-input-group-append>
         </b-input-group>
         <br />
         <b-button v-on:click="runMMC()" variant="success">Calculate</b-button>

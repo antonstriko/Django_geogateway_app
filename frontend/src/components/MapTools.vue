@@ -12,6 +12,13 @@
       <br/>
       <input
           type="checkbox"
+          v-model="qfaults"
+          @change="updateLayer('qfaults')"
+          id="qfaults"
+      ><label for="boundaries">Quaternary Faults</label>
+      <br/>
+      <input
+          type="checkbox"
           v-model="kml"
           @change="updateLayer('kml')"
           id="kml"
@@ -41,6 +48,7 @@
     </div>
     <div id="tools-show">
       <div v-show="this.ucerf">
+        Select faults display color
         <b-form-radio-group v-model="selectedColor">
           <b-form-radio label="black" name="some-radios" value="black" v-model="selectedColor" @change="updateColor('black')"><p>black</p></b-form-radio>
           <b-form-radio label="red" name="some-radios" value="red" v-model="selectedColor" @change="updateColor('red')"><p>red</p></b-form-radio>
@@ -49,6 +57,25 @@
         </b-form-radio-group>
       </div>
 
+      <div id="div_qfautls" v-show="this.qfaults" style="padding-left: 60px;" align="left">
+          <br><div align="center"><a target="_blank" href="https://www.usgs.gov/natural-hazards/earthquake-hazards/faults">Source: USGS Faults Database</a></div>
+          <!-- <img src="../assets/qfaultslegend.jpg" alt="qfaults_legend" width="80%" height="80%" style="border:1px solidblack"> -->
+          <b-form-group>
+          <b-form-checkbox-group
+            id="qfaults_type"
+            v-model="qfaults_selected"
+            stacked
+          >
+          <b-form-checkbox value="historic"><span style="color:#ff0000;font-weight: bold;">&#9473;&#9473;</span> Historic (150 yr)</b-form-checkbox>
+          <b-form-checkbox value="latest Quaternary" ><span style="color:#ffaa00;font-weight: bold;">&#9473;&#9473;</span> Latest Quaternary (15,000 yr)</b-form-checkbox>
+          <b-form-checkbox value="late Quaternary"><span style="color:#55ff00;font-weight: bold;">&#9473;&#9473;</span> Late Quaternary (130,000 yr)</b-form-checkbox>
+          <b-form-checkbox value="middle and late Quaternary"  ><span style="color:#0070ff;font-weight: bold;">&#9473;&#9473;</span> Middle and Late Quaternary (750,000 yr)</b-form-checkbox>
+          <b-form-checkbox value="undifferentiated Quaternary" ><span style="color:#000000;font-weight: bold;">&#9473;&#9473;</span> Undifferentiated Quaternary (1.6 millions yr)</b-form-checkbox>
+          <b-form-checkbox value="unspecified" ><span style="color:#dfe000;font-weight: bold;">&#9473;&#9473;</span> Unspecified Age</b-form-checkbox>
+          <b-form-checkbox value="class B" ><span style="color:#9c9c9c;font-weight: bold;">&#9473;&#9473;</span> Class B</b-form-checkbox>
+          </b-form-checkbox-group>
+          </b-form-group>
+      </div>
       <div v-if="this.kml">
         <br />
         <h4>KML File Upload</h4>
@@ -61,9 +88,7 @@
           <div class="fileEntry" >
             <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)" > <span style="font-size: 15px; color: #222222">{{entry.name}}</span><br>
           </div>
-
         </div>
-
         <!--            <div v-if="boundaries">-->
         <!--                <label for="opacity">Example range with min and max</label>-->
         <!--                <b-form-input id="opacity" @change="updateOpacity(value)" v-model="value" type="range" min="0" max="100"></b-form-input>-->
@@ -93,6 +118,7 @@ export default {
       coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
       userLocationPin: null, //vuex-map-fields does not correctly reference variables inside of event listeners
       //selectedColor: 'grey',
+      qfaults_selected:["historic", "late Quaternary", "undifferentiated Quaternary", "unspecified", "class B", "middle and late Quaternary", "latest Quaternary"],
     }
   },
   computed: {
@@ -103,13 +129,20 @@ export default {
     // kmlFile: null,
     // value: 50,
     // kmlLayers: [],
-    ...mapFields(['mapTools.kmlLayers', 'mapTools.boundaries', 'mapTools.ucerf',
+    ...mapFields(['mapTools.kmlLayers', 'mapTools.boundaries', 'mapTools.ucerf', 'mapTools.qfaults',
       'mapTools.coasts', 'mapTools.kml', 'mapTools.kmlFile', 'mapTools.selected', 'mapTools.currLoc',
       'mapTools.userLocationCirc', 'mapTools.selectedColor',
       // 'maTools.userLocationPin',
       'mapTools.locActive',
 
-      'map.globalMap'])
+      'map.globalMap',
+      'map.layers'])
+  },
+  watch: {
+  qfaults_selected() {
+    //console.log(val); // or this.selectedFruits
+    this.updateqfaults();
+   }
   },
   mounted() {
 
@@ -157,7 +190,42 @@ export default {
       //this.selected = selected;
       bus.$emit('RemoveLayer', 'ucerfL');
       this.updateLayer('ucerf', selected)
+    },    
+    updateqfaults() {
+      var filterstr = "";
+      // filter by age
+      console.log(this.qfaults_selected);
+      if (this.qfaults_selected.length == 1) {
+        filterstr = "age like '" + this.qfaults_selected[0] + "'";
+      }
+      if (this.qfaults_selected.length > 1 && this.qfaults_selected.length < 7) {
+        filterstr = "age IN " + "('" + this.qfaults_selected.join("','") + "')";
+      }
+      if (this.globalMap.hasLayer(this.layers['qfaultsWMS'])) {
+        this.layers['qfaultsWMS'].remove();
+      }
+      if (this.qfaults_selected.length == 0) {
+        return;
+      }
+      if (filterstr == "") {
+      this.layers['qfaultsWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
+        layers: 'InSAR:Qfaults_US_Database',
+        transparent: true,
+        format: 'image/png',
+        zIndex: 10,
+        //cql_filter: filterstr,
+      }); } else {
+        this.layers['qfaultsWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
+        layers: 'InSAR:Qfaults_US_Database',
+        transparent: true,
+        format: 'image/png',
+        zIndex: 10,
+        cql_filter: filterstr,
+      }); 
+      }
+      this.globalMap.addLayer(this.layers['qfaultsWMS']);
     },
+
     updateLayer(l, color){
       switch (l) {
         case 'ucerf':
@@ -184,6 +252,11 @@ export default {
           if(this.coasts) {
             bus.$emit('UrlAddLayer', this.coastsUrl, 'coastsL');
           }else bus.$emit('RemoveLayer', 'coastsL');
+          break;
+        case 'qfaults':
+          if(this.qfaults) {
+            this.updateqfaults();
+          } else {this.layers['qfaultsWMS'].remove();}
           break;
       }
     },
@@ -228,5 +301,10 @@ export default {
   border-radius: 8px;
   background-color: #8494A3;
   margin-bottom: 5px;
+}
+a:link, a:visited {
+  color: black;
+  text-decoration: underline;
+  display: inline-block;
 }
 </style>

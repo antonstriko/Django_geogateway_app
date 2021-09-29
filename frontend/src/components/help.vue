@@ -1,17 +1,39 @@
 <template>
     <div>
-        <h3>User Guide</h3>
+        <h3>User Resources</h3>
       <!--  
       <a href="https://archive.geo-gateway.org:3000/main.html" target="_blank"> <i>Visit the archived Geo-Gateway</i></a>
      -->
       <div class="tool-content">
       <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_User_Guide.pdf"><strong>User Guide (pdf)</strong></a>
-      <br>Lastest user guide will be posted soon.
-      <br><br>
+      <br/>
+       <a target="_blank" href="https://www.youtube.com/channel/UC0_bNEBxRWH2qBULDl6cB7Q/featured"><strong>Tutorial Videos</strong></a>
+       <br/>
+       <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_Exercises.pdf"><strong>Exercises (pdf)</strong></a>
+       <br/><br/>
+       <strong>Recent Publications</strong>
+       <div align="left">
+       <b-list-group>
+           <!-- <b-list-group-item>
+       <a target="_blank" href="https://doi.org/10.1007/s12145-020-00561-7">Donnellan, A., Parker, J., Heflin, M. et al. Improving access to geodetic imaging crustal deformation data using GeoGateway. Earth Science Informatics, (2021).</a> 
+           </b-list-group-item>
+           <b-list-group-item > 
+               <a target="_blank" href="https://doi.org/10.1029/2019EA000644">Heflin, M., Donnellan, A., Parker, J. et al. Automated Estimation and Tools to Extract Positions, Velocities, Breaks, and Seasonal Terms From Daily GNSS Measurements: Illuminating Nonlinear Salton Trough Deformation. Earth and Space Science, (2020).</a>
+           </b-list-group-item>          
+           <b-list-group-item > 
+               <a target="_blank" href="https://doi.org/10.1002/essoar.10506047.1">Parker, J., Bilham, R., Donnellan, A. et al. Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas Fault triggered by the 2010 El Mayor Cucapah Earthquake revealed by UAVSAR. Earth and Space Science, (2021).</a>
+           </b-list-group-item>           -->
+           <b-list-group-item v-for="item in papers" :key="item.year">
+               <a target="_blank" :href= "item.doiurl">{{ item.title }}</a>
+            </b-list-group-item>
+       </b-list-group>
+       </div>
+       <br/>
+       <strong>More</strong><br/>
       <a target="_blank" href="https://earthdata.nasa.gov/learn/articles/getting-started-with-sar"><strong>GSA 2020 Workshop</strong></a>
       <br/><a target="_blank" href="https://cdn.earthdata.nasa.gov/conduit/upload/15244/GSA__2020_GeoGateway_updated_October_14.pdf"><strong>GSA 2020 Workshop (slides)</strong></a>
       <br/><a target="_blank" href="https://youtu.be/Dz2JPgCpd-k"><strong>GSA 2020 Workshop (video)</strong></a>
-      <br><br>
+      <br/>
       <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_SSA_Workshop.pdf"><strong>SSA 2019 GeoGateway Workshop (slides)</strong></a>
       </div>
     </div>
@@ -19,7 +41,16 @@
 
 <script>
     export default {
-        name: "help"
+        name: "help",
+        data() {
+            return {
+                papers: [
+                    {title:'Donnellan, A., Parker, J., Heflin, M. et al. Improving access to geodetic imaging crustal deformation data using GeoGateway. Earth Science Informatics, (2021).',doiurl:'https://doi.org/10.1007/s12145-020-00561-7',year:2021},
+                    {title:'Heflin, M., Donnellan, A., Parker, J. et al. Automated Estimation and Tools to Extract Positions, Velocities, Breaks, and Seasonal Terms From Daily GNSS Measurements: Illuminating Nonlinear Salton Trough Deformation. Earth and Space Science, (2020).',doiurl:'https://doi.org/10.1029/2019EA000644',year:2020},
+                    {title:'Parker, J., Bilham, R., Donnellan, A. et al. Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas Fault triggered by the 2010 El Mayor Cucapah Earthquake revealed by UAVSAR. Earth and Space Science, (2021).',doiurl:'https://doi.org/10.1002/essoar.10506047.1',year:2021},
+                ],
+            }
+        },
     }
 </script>
 
