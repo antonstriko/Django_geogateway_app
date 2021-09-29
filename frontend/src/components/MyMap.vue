@@ -9,7 +9,7 @@
     <DraggableDiv v-resize @resize="resizeLOS" class="col-11" v-if="plotActive" id="plot-window">
       <vue-resize ></vue-resize>
       <template slot="header">
-        <p style="color: #000000">LOS Plot</p>
+        <p style="color: #000000">Line of Sight Displacement</p>
       </template>
       <div id="losLegend">
       </div>
@@ -24,7 +24,7 @@
     <!--        </div>-->
 
     <div id="map">
-    </div>
+   </div>
 
 
 
@@ -44,6 +44,7 @@ import "leaflet-draw/dist/leaflet.draw.css";
 
 import {circleMaker, gdacsPopup, popupMaker} from '../assets/mapMethods'
 import Dygraph from "dygraphs";
+import 'dygraphs/dist/dygraph.css';
 import DraggableDiv from "./DraggableDiv";
 import 'leaflet-kmz';
 import { mapFields } from 'vuex-map-fields';
@@ -79,10 +80,10 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '140px',
-        width: '600px',
-        marginLeft: '90px',
-        marginBottom: '50px',
+        height: '250px',
+        width: '675px',
+        marginLeft: '5px',
+        marginBottom: '5px',
         borderColor: '#5cb85c'
       }
 
@@ -100,22 +101,23 @@ export default {
     L.control.scale({
       position: 'bottomright',
     }).addTo(this.globalMap);
-    this.tileLayer();
+    // load basemap
+    //this.tileLayer();
+    this.basemapLayers();
 
     var legend2 = L.control({position: 'bottomleft'});
     legend2.onAdd = function () {
       var div = L.DomUtil.create('div', 'info legend2');
+      div.setAttribute("style","padding-left:60px;");
       div.innerHTML = '<img src="https://raw.githubusercontent.com/GeoGateway/geogateway-portal/master/html/images/logos/logo_black.png" style="height: 30px; width: 82px">';
       return div;
     };
 
     legend2.addTo(this.globalMap);
 
-
-
-
     var drawnItems = new L.FeatureGroup();
     this.globalMap.addLayer(drawnItems);
+
     this.drawControl = new L.Control.Draw({
       draw: {
         polygon: false,
@@ -125,12 +127,8 @@ export default {
         rectangle: false,
         circlemarker: false,
       },
-      edit: {
-        featureGroup: drawnItems
-      }
     });
     this.globalMap.addControl(this.drawControl);
-    this.globalMap.addLayer(drawnItems);
 
     bus.$on('UrlAddLayer', (url, layerName) =>
         this.kmlUrl(url, layerName));
@@ -150,9 +148,6 @@ export default {
     bus.$on('filterCat', (text, dFilter, mFilter, iconScale, startDate, endDate) =>
         this.catalogFilter(text, dFilter, mFilter, iconScale, startDate, endDate));
 
-    bus.$on('addGeoJson', (text, layer) =>
-        this.addGeoJson(text, layer));
-
     bus.$on('gdacsGeoJSON', (text) =>
         this.addGdacsLayers(text));
 
@@ -161,8 +156,9 @@ export default {
 
     bus.$on('displaySave', (layers) =>
         this.displaySave(layers));
-    bus.$on('hidePlot', ()=>
-        this.plotActive = false);
+    bus.$on('hidePlot', ()=> {
+      bus.$emit('resetPlot');
+    });
     bus.$on('clearSaveLayer', (layers) =>
         this.clearSave(layers));
     bus.$on('removeUavsarLayer', (name) =>
@@ -253,14 +249,41 @@ export default {
       this.losPlot = new Dygraph(
           document.getElementById("dygraph-LOS"),
           csv_final, {
-            drawPoints: true,
-            pointSize: 2,
-            strokeWidth: 0.0,
-            titleHeight: 20,
-            xLabelHeight: 16,
-            yLabelWidth: 16,
+            labels:['distance','grc','dem'],
+            series:{'grc':{axis:'y',drawPoints: true,pointSize: 2,strokeWidth: 0.0,showInRangeSelector: true},
+              'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false,showInRangeSelector: false},
+              },
+            // drawPoints: true,
+            // pointSize: 2,
+            // strokeWidth: 0.0,
+            // titleHeight: 20,
+            // xLabelHeight: 16,
+            // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
-            ylabel: 'GRC (cm)'
+            ylabel: 'Ground Range Change (cm)',
+            y2label: 'Ground Elevation (m) (line)',
+            //maxNumberWidth: 5,
+            sigFigs: 2,
+            digitsAfterDecimal:2,
+            //legend: 'always',
+            showRangeSelector: true,
+            axes: {
+              y: {
+              valueFormatter: y => y.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              y2: {
+              valueFormatter: y => y.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              x: {
+              valueFormatter: x => x.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: x => x.toFixed(1),
+              }
+            }
           }
       )
     },
@@ -319,23 +342,64 @@ export default {
       this.globalMap.addLayer(this.uavsarLayers[name]);
     },
 
+    // load basemap layer
+    basemapLayers() { 
 
-    tileLayer() {
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-      }).addTo(this.globalMap);
+      var  tileProviders = [
+        {
+          name: 'ArcGIS Topo Map',
+          visible: true,
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+          attribution:
+            'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
+          token:'',
+          zIndex: 1 
+        },
+        {
+          name: 'ArcGIS Light Map',
+          visible: false,
+          attribution:
+            'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          token:'',
+          zIndex: 2
+         },
+        {
+          name: 'ArcGIS Dark Map',
+          visible: false,
+          attribution:
+            'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
+          url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+          token:'',
+          zIndex:3
+        }
+      ];
+
+      var basemaps = {};
+      var baseLayer;
+      for (var tile of tileProviders) {
+        baseLayer = L.tileLayer(tile.url,{attribution:tile.attribution});
+        basemaps[tile['name']]=baseLayer;
+        if (tile.visible == true) {baseLayer.addTo(this.globalMap);}
+      }
+      L.control.layers(basemaps).addTo(this.globalMap);
     },
+
+    // tileLayer() {
+    //   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    //     attribution: 'ArcGIS World Topo Map',zIndex:1
+    //   }).addTo(this.globalMap);
+    // },
+
     kmlText(text, layerName) {
       const parser = new DOMParser();
       const kml = parser.parseFromString(text, 'text/xml');
       this.layers[layerName] = new L.KML(kml);
       this.globalMap.addLayer(this.layers[layerName]);
-      const bounds = this.layers[layerName].getBounds();
-      this.globalMap.fitBounds(bounds);
 
     },
     addGnssLayer(file, type, prefix) {
       this.kmlText(file, type.concat(prefix));
-
     },
     removePlotGnss() {
       console.log(this.layers['gnssPlotPt'].remove());
@@ -347,8 +411,6 @@ export default {
             var kml = parser.parseFromString(kmltext, "text/xml");
             this.layers[layerName] = new L.KML(kml);
             this.globalMap.addLayer(this.layers[layerName]);
-            this.globalMap.fitBounds(this.layers[layerName].getBounds());
-
           });
 
     },
@@ -407,7 +469,9 @@ export default {
         this.usgsLegend = L.control({position: 'bottomleft'});
         this.usgsLegend.onAdd = function () {
           var div = L.DomUtil.create('div', 'usgsLegend');
-          div.innerHTML = '<img src="https://raw.githubusercontent.com/cosmic-tichy/GeoGatewayStaticResources/master/icons/color_gradient.jpg">';
+          div.innerHTML = "<b>"+startDate.toISOString().slice(0,10) +"</b> -- <b>"+endDate.toISOString().slice(0,10)+"</b>";
+          div.innerHTML += "<br>"
+          div.innerHTML += '<img  width="150" height="20" src="https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/icons/rsz_gradient_linear.png">';
           return div;
         };
 
@@ -451,7 +515,7 @@ export default {
 
 #map-window {
   position: inherit;
-  height: calc(100% - 125px);
+  height: calc(100% - 40px);
   /*z-index: 30000;*/
   width: auto;
   padding: 0;
@@ -491,7 +555,7 @@ export default {
   z-index: 1500;
   background-color: #ccffcc;
   /*opacity: .5;*/
-  height: 250px;
+  height: 350px;
   resize: both;
   overflow: auto;
   width: 725px;

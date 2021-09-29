@@ -33,9 +33,10 @@
                         v-model="gdacsL"
                         @change="gdacsLayer"
                         id="gdacs"
-                ><label for="gdacs">Show GDACS Data </label>
+                ><label for="gdacs">Show GDACS Data (>=5.5M)</label>
                 <br/>
                 <br/>
+                <!-- disbale nowcast plot
                 <h3>Nowcast Plots</h3>
                 <h5>Magnitude-Frequency relations and Nowcast</h5>
                 <hr/>
@@ -60,6 +61,7 @@
                 <br />
                 <b-button variant="success" id="run_plot"  @click="runPlot()">
                     Run</b-button>
+                -->
             </div>
         </div>
     </div>
@@ -106,7 +108,7 @@
             },
             woForecastLayer() {
                 if(this.woLayer) {
-                    var woForecastUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/wo_forecast';
+                    var woForecastUrl = '/geogateway_django_app/wo_forecast';
                     axios.get(woForecastUrl, {
                         responseType: "text",
                         params : {
@@ -122,7 +124,7 @@
             },
             caForecastLayer() {
                 if(this.caLayer) {
-                    var caForecastUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/ca_forecast';
+                    var caForecastUrl = '/geogateway_django_app/ca_forecast';
                     axios.get(caForecastUrl, {
                         responseType: "text",
                         params : {
@@ -137,7 +139,7 @@
             },
             gdacsLayer(){
                 if(this.gdacsL) {
-                    var gdacsUrl = 'https://beta.geogateway.scigap.org/geogateway_django_app/gdacs';
+                    var gdacsUrl = '/geogateway_django_app/gdacs';
                     axios.get(gdacsUrl, {
                         responseType: "text",
                     }).then(function (response) {
@@ -165,7 +167,7 @@
                 var lat = this.lat
                 var lon = this.lon
                 if(this.formCheck()){
-                    const baseURI = 'https://beta.geogateway.scigap.org/geogateway_django_app/nowcast'
+                    const baseURI = '/geogateway_django_app/nowcast'
 
                     axios.get(baseURI, {
                         params: {
@@ -174,7 +176,8 @@
                             "lon": this.lon,
                         },
                     }).then(function (response){
-                        console.log(response.data)
+                        console.log(response.request);
+                        console.log(response.data);
                         bus.$emit('nowcast', response.data, lat, lon)
                     })
                     //add logic for layer removal

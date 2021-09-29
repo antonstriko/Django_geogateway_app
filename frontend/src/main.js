@@ -11,9 +11,11 @@ import UAVSAR from "./components/UAVSAR";
 import report from "./components/report";
 import help from "./components/help";
 import Disloc from "./components/Disloc";
-import VueRouter from 'vue-router'
+import SpecialStudies from "./components/SpecialStudies";
+import ThreeDImaging from "./components/ThreeDImaging";
+import VueRouter from 'vue-router';
 import 'leaflet/dist/leaflet.css';
-import "leaflet-kml"
+import "leaflet-kml";
 import {store} from "./store/store";
 import resize from "vue-element-resize-detector";
 
@@ -35,15 +37,17 @@ import VueResource from 'vue-resource';
 
 const routes = [
   {name: 'maptools', path: '/maptools', component: MapTools },
-  { path: '/gnss', component: GNSS },
-  { path: '/momentmagnitude', component: MMCalc },
-  { path: '/nowcast', component: Nowcast },
-  { path: '/seismicity', component: Seismicity },
-  { path: '/disloc', component: Disloc },
-  { path: '/mapsaves', component: Saves },
-  { path: '/uavsar', component: UAVSAR },
-  { path: '/report', component: report },
-  { path: '/help', component: help },
+  {name: 'gnss', path: '/gnss', component: GNSS },
+  {name: 'momentmagnitude', path: '/momentmagnitude', component: MMCalc },
+  {name: 'nowcast', path: '/nowcast', component: Nowcast },
+  {name: 'seismicity', path: '/seismicity', component: Seismicity },
+  {name: 'disloc', path: '/disloc', component: Disloc },
+  {name: 'mapsaves', path: '/mapsaves', component: Saves },
+  {name: 'uavsar', path: '/uavsar', component: UAVSAR },
+  {name: 'specialstudies', path: '/specialstudies', component: SpecialStudies },
+  {name: '3dimaging', path: '/3dimaging', component: ThreeDImaging },
+  {name: 'report', path: '/report', component: report },
+  {name: 'help', path: '/help', component: help },
 
 ]
 

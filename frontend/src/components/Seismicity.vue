@@ -39,6 +39,7 @@
       <!--        ><label for="showhide"> Show/Hide Selected Earthquakes</label>-->
       <!--        <br/>-->
       <br/>
+      <!--
       <h5>Filter By Magnitude</h5>
       <select class="form-control" v-model="mFilter" id="mFilters" >
         <option value="0" selected>No Filter</option>
@@ -51,7 +52,7 @@
         <option value="0">No Filter</option>
         <option value='30'>Depth &#8804; 30km </option>
       </select>
-      <hr/>
+      <hr/> -->
       <h4>Search Earthquake Catalog</h4>
       <b-button variant="dark" id="sp_windowpicker" class="btn btn-light" @click="seisDrawRect()">
         <b-icon-pencil></b-icon-pencil> Draw an area on map</b-button>
@@ -138,7 +139,7 @@ export default {
       'seismicity.minMag',
       'seismicity.maxMag',
       'seismicity.iconScale',
-      'seismicity.selected', 
+      'seismicity.selected',
       'seismicity.kmlUri',
       'seismicity.geoUri',
 
@@ -148,6 +149,8 @@ export default {
   },
   methods: {
     clearUsgs(){
+      this.geoUri = '';
+      this.kmlUri = '';
       bus.$emit('ClearUsgs', 'usgs_layer');
     },
     showSelected(time) {
@@ -174,7 +177,7 @@ export default {
           startD.setDate(startD.getDate()-30);
           break;
       }
-      axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/seismicity', {
+      axios.get('/geogateway_django_app/seismicity', {
         params: {
           "fullUri": timeUrl,
         }}).then(function(response){
@@ -196,7 +199,7 @@ export default {
           "maxlongitude=" + this.maxLon;
       this.kmlUri = fullUri.replace('geojson', 'kml');
       this.geoUri = fullUri;
-      axios.get('https://beta.geogateway.scigap.org/geogateway_django_app/seismicity', {
+      axios.get('/geogateway_django_app/seismicity', {
         params: {
           "fullUri": fullUri,
         }

@@ -1,16 +1,18 @@
 <template>
     <div id="tabs">
-        <b-tabs v-model="tabIndex" pills card>
-            <b-tab title="Map Tools" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="UAVSAR" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="GNSS" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Seismicity" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Nowcast" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Magnitude"><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Disloc" disabled ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Saves" disabled><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Feedback" ><b-card-text><router-view></router-view></b-card-text></b-tab>
-            <b-tab title="Help" ><b-card-text><router-view></router-view></b-card-text></b-tab>
+        <b-tabs v-model="tabIndex" small pills card>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Map Tools</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>UAVSAR</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>GNSS</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Seismicity</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Nowcast</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Magnitude</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Disloc</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+<!--            <b-tab title="Saves" disabled><b-card-text><router-view></router-view></b-card-text></b-tab>-->
+            <b-tab><template #title> <span style="font-size:14px"><strong>Studies</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>3D Imaging</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Feedback</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Help</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
         </b-tabs>
     </div>
 </template>
@@ -29,7 +31,11 @@
             }
         },
         mounted() {
-            this.toPage(this.tabIndex);
+            //this.toPage(this.tabIndex);
+ 
+            if (this.tabUrl == '/') {  
+                this.tabIndex = 0; this.toPage(this.tabIndex);} 
+            else {this.directUrl(this.tabUrl)}
         },
         watch: {
             tabIndex: function(val){
@@ -43,7 +49,7 @@
             tabUrl: function(){
                 return this.$route.fullPath;
             },
-          ...mapFields(['uavsar.overview', 'map.globalMap', 'map.layers'])
+          ...mapFields(['uavsar.overview', 'map.globalMap', 'map.layers', 'uavsar.overviewLegend'])
         },
         methods: {
             toPage(page){
@@ -74,24 +80,36 @@
                         this.$router.push('/disloc');
                         break;
                     case 7:
-                        this.$router.push('/mapsaves');
+                        this.$router.push('/specialstudies');
                         break;
                     case 8:
-                        this.$router.push('/report');
+                        this.$router.push('/3dimaging');
                         break;
                     case 9:
+                        this.$router.push('/report');
+                        break;
+                    case 10:
                         this.$router.push('/help');
                         break;
                 }
             },
+
           uavsarOverview(){
-            this.layers['uavsarWMS'] = L.tileLayer.wms('http://gf8.ucs.indiana.edu/geoserver/InSAR/wms?', {
+            this.layers['uavsarWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
                   layers: 'InSAR:thumbnailmosaic',
                   transparent: true,
                   format: 'image/png',
                   zIndex: 2
                 }
             );
+            this.overviewLegend = L.control({position: 'bottomleft'});
+            this.overviewLegend.onAdd = function () {
+              var div = L.DomUtil.create('div', 'overviewLegend');
+              div.innerHTML = '<img src=' + 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/uavsarlegend.png' + '>';
+              return div;
+            };
+            this.overviewLegend.addTo(this.globalMap);
+
             this.globalMap.addLayer(this.layers['uavsarWMS'])
             this.layers['uavsarWMS'].setOpacity(.7);
           },
@@ -118,14 +136,17 @@
                     case "/disloc":
                         this.tabIndex = 6;
                         break;
-                    case "/mapsaves":
+                    case "/specialstudies":
                         this.tabIndex = 7;
                         break;
-                    case "/report":
+                    case "/3dimaging":
                         this.tabIndex = 8;
                         break;
-                    case "/help":
+                    case "/report":
                         this.tabIndex = 9;
+                        break;
+                    case "/help":
+                        this.tabIndex = 10;
                         break;
                 }
             },
@@ -139,12 +160,17 @@
         background-color: #e6e6ff;
 
     }
+ 
     .tab-text {
         width: auto;
         position: relative;
         align-content: center;
         height: 100% ;
         overflow: auto;
+    }
+ 
+    h3 {
+    font-size: 20px !important;
     }
 
     .nav-pills .nav-link.active {
