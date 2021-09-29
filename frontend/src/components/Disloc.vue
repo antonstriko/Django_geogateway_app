@@ -4,7 +4,9 @@
   <div class="tab-window">
     <h3>Disloc</h3>
     <hr/>
+
     <div id="upload-container">
+      <!--
       <h5><b>Input File Upload &nbsp;&nbsp;</b>
         <b-icon icon="question-circle-fill" v-b-modal.modal-2></b-icon></h5>
       <b-modal id="modal-2" title="Input File Format" button-size="sm" ok-only>
@@ -39,10 +41,14 @@
       <div class="container" v-html="fileInfo">
       </div>
       <br>
-      <!--      <div v-if="jobActive" class="center">-->
-      <!--        <b-spinner type="grow" label="Job executing..."></b-spinner>-->
-      <!--        <br />-->
-      <!--      </div>-->
+      -->
+      <!--
+          <div v-if="jobActive" class="center">
+              <b-spinner type="grow" label="Job executing..."></b-spinner>
+             <br />
+         </div>
+      -->
+
       <b-button @click="loadExperiments()">
         <div v-if="results.length !== 0">
           Refresh Experiments

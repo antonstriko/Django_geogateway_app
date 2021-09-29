@@ -3,7 +3,7 @@ const BundleTracker = require("webpack-bundle-tracker");
 module.exports = {
     publicPath:
         process.env.NODE_ENV === "development"
-            ? "http://0.0.0.0:9000/static/geogateway_django_app/bundles/": "/static/geogateway_django_app/bundles/",
+            ? "http://127.0.0.1:9000/static/geogateway_django_app/bundles/": "/static/geogateway_django_app/bundles/",
     outputDir: '../geogateway_django_app/static/geogateway_django_app/bundles',
 
     devServer: {

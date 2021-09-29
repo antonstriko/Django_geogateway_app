@@ -9,7 +9,7 @@
     <DraggableDiv v-resize @resize="resizeLOS" class="col-11" v-if="plotActive" id="plot-window">
       <vue-resize ></vue-resize>
       <template slot="header">
-        <p style="color: #000000">LOS Plot</p>
+        <p style="color: #000000">Line of Sight Displacement</p>
       </template>
       <div id="losLegend">
       </div>
@@ -24,7 +24,7 @@
     <!--        </div>-->
 
     <div id="map">
-    </div>
+   </div>
 
 
 
@@ -80,10 +80,10 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '190px',
-        width: '650px',
-        marginLeft: '10px',
-        marginBottom: '10px',
+        height: '250px',
+        width: '675px',
+        marginLeft: '5px',
+        marginBottom: '5px',
         borderColor: '#5cb85c'
       }
 
@@ -249,20 +249,31 @@ export default {
       this.losPlot = new Dygraph(
           document.getElementById("dygraph-LOS"),
           csv_final, {
-            drawPoints: true,
-            pointSize: 2,
-            strokeWidth: 0.0,
+            labels:['distance','grc','dem'],
+            series:{'grc':{axis:'y',drawPoints: true,pointSize: 2,strokeWidth: 0.0,showInRangeSelector: true},
+              'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false,showInRangeSelector: false},
+              },
+            // drawPoints: true,
+            // pointSize: 2,
+            // strokeWidth: 0.0,
             // titleHeight: 20,
             // xLabelHeight: 16,
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
-            ylabel: 'GRC (cm)',
+            ylabel: 'Ground Range Change (cm)',
+            y2label: 'Ground Elevation (m) (line)',
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
+            //legend: 'always',
             showRangeSelector: true,
             axes: {
               y: {
+              valueFormatter: y => y.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              y2: {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
@@ -333,6 +344,7 @@ export default {
 
     // load basemap layer
     basemapLayers() { 
+
       var  tileProviders = [
         {
           name: 'ArcGIS Topo Map',
@@ -341,6 +353,7 @@ export default {
           attribution:
             'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
           token:'',
+          zIndex: 1 
         },
         {
           name: 'ArcGIS Light Map',
@@ -349,7 +362,8 @@ export default {
             'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
           token:'',
-        },
+          zIndex: 2
+         },
         {
           name: 'ArcGIS Dark Map',
           visible: false,
@@ -357,6 +371,7 @@ export default {
             'Map data: &copy; <a href=<a href="http://www.esri.com/">Esri</a>',
           url: 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}',
           token:'',
+          zIndex:3
         }
       ];
 
@@ -370,11 +385,11 @@ export default {
       L.control.layers(basemaps).addTo(this.globalMap);
     },
 
-    tileLayer() {
-      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-        attribution: 'ArcGIS World Topo Map'
-      }).addTo(this.globalMap);
-    },
+    // tileLayer() {
+    //   L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    //     attribution: 'ArcGIS World Topo Map',zIndex:1
+    //   }).addTo(this.globalMap);
+    // },
 
     kmlText(text, layerName) {
       const parser = new DOMParser();
@@ -540,7 +555,7 @@ export default {
   z-index: 1500;
   background-color: #ccffcc;
   /*opacity: .5;*/
-  height: 250px;
+  height: 350px;
   resize: both;
   overflow: auto;
   width: 725px;

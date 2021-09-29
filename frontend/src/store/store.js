@@ -18,6 +18,7 @@ export const store = new Vuex.Store({
             boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
             coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
             ucerf: false,
+            qfaults: false,
             boundaries: false,
             coasts: false,
             kml: false,
@@ -85,6 +86,7 @@ export const store = new Vuex.Store({
             headingLegend: null,
             layers: {
                 'ucerfL': null,
+                'qfaultsWMS':null,
                 'woForecastL': null,
                 'caForecastL': null,
                 'boundariesL': null,
@@ -163,9 +165,9 @@ export const store = new Vuex.Store({
             lon: '',
         },
         mmcalc: {
-            mm_length: 249,
-            mm_width: 120.0,
-            mm_slip: 23,
+            mm_length: 12.5,
+            mm_width: 10,
+            mm_slip: 0.45,
             mm_shear: 3,
             SM: null,
             MM: null,
