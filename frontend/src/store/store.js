@@ -1,96 +1,207 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 // import L from "leaflet";
+// import L from "leaflet";
+
+import { getField, updateField } from 'vuex-map-fields';
 
 Vue.use(Vuex);
 
+
 export const store = new Vuex.Store({
     state: {
-        globalLayers: {
-          ucerf: null,
-          kml: null,
-          boundaries: null,
-          coasts: null,
-          gnss1: null,
-          gnss2: null,
+        mapTools: {
+            ucerfUrlGrey: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_grey.kml",
+            ucerfUrlBlack: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
+            ucerfUrlRed: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_red.kml",
+            ucerfUrlYellow: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_yellow.kml",
+            boundariesUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml',
+            coastsUrl: 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml',
+            ucerf: false,
+            qfaults: false,
+            boundaries: false,
+            coasts: false,
+            kml: false,
+            kmlFile: null,
+            selectedColor: 'grey',
+            value: 50,
+            kmlLayers: [],
+            currLoc: false,
+            userLocationCirc: null,
+            userLocationPin: null,
+            locActive: false,
         },
-        //layers all in one dict?
-        mapToolsState: {
-            ucerf: [false, "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml"],
-            kml: [false, ''],
-            boundaries: [false, 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/gz_2010_us_040_00_20m.kml'],
-            coasts: [false, 'https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ne_50m_coastline.kml'],
+        uavsar: {
+            overview: false,
+            flight_path: '',
+            lat_lon: '',
+            uavsarLayers: [],
+            layerFound: false,
+            selDesel: false,
+            LosPlotAvailable: false,
+            extendedColor: '',
+            extendedBorder: '',
+            extendingActive: false,
+            lat1: '',
+            lat2: '',
+            lon1: '',
+            lon2: '',
+            losLength: '',
+            azimuth: '',
+            activePlot: '',
+            csv_final: '',
+            activeEntry: null,
+            opVal: 75,
+            alternateColoringChecked: false,
+            uid: '',
+            uavsarLayersFiltered: [],
+            activeQuery: false,
+            geomEntries: [],
+            path: '',
+            sortBy: null,
+            uavsarHighResLayer: null,
+            uavsarDisplayedLayers: [],
+            plottingMarkerStart: null,
+            plottingMarkerEnd: null,
+            plotLine: null,
+            plotLat1: null,
+            plotLon1: null,
+            plotLat2: null,
+            plotLon2: null,
+            uavsarLatlon: null,
+            hasAlternateColoring: false,
+            activeBackground: '#a8b4bf',
+            dateFilter: false,
+            bracketDate: '',
+            currentExtendedEntry: null,
+            overviewLegend: null,
+            lowResDisplayed: 0,
         },
-        gnssState: {
-            gnss1: [false, ''],
-            gnss2: [false, ''],
-
+        map: {
+            uavsarEntry: null,
+            globalMap: null,
+            drawControl: null,
+            uavsarLegend: null,
+            plotActive: false,
+            headingLegend: null,
+            layers: {
+                'ucerfL': null,
+                'qfaultsWMS':null,
+                'woForecastL': null,
+                'caForecastL': null,
+                'boundariesL': null,
+                'coastsL': null,
+                'gdacsL': null,
+                'gnssPlotPt': null,
+                'nowcastL': null,
+                'usgs_layer': null,
+                'markerLayer': null,
+                'kmlUpload': null,
+                'nowcastLayer': null,
+                'uavsarWMS': null,
+                'uavsarOverlay': null,
+                'highResUavsar': null,
+                'disloc': null,
+            },
         },
-        drawToolBar: false,
-        nowcastState: {
-            globalForecast: false,
-
-
+        gnss: {
+            gnssLayers: [],
+            kmltype_sel: 'getvelocities',
+            gs_latitude: '',
+            gs_longitude: '',
+            gs_width: '',
+            gs_height: '',
+            gs_epoch: '',
+            gs_epoch1: '',
+            gs_epoch2: '',
+            gs_refsite: '',
+            gs_scale: '',
+            gs_ctwin: '',
+            gs_ptwin: '',
+            gs_dwin1: '',
+            gs_dwin2: '',
+            gs_outputprefix: '',
+            kmlData: '',
+            gs_eon: '',
+            gs_vabs: '',
+            gs_analysisCenter: '',
+            ranLayers: [],
+            activeLayers: [],
+            markerSize: false,
+            layersActive: false,
+            activeGnssQuery: false,
+            geometryActive: false,
+            rectDraw: null,
+        },
+        seismicity: {
+            day: false,
+            week: false,
+            month: false,
+            mFilter: '',
+            dFilter: '',
+            minLat: '32.0',
+            minLon: '-130.0',
+            maxLat: '35.0',
+            maxLon: '-110.0',
+            startDate: '2020-05-24',
+            startTime: '00:00:00',
+            endDate: '2020-06-23',
+            endTime: '00:00:00',
+            minMag: '3.0',
+            maxMag: '10.0',
+            iconScale: '1',
+            selected: null,
+            kmlUri: '',
+            geoUri: '',
+        },
+        nowcast: {
+            ucerfL: false,
+            woLayer: false,
+            caLayer: false,
+            gdacsL: false,
+            ucerfUrl: "https://raw.githubusercontent.com/GeoGateway/GeoGatewayStaticResources/master/kmz/ucerf3_black.kml",
+            p_name: '',
+            lat: '',
+            lon: '',
+        },
+        mmcalc: {
+            mm_length: 12.5,
+            mm_width: 10,
+            mm_slip: 0.45,
+            mm_shear: 3,
+            SM: null,
+            MM: null,
+        },
+        disloc: {
+            file: null,
+            fileInfo: null,
+            Elevation: 60,
+            Azimuth: 0,
+            RadarFrequency: 1.26,
+            jobActive: false,
+            jobCompleted: false,
+            experiment: null,
+            app_id: null,
+            models: null,
+            services: null,
+            session: null,
+            utils: null,
+            expData: null,
+            results: [],
+            showFullExp: false,
+            hostname: "geogateway-vc.jetstream-cloud.org",
+        },
+        mapSaves: {
+            saves: [],
         }
-
     },
     mutations: {
-        setkml (state, n){
-            state.GNSS.formData.kmltype_sel = n;
+        addKmlLayer(state, layer) {
+            state.mapTools.kmlLayers.push(layer);
         },
-        setLat (state, n){
-            state.GNSS.formData.gs_latitude = n;
-        },
-        setLng (state, n){
-            state.GNSS.formData.gs_longitude = n;
-        },
-        setWidth (state, n){
-            state.GNSS.formData.gs_width = n;
-        },
-        setHeight (state, n){
-            state.GNSS.formData.gs_height = n;
-        },
-        setEp (state, n){
-            state.GNSS.formData.gs_epoch = n;
-        },
-        setEp1 (state, n){
-            state.GNSS.formData.gs_epoch1 = n;
-        },
-        setEp2 (state, n){
-            state.GNSS.formData.gs_epoch2 = n;
-        },
-        setRef (state, n){
-            state.GNSS.formData.gs_refsite = n;
-        },
-        setScale (state, n){
-            state.GNSS.formData.gs_scale = n;
-        },
-        setCtwin (state, n){
-            state.GNSS.formData.gs_ctwin = n;
-        },
-        setPtwin (state, n){
-            state.GNSS.formData.gs_ptwin = n;
-        },
-        setDwin1 (state, n){
-            state.GNSS.formData.gs_dwin1 = n;
-        },
-        setDwin2 (state, n){
-            state.GNSS.formData.gs_dwin2 = n;
-        },
-        setPrefix (state, n){
-            state.GNSS.formData.gs_outputprefix = n;
-        },
-         // gs_epoch: '',
-         //        gs_epoch1: '',
-         //        gs_epoch2: '',
-         //        gs_refsite: '',
-         //        gs_scale: '',
-         //        gs_ctwin: '',
-         //        gs_ptwin: '',
-         //        gs_dwin1: '',
-         //        gs_dwin2: '',
-         //        gs_outputprefix: '',
-         //        kmlData: '',}
+        updateField
+    },
+    getters: {
+        getField
     }
-    // }
 });

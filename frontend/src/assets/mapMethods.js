@@ -19,9 +19,10 @@ export function perc2color(perc) {
 export function circleMaker(feature, latlng, iconScale, startDate, endDate){
     var eventUTC = new Date(feature.properties.time);
 
-    var eventDate = convertEpochToSpecificTimezone(-10, eventUTC)
-    var diff = (endDate - eventDate)
-    var range = (endDate - startDate)
+    var eventDate = convertEpochToSpecificTimezone(-10, eventUTC);
+    //var diff = (endDate - eventDate);
+    var diff = (eventDate - startDate);
+    var range = (endDate - startDate);
 
     var color = perc2color(Math.abs(((diff/range)*100) - 100))
 
@@ -29,7 +30,7 @@ export function circleMaker(feature, latlng, iconScale, startDate, endDate){
         radius: feature.properties.mag * iconScale,
         color: color,
         fillColor: color,
-        fillOpacity: .5,
+        fillOpacity: 0.8,
     }
 
     var circle = L.circleMarker(latlng, circleProps);
@@ -43,7 +44,7 @@ export function popupMaker (feature, layer) {
         '<p><b>Magnitude</b>: ' + feature.properties.mag + '</p>' +
         '<p><b>Place</b>: ' + feature.properties.place + '</p>' +
         '<p><b>Time</b>: ' + d.toLocaleString() + '</p>' +
-        '<a href=' + feature.properties.url + '>' + 'USGS Event' + '</a>'
+        '<a target="_blank" href=' + feature.properties.url + ' >' + 'USGS Event' + '</a>'
     );
 }
 //GMT offset = -10
@@ -54,9 +55,10 @@ export function convertEpochToSpecificTimezone(offset, d){
 }
 
 export function gnssPopup(feature, layer){
-    layer.bindPopup(
-        feature.properties.description
-    );
+            layer.bindPopup(
+            feature.properties.description
+        );
+
 }
 
 export function gdacsPopup(feature, layer){
@@ -66,3 +68,5 @@ export function gdacsPopup(feature, layer){
         feature.properties.longitude + '</p>'
     );
 }
+
+

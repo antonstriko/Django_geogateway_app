@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base1.html' %}
 {% load static %}
 {% load render_bundle from webpack_loader %}
 
@@ -10,6 +10,7 @@
 
 
 {% block content %}
+{% csrf_token %}
 <div id="app"></div>
 {% endblock %}
 {% block scripts %}

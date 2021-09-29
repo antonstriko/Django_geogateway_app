@@ -4,12 +4,13 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+FILE_UPLOAD_PERMISSIONS = 0o644
+CSRF_COOKIE_NAME= "XSRF-TOKEN"
 
-ALLOWED_HOSTS = ['django.seagrid.org', '192.168.1.4', '127.0.0.1']
+ALLOWED_HOSTS = ['django.seagrid.org', '192.168.1.4',]
 
 
 class Settings:
-
     WEBPACK_LOADER = {
         "djvue_app2": {
             "BUNDLE_DIR_NAME": "geogateway_django_app/bundles/",
@@ -27,6 +28,6 @@ class Settings:
 class GeogatewayDjangoAppConfig(AppConfig):
     name = 'geogateway_django_app'
     label = name
-    verbose_name = 'GeoGateway Django-Vue App'
+    verbose_name = 'GeoGateway Develop'
     fa_icon_class = 'fa-comment'
     settings = Settings()

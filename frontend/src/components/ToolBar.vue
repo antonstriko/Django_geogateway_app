@@ -1,6 +1,6 @@
 <template>
 
-    <b-collapse id="sidebar-1" bg-variant="dark">
+    <b-collapse visible id="sidebar-1" bg-variant="dark">
         <ToolTabs />
     </b-collapse>
 
@@ -19,22 +19,15 @@
 
 <style scoped>
 
-  .toolbar-active {
-      position: relative;
-      float: left;
-      width: 500px;
-      height: auto;
-      overflow: auto;
-
-  }
-
     #sidebar-1 {
-        height: calc(100% - 100px);
-        width: 500px;
-        overflow: auto;
+        height: 100%;
+        width: 27%;
+        overflow-y: scroll;
         float: left;
+        background-color: #e6e6ff;
+        -webkit-transition: none;
+        transition: none;
     }
-
 
 
 </style>
