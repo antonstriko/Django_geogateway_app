@@ -56,7 +56,7 @@
         <div class="layer-options">
           <b-row>
             <b-button class="btn-sm" @click="selDeselAll">
-              Select/Deselect All
+              Display/Hide All
             </b-button>
             <b-button class="btn-sm" @click="clearQuery" variant="warning">
               Clear Query
@@ -69,10 +69,8 @@
             <b-button @click="filterDate" variant="success" size="sm">Filter by Date</b-button>
             <b-button @click="clearFilters" variant="warning" size="sm">Clear Filter</b-button>
           </b-row>
-          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate cloring if available</b-checkbox>
+          <b-checkbox style="text-align: left" v-model="alternateColoringChecked">Show alternate coloring if available</b-checkbox>
         </div>
-        <!--        <b-button @click="downloadCSV(uavsarLayersFiltered[currentExtendedEntry],[plottingMarkerEnd.getLatLng().lat, plottingMarkerEnd.getLatLng().lng, plottingMarkerStart.getLatLng().lat, plottingMarkerStart.getLatLng().lng])"-->
-        <!--        variant="success">Download LOS Data</b-button>-->
       </b-container>
 
 
@@ -80,7 +78,7 @@
 
         <div class="collapsed"  v-for="entry in uavsarLayersFiltered" :key="entry.info['uid']" v-bind:style="{backgroundColor: entry.activeBackground}">
           <b-col>
-            <input type="checkbox" v-model="entry.active" @change="kmlLayerChange(entry)"><br>
+           <input type="checkbox" v-model="entry.displayed" @change="kmlLayerChange(entry)"> Display/Hide <br> 
           </b-col>
           <b-col >
             <div id="selectableHeader"  @click="extendEntry(entry)" style="cursor:pointer;">
@@ -124,7 +122,7 @@
             <div v-else-if="entry.extended && !extendingActive" class="extended" v-bind:style="{backgroundColor: extendedColor, border: extendedBorder }">
 
               <div class="extended">
-                <!--                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>-->
+                <b>Heading: </b> {{entry.info['heading']}}  <b>Radar Dir: </b> {{entry.info['radardirection']}} <br/>
                 <!--                <i v->{{hasAlternateColoring ? 'Displaying alternate coloring' : 'Alternate coloring not found'}}</i>-->
               </div>
               <div v-if="layerFound">
@@ -439,11 +437,11 @@ export default {
       for(var i=0;i<csv2.length;i++) {
         var csv3=csv2[i].split(",");
         //                console.log(csv2[i],csv3)
-        if(csv3[2] && csv3[3]) {
-          csv_final+=csv3[2]+","+csv3[3]+"\n";
+        if(csv3[2] && csv3[3] && csv3[5]) {
+          csv_final+=csv3[2]+","+csv3[3]+ ","+csv3[5] + "\n";
         }
-        //                console.log(csv_final);
       }
+//      console.log(csv_final);
       this.csv_final = csv_final;
       this.LosPlotAvailable= true;
       bus.$emit('activatePlot', csv_final);
@@ -463,7 +461,9 @@ export default {
 
       axios.get('/geogateway_django_app/UAVSAR_csv/', {
         params: {
-          'entry':JSON.stringify(entry),
+          //'entry':JSON.stringify(entry),
+          'uid':entry['info']['uid'],
+          'dataname':entry['info']['dataname'],
           'lat1':this.lat1,
           'lon1':this.lon1,
           'lat2':this.lat2,
@@ -541,9 +541,9 @@ export default {
         entry.clicked = true;
         entry.activeBackground = '#8494a3';
         entry.extended = true;
-        var testURI = '/geogateway_django_app/UAVSAR_test/'
+        var testURI = '/geogateway_django_app/UAVSAR_test/';
 
-        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw'
+        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw';
 
         //set current extended entry for keyup keydown change
 
@@ -572,7 +572,7 @@ export default {
             vm.uavsarHighRes(entry, vm.hasAlternateColoring);
 
           }
-        })
+        });
       }
       vm.extendingActive = false;
     },
@@ -581,7 +581,7 @@ export default {
     uavsarHighRes(entry, hasAlternateColoring) {
       var latlon = entry.info.geometry.coordinates[0];
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
-        this.uavsarLayersFiltered[i].active = false;
+        this.uavsarLayersFiltered[i].displayed = false;
         this.kmlLayerChange(this.uavsarLayersFiltered[i]);
       }
       if (this.uavsarLegend !== null) {
@@ -756,7 +756,7 @@ export default {
     /////// Global UAVSAR query methods
     selDeselAll(){
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
-        this.uavsarLayersFiltered[i].active = this.selDesel;
+        this.uavsarLayersFiltered[i].displayed = this.selDesel;
         this.kmlLayerChange(this.uavsarLayersFiltered[i]);
       }
       this.selDesel = !this.selDesel;
@@ -905,6 +905,7 @@ export default {
             "queryStr": queryStr,
           }
         }).then(function (response) {
+//          console.log(response.headers);
           let entries = response.data;
           let baseURI = '/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
@@ -925,8 +926,11 @@ export default {
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
               entry.activeBackground = '#a8b4bf';
-              vm.uavsarLayers[k] = entry;
-              vm.uavsarLayersFiltered[k] = entry;
+              //Use the $set function to make these arrays reactive. See https://vuejs.org/v2/guide/reactivity.html#For-Arrays	      
+//              vm.uavsarLayers[k] = entry;
+              vm.$set(vm.uavsarLayers,k,entry);
+//              vm.uavsarLayersFiltered[k] = entry;
+              vm.$set(vm.uavsarLayersFiltered,k,entry);
               let uid = vm.uavsarLayers[k].info['uid'];
 
               const parser = new DOMParser();
@@ -1017,7 +1021,7 @@ export default {
     },
     kmlLayerChange(entry){
       const uid = entry.info['uid'];
-      if(entry.active) {
+      if(entry.displayed) {
         this.globalMap.addLayer(this.uavsarDisplayedLayers[uid]);
       }else {
         this.globalMap.removeLayer(this.uavsarDisplayedLayers[uid]);
