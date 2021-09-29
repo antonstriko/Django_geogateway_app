@@ -24,7 +24,7 @@
     <!--        </div>-->
 
     <div id="map">
-    </div>
+   </div>
 
 
 
@@ -80,10 +80,10 @@ export default {
       plotResize: null,
       losPlot: null,
       losStyle: {
-        height: '190px',
-        width: '650px',
-        marginLeft: '10px',
-        marginBottom: '10px',
+        height: '250px',
+        width: '675px',
+        marginLeft: '5px',
+        marginBottom: '5px',
         borderColor: '#5cb85c'
       }
 
@@ -249,20 +249,31 @@ export default {
       this.losPlot = new Dygraph(
           document.getElementById("dygraph-LOS"),
           csv_final, {
-            drawPoints: true,
-            pointSize: 2,
-            strokeWidth: 0.0,
+            labels:['distance','grc','dem'],
+            series:{'grc':{axis:'y',drawPoints: true,pointSize: 2,strokeWidth: 0.0,showInRangeSelector: true},
+              'dem':{axis:'y2',strokeWidth:1.0,drawPoints:false,showInRangeSelector: false},
+              },
+            // drawPoints: true,
+            // pointSize: 2,
+            // strokeWidth: 0.0,
             // titleHeight: 20,
             // xLabelHeight: 16,
             // yLabelWidth: 16, 
             xlabel: 'Distance (km)',
-            ylabel: 'GRC (cm)',
+            ylabel: 'Ground Range Change (cm)',
+            y2label: 'Ground Elevation (m) (line)',
             //maxNumberWidth: 5,
             sigFigs: 2,
             digitsAfterDecimal:2,
+            //legend: 'always',
             showRangeSelector: true,
             axes: {
               y: {
+              valueFormatter: y => y.toFixed(3),
+              ticker: Dygraph.numericTicks,
+              axisLabelFormatter: y => y.toFixed(1),
+              },
+              y2: {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
@@ -544,7 +555,7 @@ export default {
   z-index: 1500;
   background-color: #ccffcc;
   /*opacity: .5;*/
-  height: 250px;
+  height: 350px;
   resize: both;
   overflow: auto;
   width: 725px;

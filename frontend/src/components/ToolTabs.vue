@@ -1,7 +1,7 @@
 <template>
     <div id="tabs">
         <b-tabs v-model="tabIndex" small pills card>
-            <b-tab><template #title> <span style="font-size:14px"><strong>Maptools</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
+            <b-tab><template #title> <span style="font-size:14px"><strong>Map Tools</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
             <b-tab><template #title> <span style="font-size:14px"><strong>UAVSAR</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
             <b-tab><template #title> <span style="font-size:14px"><strong>GNSS</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
             <b-tab><template #title> <span style="font-size:14px"><strong>Seismicity</strong></span></template><b-card-text><router-view></router-view></b-card-text></b-tab>
@@ -31,7 +31,11 @@
             }
         },
         mounted() {
-            this.toPage(this.tabIndex);
+            //this.toPage(this.tabIndex);
+ 
+            if (this.tabUrl == '/') {  
+                this.tabIndex = 0; this.toPage(this.tabIndex);} 
+            else {this.directUrl(this.tabUrl)}
         },
         watch: {
             tabIndex: function(val){
@@ -89,6 +93,7 @@
                         break;
                 }
             },
+
           uavsarOverview(){
             this.layers['uavsarWMS'] = L.tileLayer.wms('https://archive.geo-gateway.org/geoserver/InSAR/wms?', {
                   layers: 'InSAR:thumbnailmosaic',
