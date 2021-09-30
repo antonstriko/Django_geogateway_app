@@ -521,7 +521,6 @@ export default {
       return -1;
     },
     extendEntry(entry){
-      console.log(entry.displayed);
       var vm = this;
       this.overviewLegend.remove();
       for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
@@ -576,7 +575,6 @@ export default {
         });
       }
       vm.extendingActive = false;
-      console.log(entry.displayed);      
     },
 
     //High Res KML's and CSV LOS plotting methods //////////////////////////////////
@@ -907,7 +905,7 @@ export default {
             "queryStr": queryStr,
           }
         }).then(function (response) {
-          console.log(response.headers);
+//          console.log(response.headers);
           let entries = response.data;
           let baseURI = '/geogateway_django_app/UAVSAR_KML/'
           let promises = [];
@@ -928,6 +926,7 @@ export default {
             for(let k = 0;k < responses.length;k++){
               let entry = responses[k].data;
               entry.activeBackground = '#a8b4bf';
+              //Use the $set function to make these arrays reactive. See https://vuejs.org/v2/guide/reactivity.html#For-Arrays	      
 //              vm.uavsarLayers[k] = entry;
               vm.$set(vm.uavsarLayers,k,entry);
 //              vm.uavsarLayersFiltered[k] = entry;
