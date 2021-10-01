@@ -523,14 +523,19 @@ export default {
     extendEntry(entry){
       var vm = this;
       this.overviewLegend.remove();
+      //Reset any previously extended entries.
       for(let i = 0; i < this.uavsarLayersFiltered.length; i++){
         this.uavsarLayersFiltered[i].extended = false;
+	this.uavsarLayersFiltered[i].activeBackground = '#a8b4bf';
+	//Also, unselect them
+	this.uavsarLayersFiltered[i].displayed = false;	
       }
       if(this.uavsarHighResLayer !== null){
         this.globalMap.removeLayer(this.uavsarHighResLayer);
         this.uavsarLegend.remove();
         // this.headingLegend.remove();
       }
+      //Now handle the selected entry
       if(!entry.extended) {
         this.extendingActive = true;
         if(this.plotActive){
@@ -574,6 +579,7 @@ export default {
           }
         });
       }
+      entry.displayed=true;      
       vm.extendingActive = false;
     },
 
