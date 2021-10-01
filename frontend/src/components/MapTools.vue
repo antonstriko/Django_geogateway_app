@@ -22,7 +22,7 @@
           v-model="kml"
           @change="updateLayer('kml')"
           id="kml"
-      ><label for="kml">KML Uploader</label>
+      ><label for="kml">KML/KMZ Uploader</label>
       <br/>
       <input
           type="checkbox"
@@ -78,8 +78,8 @@
       </div>
       <div v-if="this.kml">
         <br />
-        <h4>KML File Upload</h4>
-        <p>Upload a KML from your local file system</p>
+        <h4>KML/KMZ File Upload</h4>
+        <p>Upload a KML or KMZ from your local file system</p>
         <label>File
           <input  type="file" id="file" ref="file" @change="handleFileUpload"/>
         </label>
