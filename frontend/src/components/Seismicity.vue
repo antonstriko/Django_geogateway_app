@@ -152,6 +152,7 @@ export default {
       this.geoUri = '';
       this.kmlUri = '';
       bus.$emit('ClearUsgs', 'usgs_layer');
+      this.selected=null;
     },
     showSelected(time) {
       var dFilter = this.dFilter;
