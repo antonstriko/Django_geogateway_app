@@ -119,6 +119,7 @@ export default {
   data() {
     return {
       rectDraw: null,
+      areaLayer: null,
     }
   },
   computed: {
@@ -142,7 +143,6 @@ export default {
       'seismicity.selected',
       'seismicity.kmlUri',
       'seismicity.geoUri',
-
       'map.globalMap',
       'map.drawControl'
     ])
@@ -152,7 +152,15 @@ export default {
       this.geoUri = '';
       this.kmlUri = '';
       bus.$emit('ClearUsgs', 'usgs_layer');
+      let vm = this;
+      if (vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+      }
       this.selected=null;
+      this.minLat = null;
+      this.minLon=null;
+      this.maxLat=null;
+      this.maxLon=null;
     },
     showSelected(time) {
       var dFilter = this.dFilter;
@@ -215,6 +223,9 @@ export default {
       vm.globalMap.on('draw:created', function (e) {
         var type = e.layerType;
         if (type === 'rectangle') {
+          if (vm.areaLayer!=null){
+            vm.globalMap.removeLayer(vm.areaLayer);
+          }
           var layer = e.layer;
           vm.globalMap.addLayer(layer);
           vm.centerLat = layer.getCenter().lat;
@@ -223,11 +234,10 @@ export default {
           vm.maxLon = layer.getLatLngs()[0][2].lng;
           vm.minLat = layer.getLatLngs()[0][3].lat;
           vm.minLon = layer.getLatLngs()[0][0].lng;
-          vm.globalMap.removeLayer(layer)
+          vm.areaLayer=layer;
           vm.rectDraw = null;
           // vm.geometryActive = false;
         }});
-
     },
     // eslint-disable-next-line no-unused-vars
     setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng) {
@@ -258,7 +268,6 @@ img {
   border-radius: 25px;
   height: 50px;
 }
-
 a {
   color: black;
 }
