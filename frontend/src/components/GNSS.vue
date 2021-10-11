@@ -122,7 +122,7 @@
             </label>
           </b-row>
           <b-row>
-            <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
+            <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="runButtonClick()">        Run
             </button>
           </b-row>
           <br />
@@ -227,6 +227,14 @@ export default {
         }
 
       },
+    runButtonClick(){
+      let vm = this;
+      if(vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer=null;
+      }
+      this.rungpsservice();
+    },
     rungpsservice(){
       this.activeGnssQuery = true;
       var vm = this;
@@ -418,9 +426,9 @@ export default {
     clearGnss(){
       let vm = this;
       if(vm.areaLayer!=null){
-          vm.globalMap.removeLayer(vm.areaLayer)
-        }
-      vm.areaLayer=null;
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer=null;
+      }
       this.layersActive = false;
       for(var i = 0; i < this.gnssLayers.length; i++){
         let curr = this.gnssLayers[i];

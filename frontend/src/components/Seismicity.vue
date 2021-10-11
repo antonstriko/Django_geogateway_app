@@ -155,6 +155,7 @@ export default {
       let vm = this;
       if (vm.areaLayer!=null){
         vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer = null;
       }
       this.selected=null;
       this.minLat = null;
@@ -194,6 +195,7 @@ export default {
       })
     },
     runSeismicity(){
+      let vm = this;
       var iconScale = this.iconScale;
       var startD = new Date(this.startDate);
       var endD = new Date(this.endDate);
@@ -206,6 +208,10 @@ export default {
           "maxlatitude=" + this.maxLat +'&' +
           "minlongitude=" + this.minLon +'&' +
           "maxlongitude=" + this.maxLon;
+      if (vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer = null;
+      }
       this.kmlUri = fullUri.replace('geojson', 'kml');
       this.geoUri = fullUri;
       axios.get('/geogateway_django_app/seismicity', {

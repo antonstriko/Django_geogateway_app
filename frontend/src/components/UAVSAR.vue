@@ -212,7 +212,6 @@ export default {
       }),
       pinDrop: null,
       rectDraw: null,
-      areaLayer: null,
       geometryActive: false,
       //wmsColorUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?',
       //wmsUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?',
@@ -329,19 +328,16 @@ export default {
       vm.globalMap.on('draw:created', function (e) {
         var type = e.layerType;
         if (type === 'rectangle') {
-          //var layer = e.layer;
-          if (this.areaLayer!=null){
-            vm.globalMap.removeLayer(this.areaLayer);
-          }
-          this.areaLayer = e.layer;
-          vm.globalMap.addLayer(this.areaLayer);
-          vm.centerLat = this.areaLayer.getCenter().lat;
-          vm.centerLng = this.areaLayer.getCenter().lng;
-          vm.maxLat = this.areaLayer.getLatLngs()[0][1].lat;
-          vm.maxLon = this.areaLayer.getLatLngs()[0][2].lng;
-          vm.minLat = this.areaLayer.getLatLngs()[0][3].lat;
-          vm.minLon = this.areaLayer.getLatLngs()[0][0].lng;
+          var layer = e.layer;
+          vm.globalMap.addLayer(layer);
+          vm.centerLat = layer.getCenter().lat;
+          vm.centerLng = layer.getCenter().lng;
+          vm.maxLat = layer.getLatLngs()[0][1].lat;
+          vm.maxLon = layer.getLatLngs()[0][2].lng;
+          vm.minLat = layer.getLatLngs()[0][3].lat;
+          vm.minLon = layer.getLatLngs()[0][0].lng;
           vm.globalMap.setView([vm.centerLat,vm.centerLng], 7);
+          vm.globalMap.removeLayer(layer);
           vm.rectDraw = null;
           vm.rectQuery(vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng);
           vm.geometryActive = false;
