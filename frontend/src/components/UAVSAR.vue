@@ -212,6 +212,7 @@ export default {
       }),
       pinDrop: null,
       rectDraw: null,
+      areaLayer: null,
       geometryActive: false,
       //wmsColorUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/InSAR/wms?',
       //wmsUrl: 'http://js-169-62.jetstream-cloud.org/geoserver/highres/wms?',
@@ -326,6 +327,10 @@ export default {
       vm.rectDraw = new L.Draw.Rectangle(vm.globalMap, vm.drawControl.options.rectangle);
       vm.rectDraw.enable();
       vm.globalMap.on('draw:created', function (e) {
+        if (vm.areaLayer!=null){
+          vm.globalMap.removeLayer(vm.areaLayer);
+          vm.areaLayer = null;
+        }
         var type = e.layerType;
         if (type === 'rectangle') {
           var layer = e.layer;
@@ -337,8 +342,8 @@ export default {
           vm.minLat = layer.getLatLngs()[0][3].lat;
           vm.minLon = layer.getLatLngs()[0][0].lng;
           vm.globalMap.setView([vm.centerLat,vm.centerLng], 7);
-          vm.globalMap.removeLayer(layer);
           vm.rectDraw = null;
+          vm.areaLayer = layer;
           vm.rectQuery(vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng);
           vm.geometryActive = false;
         }});
@@ -755,6 +760,14 @@ export default {
       this.LosPlotAvailable = false;
     },
 
+    removeAreaLayer(){
+      let vm = this;
+      if (vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer = null;
+      }
+    },
+
 
 /////////////////////////////////////////////////////////////////////
 
@@ -1020,6 +1033,7 @@ export default {
               vm.uavsarDisplayedLayers[uid] = track;
               vm.globalMap.addLayer(vm.uavsarDisplayedLayers[uid]);
             }
+            vm.removeAreaLayer();
             vm.activeQuery = false;
           })
         })
