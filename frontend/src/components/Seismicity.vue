@@ -119,6 +119,7 @@ export default {
   data() {
     return {
       rectDraw: null,
+      areaLayer: null,
     }
   },
   computed: {
@@ -142,7 +143,6 @@ export default {
       'seismicity.selected',
       'seismicity.kmlUri',
       'seismicity.geoUri',
-
       'map.globalMap',
       'map.drawControl'
     ])
@@ -152,7 +152,16 @@ export default {
       this.geoUri = '';
       this.kmlUri = '';
       bus.$emit('ClearUsgs', 'usgs_layer');
+      let vm = this;
+      if (vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer = null;
+      }
       this.selected=null;
+      this.minLat = null;
+      this.minLon=null;
+      this.maxLat=null;
+      this.maxLon=null;
     },
     showSelected(time) {
       var dFilter = this.dFilter;
@@ -186,6 +195,7 @@ export default {
       })
     },
     runSeismicity(){
+      let vm = this;
       var iconScale = this.iconScale;
       var startD = new Date(this.startDate);
       var endD = new Date(this.endDate);
@@ -198,6 +208,10 @@ export default {
           "maxlatitude=" + this.maxLat +'&' +
           "minlongitude=" + this.minLon +'&' +
           "maxlongitude=" + this.maxLon;
+      if (vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer = null;
+      }
       this.kmlUri = fullUri.replace('geojson', 'kml');
       this.geoUri = fullUri;
       axios.get('/geogateway_django_app/seismicity', {
@@ -215,6 +229,9 @@ export default {
       vm.globalMap.on('draw:created', function (e) {
         var type = e.layerType;
         if (type === 'rectangle') {
+          if (vm.areaLayer!=null){
+            vm.globalMap.removeLayer(vm.areaLayer);
+          }
           var layer = e.layer;
           vm.globalMap.addLayer(layer);
           vm.centerLat = layer.getCenter().lat;
@@ -223,11 +240,10 @@ export default {
           vm.maxLon = layer.getLatLngs()[0][2].lng;
           vm.minLat = layer.getLatLngs()[0][3].lat;
           vm.minLon = layer.getLatLngs()[0][0].lng;
-          vm.globalMap.removeLayer(layer)
+          vm.areaLayer=layer;
           vm.rectDraw = null;
           // vm.geometryActive = false;
         }});
-
     },
     // eslint-disable-next-line no-unused-vars
     setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng) {
@@ -258,7 +274,6 @@ img {
   border-radius: 25px;
   height: 50px;
 }
-
 a {
   color: black;
 }

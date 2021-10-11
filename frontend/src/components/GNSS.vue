@@ -122,7 +122,7 @@
             </label>
           </b-row>
           <b-row>
-            <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="rungpsservice()">        Run
+            <button  class="btn btn-success" id="gs_submit" name="submit" type="submit" v-on:click.prevent="runButtonClick()">        Run
             </button>
           </b-row>
           <br />
@@ -173,7 +173,7 @@ export default {
   name: "GNSS-tools",
   data() {
     return {
-
+      areaLayer: null,
     }
   },
   computed: {
@@ -227,6 +227,14 @@ export default {
         }
 
       },
+    runButtonClick(){
+      let vm = this;
+      if(vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer=null;
+      }
+      this.rungpsservice();
+    },
     rungpsservice(){
       this.activeGnssQuery = true;
       var vm = this;
@@ -390,6 +398,9 @@ export default {
       vm.rectDraw = new L.Draw.Rectangle(vm.globalMap, vm.drawControl.options.rectangle);
       vm.rectDraw.enable();
       vm.globalMap.on('draw:created', function (e) {
+        if(vm.areaLayer!=null){
+          vm.globalMap.removeLayer(vm.areaLayer)
+        }
         var type = e.layerType;
         if (type === 'rectangle') {
           var layer = e.layer;
@@ -400,7 +411,7 @@ export default {
           vm.maxLon = layer.getLatLngs()[0][2].lng;
           vm.minLat = layer.getLatLngs()[0][3].lat;
           vm.minLon = layer.getLatLngs()[0][0].lng;
-          vm.globalMap.removeLayer(layer)
+          vm.areaLayer=layer;
           vm.rectDraw = null;
           bus.$emit('gnssDrawQuery', vm.maxLat, vm.minLon, vm.minLat, vm.maxLon, vm.centerLat, vm.centerLng)
           vm.geometryActive = false;
@@ -413,6 +424,11 @@ export default {
       this.rectDraw.disable();
     },
     clearGnss(){
+      let vm = this;
+      if(vm.areaLayer!=null){
+        vm.globalMap.removeLayer(vm.areaLayer);
+        vm.areaLayer=null;
+      }
       this.layersActive = false;
       for(var i = 0; i < this.gnssLayers.length; i++){
         let curr = this.gnssLayers[i];
@@ -421,6 +437,11 @@ export default {
           this.globalMap.removeLayer(this.layers[name]);
         }
       }
+      
+      this.gs_latitude =null;
+      this.gs_longitude = null;
+      this.gs_width = null;
+      this.gs_height = null;
       this.gnssLayers = [];
     },
     setRect(maxLat, minLon, minLat, maxLon, centerLat, centerLng){
