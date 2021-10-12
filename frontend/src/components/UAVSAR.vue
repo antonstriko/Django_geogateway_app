@@ -626,7 +626,7 @@ export default {
 
       this.uavsarLatlon = latlon;
       this.uavsarEntry = entry;
-
+      console.log(hasHighresOverlay);
       if (hasHighresOverlay) {
         this.uavsarHighResLayer = L.tileLayer.wms(baseURI, {
           layers: layername,
@@ -634,9 +634,12 @@ export default {
           format: 'image/png',
           zIndex: 11
         })
+      } else {
+        this.uavsarHighResLayer = this.uavsarDisplayedLayers[entry.info['uid']];
       }
+
       this.globalMap.addLayer(this.uavsarHighResLayer);
-      this.uavsarHighResLayer.setOpacity(.75)
+      //this.uavsarHighResLayer.setOpacity(.75)
       // zoom to image center
       var pos_list = entry.info['geometry']['coordinates'];
       var lon_sum = 0,lat_sum = 0;
