@@ -277,6 +277,7 @@ export default {
       'uavsar.uavsarHighResLayer',
       'uavsar.uavsarDisplayedLayers',
       'uavsar.hasAlternateColoring',
+      'uavsar.hasHighresOverlay',
       'uavsar.activeBackground',
       'uavsar.dateFilter',
       'uavsar.bracketDate',
@@ -566,20 +567,26 @@ export default {
             'uid': layername,
           }
         }).then( (response) => {
-          var datajson = response.data
-          if (Object.prototype.hasOwnProperty.call(datajson, 'layerDescriptions') && vm.alternateColoringChecked) {
+          var datajson = response.data;
+          if (Object.prototype.hasOwnProperty.call(datajson, 'hasAlternateColoring')) {
+            vm.hasAlternateColoring = true; }
+          if (Object.prototype.hasOwnProperty.call(datajson, 'hasHighresOverlay')) {
+            vm.hasHighresOverlay = true; }
+          
+
+          if (vm.alternateColoringChecked) {
             vm.layerFound = true;
             vm.extendedColor = '#CCFFCC'
             vm.extendedBorder = '1px solid #ADD673'
-            vm.hasAlternateColoring = true;
-            vm.uavsarHighRes(entry, vm.hasAlternateColoring);
+            //vm.hasAlternateColoring = true;
+            vm.uavsarHighRes(entry, vm.hasAlternateColoring, vm.hasHighresOverlay);
 
           } else {
             vm.layerFound = true;
             vm.extendedColor = '#CCFFCC'
             vm.extendedBorder = '1px solid #ADD673'
-            vm.hasAlternateColoring = false;
-            vm.uavsarHighRes(entry, vm.hasAlternateColoring);
+            //vm.hasAlternateColoring = false;
+            vm.uavsarHighRes(entry, vm.hasAlternateColoring, vm.hasHighresOverlay);
 
           }
         });
@@ -589,7 +596,7 @@ export default {
     },
 
     //High Res KML's and CSV LOS plotting methods //////////////////////////////////
-    uavsarHighRes(entry, hasAlternateColoring) {
+    uavsarHighRes(entry, hasAlternateColoring, hasHighresOverlay) {
       var latlon = entry.info.geometry.coordinates[0];
       for(var i = this.uavsarLayersFiltered.length-1; i >= 0; i--){
         this.uavsarLayersFiltered[i].displayed = false;
@@ -599,7 +606,7 @@ export default {
         this.uavsarLegend.remove();
       }
       var baseURI, overlayType, legendExten, legendFinal;
-      if(hasAlternateColoring) {
+      if(hasAlternateColoring && this.alternateColoringChecked) {
         baseURI = this.wmsColorUrl;
         overlayType = 'InSAR:';
         legendExten = entry.info['uid'] + '_unw_default.png';
@@ -620,15 +627,14 @@ export default {
       this.uavsarLatlon = latlon;
       this.uavsarEntry = entry;
 
-      this.uavsarHighResLayer = L.tileLayer.wms(baseURI, {
-        layers: layername,
-        transparent: true,
-        format: 'image/png',
-        zIndex: 11
-      })
-
-      // https://lh5.googleusercontent.com/proxy/f1YEx_QBYQtFSXw7QKtmGBQQWUYHZa6U1Zu0ktt3bgAwynGJ99sYdVksg1ItCmfeEsWCBy3EVSZYRvqVTgHEY9Kzji8=s0-d
-
+      if (hasHighresOverlay) {
+        this.uavsarHighResLayer = L.tileLayer.wms(baseURI, {
+          layers: layername,
+          transparent: true,
+          format: 'image/png',
+          zIndex: 11
+        })
+      }
       this.globalMap.addLayer(this.uavsarHighResLayer);
       this.uavsarHighResLayer.setOpacity(.75)
       // zoom to image center
