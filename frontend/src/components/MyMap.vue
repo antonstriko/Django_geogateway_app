@@ -277,6 +277,7 @@ export default {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
+              axisLabelWidth: 75,
               },
               x: {
               valueFormatter: x => x.toFixed(3),
