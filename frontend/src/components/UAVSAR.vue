@@ -639,7 +639,9 @@ export default {
           zIndex: 11
         })
       } else {
-        const track = new L.KML(this.lowResKML,{'ignorePlacemark':true});
+        const parser = new DOMParser();
+        const kml = parser.parseFromString(this.lowResKML, 'text/xml');
+        const track = new L.KML(kml,{'ignorePlacemark':true});
         this.uavsarHighResLayer = track;
       }
 

@@ -187,7 +187,10 @@ def uavsarTest(request):
             baseURI = 'https://archive.geo-gateway.org/kmz/'
             dataname = request.GET.get('dataname')
             postfix = 'uid' + uid + '/' + dataname + '.unw.kml'
-            checkdict['lowreskml'] = baseURI + postfix
+            kmldata = requests.get(baseURI + postfix)
+            toRep = '<href>https://archive.geo-gateway.org/kmz/' + 'uid' + uid + '/'
+            respData = kmldata.content.replace('<href>'.encode(), toRep.encode()).decode("utf-8")
+            checkdict['lowreskml'] = respData
         return HttpResponse(json.dumps(checkdict))
 
 
