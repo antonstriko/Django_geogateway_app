@@ -168,8 +168,20 @@ def uavsarTest(request):
 
         layername = request.GET.get('uid')
 
-        data = requests.get(wmsColorUrl + testURI + layername)
-        return HttpResponse(data)
+        # test if it has coloring layer
+        geoserver_response = requests.get(wmsColorUrl + testURI + layername)
+        data = geoserver_response.json()
+        checkdict = {'layer':layername}
+        if "layerDescriptions" in data:
+            checkdict['hasAlternateColoring'] = 1
+            
+        # test if it has highres layer
+        geoserver_response = requests.get(wmsUrl + testURI + layername)
+        data = geoserver_response.json()
+        if "layerDescriptions" in data:
+            checkdict['hasHighresOverlay'] = 1
+
+        return HttpResponse(json.dumps(checkdict))
 
 
 def uavsarKML(request):
