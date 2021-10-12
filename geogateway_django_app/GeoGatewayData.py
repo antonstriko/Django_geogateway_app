@@ -166,7 +166,9 @@ def uavsarTest(request):
     if request.method == 'GET':
         testURI = 'version=1.1.1&request=DescribeLayer&outputFormat=application/json&exceptions=application/json&layers= '
 
-        layername = request.GET.get('uid')
+        uid = request.GET.get('uid')
+        uid = str(uid)
+        layername = 'InSAR:' + 'uid' + uid + '_unw'
 
         # test if it has coloring layer
         geoserver_response = requests.get(wmsColorUrl + testURI + layername)
@@ -180,7 +182,12 @@ def uavsarTest(request):
         data = geoserver_response.json()
         if "layerDescriptions" in data:
             checkdict['hasHighresOverlay'] = 1
-
+        else:
+            # get lowres kml
+            baseURI = 'https://archive.geo-gateway.org/kmz/'
+            dataname = request.GET.get('dataname')
+            postfix = 'uid' + uid + '/' + dataname + '.unw.kml'
+            checkdict['lowreskml'] = baseURI + postfix
         return HttpResponse(json.dumps(checkdict))
 
 
@@ -192,7 +199,7 @@ def uavsarKML(request):
 
         raw = request.GET.get('json')
         query = json.loads(raw)
-        postfix = 'uid' + query['uid'] + '/' + query['dataname'] + '.int.kml'
+        postfix = 'uid' + query['uid'] + '/' + query['dataname'] + '.unw.kml'
         fullURI = baseURI + postfix
         data = requests.get(fullURI)
 

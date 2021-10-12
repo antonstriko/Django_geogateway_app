@@ -283,6 +283,7 @@ export default {
       'uavsar.bracketDate',
       'uavsar.currentExtendedEntry',
       'uavsar.overviewLegend',
+      'uavsar.lowResKML',
       'uavsar.lowResDisplayed',
       //Map objects
       'map.globalMap',
@@ -554,7 +555,8 @@ export default {
         entry.extended = true;
         var testURI = '/geogateway_django_app/UAVSAR_test/';
 
-        var layername = 'InSAR:' + 'uid' + entry.info['uid'] + '_unw';
+        //var layername = entry.info['uid'] + '_unw';
+        //var dataname = entry.info['dataname'];
 
         //set current extended entry for keyup keydown change
 
@@ -564,7 +566,8 @@ export default {
 
         axios.get(testURI, {
           params: {
-            'uid': layername,
+            'uid': entry.info['uid'],
+            'dataname': entry.info['dataname'],
           }
         }).then( (response) => {
           var datajson = response.data;
@@ -572,7 +575,8 @@ export default {
             vm.hasAlternateColoring = true; }
           if (Object.prototype.hasOwnProperty.call(datajson, 'hasHighresOverlay')) {
             vm.hasHighresOverlay = true; }
-          
+          if (Object.prototype.hasOwnProperty.call(datajson, 'lowreskml')) {
+            vm.lowResKML = datajson['lowreskml'];}
 
           if (vm.alternateColoringChecked) {
             vm.layerFound = true;
@@ -635,7 +639,8 @@ export default {
           zIndex: 11
         })
       } else {
-        this.uavsarHighResLayer = this.uavsarDisplayedLayers[entry.info['uid']];
+        const track = new L.KML(this.lowResKML,{'ignorePlacemark':true});
+        this.uavsarHighResLayer = track;
       }
 
       this.globalMap.addLayer(this.uavsarHighResLayer);

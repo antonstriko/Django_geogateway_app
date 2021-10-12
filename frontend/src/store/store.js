@@ -76,6 +76,7 @@ export const store = new Vuex.Store({
             bracketDate: '',
             currentExtendedEntry: null,
             overviewLegend: null,
+            lowResKML: '',
             lowResDisplayed: 0,
         },
         map: {
