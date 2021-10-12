@@ -70,11 +70,13 @@ export const store = new Vuex.Store({
             plotLon2: null,
             uavsarLatlon: null,
             hasAlternateColoring: false,
+            hasHighresOverlay: false,
             activeBackground: '#a8b4bf',
             dateFilter: false,
             bracketDate: '',
             currentExtendedEntry: null,
             overviewLegend: null,
+            lowResKML: '',
             lowResDisplayed: 0,
         },
         map: {
