@@ -272,17 +272,20 @@ export default {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
+              pixelsPerLabel: 15,	      
               },
               y2: {
               valueFormatter: y => y.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: y => y.toFixed(1),
               axisLabelWidth: 75,
+              pixelsPerLabel: 15,
               },
               x: {
               valueFormatter: x => x.toFixed(3),
               ticker: Dygraph.numericTicks,
               axisLabelFormatter: x => x.toFixed(1),
+              pixelsPerLabel: 35,
               }
             }
           }
