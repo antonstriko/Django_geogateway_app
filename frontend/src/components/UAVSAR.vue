@@ -872,7 +872,7 @@ export default {
           params: {
             //
             "type": "path",
-            "queryStr": path + '',
+            "queryStr": path.trim() + '',
           }
         }).then(function (response) {
           let entries = response.data;
