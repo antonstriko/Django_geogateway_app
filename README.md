@@ -13,7 +13,7 @@ After you have installed the Airavata Django Portal, install the GeoGateway Djan
 2. In Terminal #1, clone this repo under $HOME, creating the directory $HOME/geogateway-django-app. 
 
 2. In Terminal #1, install dependencies and build frontend code for the Geogateway Django App:
-   * ```cd $HOME/ geogateway-django-app/frontend```
+   * ```cd $HOME/geogateway-django-app/frontend```
    * ```yarn install```
 3. In Terminal #2, activate the virtual environment 
    * ```cd $HOME/airavata-django-portal``` 
