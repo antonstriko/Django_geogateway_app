@@ -8,7 +8,7 @@
           v-model="ucerf"
           @change="updateLayer('ucerf')"
           id="ucerf"
-      ><label for="ucerf"> UCERF3 Faults</label>
+      ><label for="ucerf"> UCERF3 Fault Model</label>
       <br/>
       <input
           type="checkbox"
