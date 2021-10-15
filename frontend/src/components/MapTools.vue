@@ -9,6 +9,9 @@
           @change="updateLayer('ucerf')"
           id="ucerf"
       ><label for="ucerf"> UCERF3 Fault Model</label>
+      <a href="" v-on:click.stop.prevent="openWindow('https://www.scec.org/ucerf')">
+      <i class="fas fa-info-circle"></i>
+      </a>
       <br/>
       <input
           type="checkbox"
@@ -259,6 +262,9 @@ export default {
           } else {this.layers['qfaultsWMS'].remove();}
           break;
       }
+    },
+    openWindow(link){
+        window.open(link);
     },
     handleFileUpload(event){
       this.kmlFile = event.target.files[0];
