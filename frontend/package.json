@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@mapbox/togeojson": "^0.16.0",
-    "axios": "^0.21.2",
-    "bootstrap-vue": "^2.15.0",
-    "core-js": "^3.6.5",
+    "axios": "^0.21.4",
+    "bootstrap-vue": "^2.21.2",
+    "core-js": "^3.18.1",
     "django-airavata-api": "^1.0.0-beta.3",
     "dygraphs": "^2.1.0",
     "leaflet": "^1.6.0",
@@ -22,16 +22,16 @@
     "leaflet-kml": "git+https://github.com/webgisdeveloper/leaflet-kml.git",
     "leaflet-kmz": "^1.0.6",
     "leaflet.awesome-markers": "^2.0.5",
-    "qs": "^6.9.4",
+    "qs": "^6.10.1",
     "togeojson": "^0.16.0",
-    "vue": "^2.6.11",
+    "vue": "^2.6.14",
     "vue-element-resize-detector": "^1.0.6",
     "vue-resize": "^0.5.0",
-    "vue-resource": "^1.5.1",
-    "vue-router": "^3.3.3",
-    "vuex": "^3.4.0",
+    "vue-resource": "^1.5.3",
+    "vue-router": "^3.5.2",
+    "vuex": "^3.6.2",
     "vuex-map-fields": "^1.4.1",
-    "vuex-persistedstate": "^3.0.1",
+    "vuex-persistedstate": "^3.2.1",
     "webpack-bundle-tracker": "0.4.3"
   },
   "devDependencies": {
@@ -41,7 +41,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.14"
   },
   "eslintConfig": {
     "root": true,

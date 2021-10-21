@@ -21,6 +21,7 @@
                         id="caLayer"
                 ><label for="caLayer">California Forecast</label>
                 <br/>
+<!--
                 <input
                         type="checkbox"
                         v-model="ucerfL"
@@ -28,6 +29,8 @@
                         id="ucerfLayer"
                 ><label for="ucerfLayer">Show California faults </label>
                 <br/>
+-->
+
                 <input
                         type="checkbox"
                         v-model="gdacsL"
@@ -99,6 +102,7 @@
 
         },
         methods: {
+	//Don't use this. Use the UCERF layer from Map Tools
             ucerfAdd(){
                 if(this.ucerfL){
                     bus.$emit('UrlAddLayer', this.ucerfUrl, 'ucerfL');

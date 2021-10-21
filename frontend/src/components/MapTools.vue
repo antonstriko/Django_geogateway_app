@@ -161,6 +161,7 @@ export default {
     //   bus.$emit('stateBoundaryOpacity', (value/100))
     // },
     kmlLayerChange(entry){
+      console.log(entry.active);
       if(entry.active) {
         bus.$emit('addExisting', entry.name);
       }else {
