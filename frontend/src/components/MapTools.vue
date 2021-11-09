@@ -8,7 +8,7 @@
           v-model="ucerf"
           @change="updateLayer('ucerf')"
           id="ucerf"
-      ><label for="ucerf"> UCERF3 Fault Model</label>
+      ><label for="ucerf"> UCERF3 Fault Model</label>&ensp;
       <a href="" v-on:click.stop.prevent="openWindow('https://www.scec.org/ucerf')">
       <i class="fas fa-info-circle"></i>
       </a>

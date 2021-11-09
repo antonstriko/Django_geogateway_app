@@ -18,6 +18,8 @@ import 'leaflet/dist/leaflet.css';
 import "leaflet-kml";
 import {store} from "./store/store";
 import resize from "vue-element-resize-detector";
+import LandinigPage from "./components/LandingPage";
+import MyMap from "./components/MyMap";
 
 Vue.use(VueRouter);
 Vue.use(BootstrapVue);
@@ -36,6 +38,9 @@ import VueResource from 'vue-resource';
 
 
 const routes = [
+  {name: 'home', path:'/', components: {mainPage: LandinigPage}},
+  {name: 'home', path:'/map', components: {mainPage: MyMap},
+  children: [
   {name: 'maptools', path: '/maptools', component: MapTools },
   {name: 'gnss', path: '/gnss', component: GNSS },
   {name: 'momentmagnitude', path: '/momentmagnitude', component: MMCalc },
@@ -48,7 +53,7 @@ const routes = [
   {name: '3dimaging', path: '/3dimaging', component: ThreeDImaging },
   {name: 'report', path: '/report', component: report },
   {name: 'help', path: '/help', component: help },
-
+  ]}
 ]
 
 

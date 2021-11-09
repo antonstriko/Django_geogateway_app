@@ -1,17 +1,21 @@
 <template>
     <div id="app">
-        <MyMap/>
+      <router-view name="mainPage"/>
     </div>
 </template>
 
 <script>
 
-    import MyMap from "./components/MyMap";
+    import 'vue-router';
+    import {bus} from './main';
     export default {
         name: 'app',
-        components: {
-            MyMap,
-        },
+        
+        mounted(){
+            bus.$on('switchPage',  (feature)=>{
+                this.$router.push(feature);
+            });
+        }
     }
 </script>
 
@@ -38,4 +42,5 @@
       border-color: #3388ff !important;
 
     }
+
 </style>
