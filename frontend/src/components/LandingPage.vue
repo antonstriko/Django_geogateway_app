@@ -32,14 +32,14 @@
         <br><br><br>
         <div>
             <div class="row">
-                <div class="col">
+                <div class="col inner-section">
                     <h3>Map Tools</h3>
                     <p>Map tools are integrated from different sources/references</p>
                     <b-button class="btn btn-circle" @click="goToMap('/maptools')">
                         <i class="fas fa-map"></i>
                     </b-button>
                 </div>
-                <div class="col">
+                <div class="col inner-section">
                     <h3>UAVSAR</h3>
                     <p>UAVSAR is an airborne, L-band, fully polarimetric radar, mounted 
                     to the belly of a piloted Gulfstream III aircraft</p>
@@ -47,7 +47,7 @@
                         <i class="fas fa-map"></i>
                     </b-button>
                 </div>
-                <div class="col">
+                <div class="col inner-section">
                     <h3>GNSS</h3>
                     <p>Global Navigation Satellite System (GNSS) is any satellite 
                     constellation which provides positioning</p>
@@ -58,21 +58,21 @@
             </div>
             <br><br>
             <div class="row">
-                <div class="col">
+                <div class="col inner-section">
                     <h3>Seismicity</h3>
                     <p>The seismicity tab allows users to display earthquakes in a region over a specified period.</p>
                     <b-button class="btn btn-circle" @click="goToMap('/seismicity')">
                         <i class="fas fa-map"></i>
                     </b-button>
                 </div>
-                <div class="col">
+                <div class="col inner-section">
                     <h3>Nowcast</h3>
                     <p>GeoGateway’s Nowcast tab consists of useful tools to evaluate earthquake hazard</p>
                     <b-button class="btn btn-circle" @click="goToMap('/nowcast')">
                         <i class="fas fa-map"></i>
                     </b-button>
                 </div>
-                <div class="col">
+                <div class="col inner-section">
                     <h3>Magnitude</h3>
                     <p>Magnitude is the physical size of an earthquake. </p>
                     <b-button class="btn btn-circle" @click="goToMap('/momentmagnitude')">
@@ -96,18 +96,18 @@
         <span class="section">Learn how to use GeoGateway</span>
         <div class="row">
             <div class="col">
-                <img id="userGuide" src="../assets/userGuide.png" alt="User Guide"> 
-                <p>User Guide</p>
+                <img id="userGuide" src="../assets/userGuide.png" alt="User Guide"> <br>
+                <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_User_Guide.pdf">User Guide</a><br>
                 <span>The user guide has detailed information on all our map tools</span>
             </div>
             <div class="col">
-                <img id="tutorials" src="../assets/tutorials.png" alt="Tutorials"> 
-                <p>Tutorials</p>
+                <img id="tutorials" src="../assets/tutorials.png" alt="Tutorials"> <br>
+                <a target="_blank" href="https://www.youtube.com/channel/UC0_bNEBxRWH2qBULDl6cB7Q/featured"> Tutorials</a><br>
                 <span>Watch tutorials to understand how to use GeoGateway</span>
             </div>
             <div class="col">
-                <img id="exercises" src="../assets/exercises.png" alt="Excersies"> 
-                <p>Excersies</p>
+                <img id="exercises" src="../assets/exercises.png" alt="Excersies"> <br>
+                <a target="_blank" href="https://github.com/GeoGateway/GeoGatewayStaticResources/raw/master/documents/GeoGateway_Exercises.pdf">Excersies</a><br>
                 <span>Our thoughtfully designed exercies let you master GeoGateway</span>
             </div>
         </div>
@@ -118,62 +118,72 @@
     <div id="publications" ref="publications">
         <div class="row">
             <div class="col">
-                <span class="section-head">Publication</span><br>
+                <span class="section-head">Publications</span><br>
                 <span class="section">See how GeoGateway is being used</span>
             </div>
         </div>
 
         <div class="row">
-            <div class="col">
+            <div class="col inner-section">
                 <span>Earth Science Informatics (2021)</span><br>
-                <!--TODO: fix links-->
-                <a class="pub-link">Improving access to geodetic imaging crustal deformation data using GeoGateway</a><br>
+                 <a target="_blank" href="https://doi.org/10.1007/s12145-020-00561-7">Improving access to geodetic imaging crustal deformation data using GeoGateway</a> <br>
                 <span>Donnellan, A., Parker, J., Heflin, M. et al.</span>
+                <hr>
             </div>
 
-            <div class="col">
+            <div class="col inner-section">
                 <span>Earth and Space Science (2020)</span><br>
-                <a >Automated Estimation and Tools to Extract Positions, Velocities, Breaks...</a><br>
+                <a target="_blank" href="https://doi.org/10.1029/2019EA000644">Automated Estimation and Tools to Extract Positions, Velocities, Breaks...</a><br>
                 <span>Heflin, M., Donnellan, A., Parker, J. et al.</span>
+                <hr>
             </div>
 
-            <div class="col">
+            <div class="col inner-section">
                 <span>Earth and Space Science (2021)</span><br>
-                <a class="pub-link">Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas...</a><br>
+                 <a target="_blank" href="https://doi.org/10.1002/essoar.10506047.1">Buried Aseismic Slip and Off‐Fault Deformation on the Southernmost San Andreas...</a><br>
                 <span>Donnellan, A., Parker, J., Heflin, M. et al.</span>
+                <hr>
             </div>
 
         </div>
         <br><br><br><br><br>
     </div>
 
-
-<!--
     <div id="contributors" ref="contributors">
         <span class="section-head">Contributors</span><br>
-        <span class="section">The team behind GeoGateway</span>
+        <span class="section">The team behind GeoGateway</span><br>
+        <Contributors/>
         <br><br><br><br><br>
     </div>
 
--->
 
     <div id="dataAttr" ref="dataAttr" >
         <span class="section-head">Data Data Attribution</span><br>
         <span class="section">We integrate map data from different sources</span>
     <br><br><br>
         <div class="row">
-            <b-table class="tbl" striped hover :items="items" :fields="fields">
+            <b-table 
+                class="tbl" 
+                striped hover 
+                :items="items" 
+                :fields="fields"
+                :per-page="perPage"
+            >
                 <template slot=cell(source) slot-scope="data">
                      <a :href="data.item.link" target="_blank" rel="noreferrer noopener">{{data.item.text}}</a>
                 </template>
             </b-table>
-        </div>
+        </div><br>
+        <b-button @click="toggleRows()">
+        {{rowButtonText()}}
+        </b-button>
         <br><br><br><br><br>
     </div>
 
 
 
     <div id="footer">
+        
     </div>
 
 </div>
@@ -181,10 +191,15 @@
 
 <script>
 import {bus} from '../main';
+import Contributors from "./Contributors";
 export default {
   name: "LandingPage",
+  components: {
+    Contributors,
+  },
   data() {
       return {
+          perPage: 6,
           fields: [
           {
             key: 'tool',
@@ -202,7 +217,12 @@ export default {
           { tool: 'Show coastlines', text: 'Natural Earth Data', link: 'https://www.naturalearthdata.com/'},
           { tool: 'UAVSAR', text: 'Alaska Satellite Facility - ASF, Donnellan et al. 2010', link: 'https://asf.alaska.edu/'},
           { tool: 'GNSS', text: 'GPS.gov, Heflin et al. 2020', link: 'https://www.gps.gov/systems/gnss/'},
-        ]
+          { tool: 'Seismicity', text: ' earthquake.usgs.gov/earthquakes/map/', link: 'https://earthquake.usgs.gov/earthquakes/map/'},
+          { tool: 'Nowcast', text: 'Open Hazards Group', link: 'https://www.openhazards.com/'},
+          //{ tool: 'Magnitude', text: 'GPS.gov, Heflin et al. 2020', link: 'https://www.gps.gov/systems/gnss/'},
+          //{ tool: 'Discloc', text: 'GPS.gov, Heflin et al. 2020', link: 'https://www.gps.gov/systems/gnss/'},
+          { tool: '3D Imaging', text: 'Seismological Research Letters', link: 'https://doi.org/10.1785/0220190274'},
+          ]
       }
     },
   methods:{
@@ -214,6 +234,21 @@ export default {
     goToMap(feature){
         bus.$emit('switchPage', feature);
     },
+    toggleRows(){
+        if(this.perPage<this.items.length){
+            this.perPage=this.items.legth;
+        }else{
+            this.perPage=6;
+        }
+        
+    },
+    rowButtonText(){
+        if(this.perPage<this.items.length){
+            return "See All";
+        }else{
+            return "See Less";
+        }
+    }
   },
 
 }
@@ -230,6 +265,9 @@ export default {
 }
 #features{
     padding:50px;
+
+    padding-left: 100px;
+    padding-right: 100px;
 }
 #userRes{
     backgroundColor: #F9FAFC;
@@ -237,9 +275,27 @@ export default {
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
+
+    padding-left: 100px;
+    padding-right: 100px;
+}
+#publications a.active{
+    color: #007BFE;
+    text-decoration:none;
+
+    padding-left: 100px;
+    padding-right: 100px;
+}
+#dataAttr{
+    padding-left: 100px;
+    padding-right: 100px;
 }
 #footer{
     backgroundColor: black;
+}
+
+#contributors-inner{
+    x-overfolw:
 }
 .title{
     color: #FFFFFF;
@@ -290,15 +346,15 @@ export default {
     font-weight: 600;
     font-size: 40px;
     line-height: 70px;
-    /* or 175% */
     text-align: center;
     color: #202020;
 }
 
-#publications a.active{
-    color: #007BFE;
-    text-decoration:none;
+.inner-section {
+    padding-left: 100px;
+    padding-right: 100px;
 }
+
 .tbl{
     width: 75%;
     margin: auto;
