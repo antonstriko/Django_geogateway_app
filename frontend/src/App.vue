@@ -27,6 +27,7 @@
         text-align: center;
         color: #2c3e50;
         width: 100%;
+        min-height: 100vh;
     }
     .toolInfo {
       width: auto;
